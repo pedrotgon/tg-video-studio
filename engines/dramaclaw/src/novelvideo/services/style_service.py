@@ -54,6 +54,12 @@ class StyleService:
         "hybrid": "混合媒介",
     }
     STYLE_PREVIEW_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".gif")
+    COMMERCIAL_STYLE_ORDER = (
+        "tg_ugc_natural_br",
+        "tg_product_demo_br",
+        "tg_testimonial_br",
+        "tg_retail_offer_br",
+    )
 
     @classmethod
     def _style_preview_dir(cls, project_dir: str | Path, style_id: str) -> Path:
@@ -406,8 +412,19 @@ class StyleService:
         if style:
             return style
 
-        # 返回默认风格
-        default = cls.get_preset("chinese_period_drama")
+        # Commercial projects start with a Brazilian live-action preset;
+        # legacy projects retain the DramaClaw default for compatibility.
+        commercial = False
+        if username and project:
+            try:
+                commercial = (
+                    load_project_config_file(username, project).get("content_profile")
+                    == "commercial_br"
+                )
+            except Exception:
+                commercial = False
+        default_id = "tg_ugc_natural_br" if commercial else "chinese_period_drama"
+        default = cls.get_preset(default_id)
         if default:
             return default
 
@@ -423,8 +440,15 @@ class StyleService:
         """
         styles = []
         if cls.PRESETS_DIR.exists():
-            for f in sorted(cls.PRESETS_DIR.glob("*.json")):
-                style_id = f.stem
+            preset_files = {f.stem: f for f in cls.PRESETS_DIR.glob("*.json")}
+            ordered_ids = [
+                style_id
+                for style_id in cls.COMMERCIAL_STYLE_ORDER
+                if style_id in preset_files
+            ]
+            ordered_ids.extend(sorted(set(preset_files) - set(ordered_ids)))
+            for style_id in ordered_ids:
+                f = preset_files[style_id]
                 config = cls.get_preset(style_id)
                 if config:
                     styles.append({

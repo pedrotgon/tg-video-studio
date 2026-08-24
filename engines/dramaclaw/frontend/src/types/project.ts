@@ -32,6 +32,23 @@ export interface CommercialBrBrand {
   logo_asset_id: string | null;
 }
 
+export interface CommercialBrCreative {
+  number: number;
+  title: string;
+  angle: string;
+  approach: string;
+  hook: string;
+  promise: string;
+  proof: string;
+  cta: string;
+  script: string;
+  scenes: Array<{ order: number; visual: string; voiceover: string; on_screen: string }>;
+  duration_seconds: number;
+  aspect_ratio: string;
+  channel: string;
+  status: string;
+}
+
 export interface CreateProjectPayload {
   name: string;
   content_profile?: "commercial_br";
@@ -70,6 +87,7 @@ export interface ProjectConfig {
   campaign?: CommercialBrCampaign;
   output?: CommercialBrOutput;
   brand?: CommercialBrBrand;
+  creatives?: CommercialBrCreative[];
 }
 
 export type Project = string;

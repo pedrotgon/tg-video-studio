@@ -1730,6 +1730,10 @@
       "drama": "精品剧"
     },
     "visualStyles": {
+      "tgUgcNaturalBr": "TG 自然 UGC",
+      "tgProductDemoBr": "TG 产品演示",
+      "tgTestimonialBr": "TG 巴西式证言",
+      "tgRetailOfferBr": "TG 零售优惠",
       "anime": "动漫风格",
       "chinesePeriodDrama": "写实古装剧",
       "guomanFantasy": "3D玄幻国漫",

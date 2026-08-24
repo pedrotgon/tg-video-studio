@@ -75,6 +75,66 @@ NARRATOR_VOICE_MODE_EXPLANATION = "第一人称解说使用解说主角声线；
 SUPPORTED_VOICE_SAMPLE_COPY = "仅支持 mp3 / wav / m4a / aac / ogg"
 
 
+async def _ensure_commercial_plan(
+    *,
+    config: dict,
+    state_dir: Path,
+    output_dir: Path,
+    username: str,
+    project_name: str,
+) -> dict:
+    """Migrate older TG campaigns to the distinct persisted creative plan."""
+    if config.get("content_profile") != "commercial_br":
+        return config
+    campaign = config.get("campaign")
+    output = config.get("output")
+    existing = config.get("creatives")
+    if not isinstance(campaign, dict) or not isinstance(output, dict):
+        return config
+    plan_is_current = (
+        isinstance(existing, list)
+        and len(existing) == max(1, min(10, int(output.get("variants", 5))))
+        and all(isinstance(item, dict) and item.get("script") and item.get("scenes") for item in existing)
+    )
+    updated = config
+    if not plan_is_current:
+        creatives = build_commercial_creatives(campaign, output)
+        updated = dict(config)
+        updated["creatives"] = creatives
+        save_project_config_in_state_dir(state_dir, config=updated)
+    creatives = updated.get("creatives") or []
+
+    from novelvideo.models import NovelEpisode
+    from novelvideo.sqlite_store import SQLiteStore
+
+    store = SQLiteStore(
+        f"{username}/{project_name}", output_dir=output_dir, state_dir=state_dir
+    )
+    try:
+        await store.initialize()
+        existing_episodes = await store.list_episodes()
+        existing_numbers = {int(episode.number) for episode in existing_episodes}
+        missing_episodes = [
+                NovelEpisode(
+                    number=int(item["number"]),
+                    title=str(item["title"]),
+                    adapted_content=str(item["script"]),
+                    beat_source_text=str(item["script"]),
+                    content_summary=str(item["promise"]),
+                    main_conflict=str(item["approach"]),
+                    cliffhanger=str(item["hook"]),
+                    key_events=[str(scene["visual"]) for scene in item["scenes"]],
+                )
+                for item in creatives
+                if int(item["number"]) not in existing_numbers
+            ]
+        if missing_episodes:
+            await store.add_episodes(missing_episodes)
+    finally:
+        await store.close()
+    return updated
+
+
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -506,34 +566,13 @@ async def create_project(
                 project_config["creatives"] = creatives
         save_project_config_in_state_dir(record.state_dir, config=project_config)
         if project_config.get("content_profile") == "commercial_br":
-            # Materializa o planejamento como episódios do motor existente. Os
-            # episódios ainda não têm mídia: cada etapa seguinte é explícita.
-            from novelvideo.models import NovelEpisode
-            from novelvideo.sqlite_store import SQLiteStore
-
-            creatives = project_config.get("creatives") or []
-            store = SQLiteStore(
-                f"{user['username']}/{body.name}",
-                output_dir=record.output_dir,
+            project_config = await _ensure_commercial_plan(
+                config=project_config,
                 state_dir=record.state_dir,
+                output_dir=record.output_dir,
+                username=user["username"],
+                project_name=body.name,
             )
-            try:
-                await store.initialize()
-                await store.add_episodes(
-                    [
-                        NovelEpisode(
-                            number=int(item["number"]),
-                            title=str(item["title"]),
-                            content_summary=str(item["promise"]),
-                            main_conflict=str(item["hook"]),
-                            cliffhanger=str(item["cta"]),
-                            key_events=[str(item["proof"])],
-                        )
-                        for item in creatives
-                    ]
-                )
-            finally:
-                await store.close()
     except Exception:
         try:
             await registry.delete_uncommitted_project(record.id)
@@ -564,6 +603,13 @@ async def get_project(project: str, user: dict = Depends(get_api_user)):
         ctx.state_dir,
         username=ctx.owner_username,
         project=ctx.project_name,
+    )
+    config = await _ensure_commercial_plan(
+        config=config,
+        state_dir=ctx.state_dir,
+        output_dir=ctx.output_dir,
+        username=ctx.owner_username,
+        project_name=ctx.project_name,
     )
     record = await get_project_registry().get_project(ctx.project_id)
     data = dict(config)

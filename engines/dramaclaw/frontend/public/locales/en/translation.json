@@ -1730,6 +1730,10 @@
       "drama": "Premium drama"
     },
     "visualStyles": {
+      "tgUgcNaturalBr": "TG Natural UGC",
+      "tgProductDemoBr": "TG Product Demo",
+      "tgTestimonialBr": "TG Brazilian Testimonial",
+      "tgRetailOfferBr": "TG Retail Offer",
       "anime": "Anime",
       "chinesePeriodDrama": "Chinese Period Drama",
       "guomanFantasy": "3D Xianxia Guoman",

@@ -1,0 +1,13 @@
+{
+  "date": "2026-08-24",
+  "projectId": "01M0TS1S0W5P2M929451SB052D",
+  "frontend": {"passed": 2475, "failed": 0},
+  "backend": {"passed": 2469, "failed": 0, "skipped": 18, "deselected": 2},
+  "builds": {"root": "PASS", "dramaclaw": "PASS"},
+  "browser": {"port": 5173, "iframeCount": 0, "visiblePort5174": false},
+  "localeAudit": {"visibleCjk": 0, "visibleLegacyBrands": 0},
+  "creativeDistinctness": {"count": 5, "distinctHooks": 5, "distinctProofs": 5, "distinctCtas": 5, "distinctScripts": 5},
+  "providerStatus": "BLOCKED_EXTERNAL_CREDENTIALS",
+  "mp4Status": "BLOCKED_EXTERNAL_PROVIDER",
+  "simulatedResults": false
+}

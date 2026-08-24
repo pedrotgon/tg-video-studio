@@ -1,7 +1,7 @@
 # Evidências E2E — TG Criativo
 
 Data: 2026-08-24  
-Ambiente: TG `5173`, DramaClaw `5174`, API `8780`, `ST_EDITION=ce`  
+Ambiente: TG `5173`, API `8780`, `ST_EDITION=ce` (o DramaClaw serve a integração interna; `5174` não é exposto na interface)
 Campanha principal: `Treino em casa — Queima Pochete`  
 Projeto: `01M0TS1S0W5P2M929451SB052D`
 
@@ -26,10 +26,13 @@ Projeto: `01M0TS1S0W5P2M929451SB052D`
 
 - `npm run build` — PASS.
 - `cd engines/dramaclaw/frontend && pnpm build` — PASS; apenas avisos existentes de chunks grandes/import dinâmico.
-- Suite focada após as correções — **43/43 testes PASS**, 7 arquivos.
-- Suite completa após o shim de ambiente — **2.474/2.475 testes PASS**, 352 arquivos; 1 falha conhecida no harness MSW/Undici de multipart (`ingest.test.tsx`). A falha ocorre antes do handler MSW, ao interpretar `FormData` com Undici, e não reproduz um erro do fluxo de produção.
-- `python -m compileall -q src/novelvideo` — PASS.
-- `pytest --collect-only -q` — 2.487 testes coletados, 2 deselecionados.
+- Suite focada após as correções — **24/24 testes PASS**, 5 arquivos.
+- Suite frontend completa — **2.475/2.475 testes PASS**, 353 arquivos.
+- Suite backend completa (`.venv/bin/python -m pytest -q`) — **2.469 PASS, 18 ignorados, 2 deselecionados, 0 falhas**.
+- `npm run build` — PASS.
+- `cd engines/dramaclaw/frontend && pnpm build` — PASS; apenas avisos existentes de chunks grandes/import dinâmico.
+- `git diff --check` e `python -m compileall -q src tests` — PASS.
+- `pytest --collect-only -q` — executado; os números de execução acima são os efetivamente reportados pelo pytest.
 
 ## Evidências visuais
 
@@ -40,4 +43,4 @@ Projeto: `01M0TS1S0W5P2M929451SB052D`
 - [Biblioteca e upload](./final-assets.png)
 - [Simples preservado](./final-simple.png)
 
-As lacunas E2E-06, E2E-08 e E2E-09 dependem de entrada/infraestrutura externa; foram registradas sem simulação de resultado.
+E2E-06 permanece parcial porque o adaptador de navegador disponível não expõe upload de arquivos e não havia arquivos do usuário fornecidos. E2E-08/E2E-09 estão bloqueados por credencial externa: não há chave válida nem configuração de gateway para texto, imagem, voz ou vídeo no ambiente. Não foi criado MP4 demonstrativo, nem resultado simulado. A homologação final de mídia exige configurar um provedor real e então validar HTTP 200, `video/mp4`, tamanho > 0, `ffprobe` e download.

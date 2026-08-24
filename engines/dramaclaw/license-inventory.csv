@@ -1969,3 +1969,10 @@ tests/test_video_pool_static_urls.py,Elastic-2.0,2026 SuperTale contributors,REU
 tests/test_wysiwyg_consistency.py,Elastic-2.0,2026 SuperTale contributors,REUSE.toml aggregate annotation
 tests/test_wysiwyg_neo4j.py,Elastic-2.0,2026 SuperTale contributors,REUSE.toml aggregate annotation
 uv.lock,Elastic-2.0,2026 SuperTale contributors,REUSE.toml aggregate annotation
+frontend/public/locales/pt/translation.json,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo locale; upstream notices retained
+frontend/src/components/layout/tg-creative-rail.tsx,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo integration layer
+src/novelvideo/commercial_br.py,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo commercial adapter
+src/novelvideo/styles/presets/tg_product_demo_br.json,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo preset
+src/novelvideo/styles/presets/tg_retail_offer_br.json,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo preset
+src/novelvideo/styles/presets/tg_testimonial_br.json,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo preset
+src/novelvideo/styles/presets/tg_ugc_natural_br.json,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo preset

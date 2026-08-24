@@ -22,6 +22,10 @@ export const BUILTIN_STYLE_LABEL_KEYS: Record<string, string> = {
   post_apocalyptic: "ingest.visualStyles.postApocalyptic",
   realistic: "ingest.visualStyles.realistic",
   republican_era_drama: "ingest.visualStyles.republicanEraDrama",
+  tg_ugc_natural_br: "ingest.visualStyles.tgUgcNaturalBr",
+  tg_product_demo_br: "ingest.visualStyles.tgProductDemoBr",
+  tg_testimonial_br: "ingest.visualStyles.tgTestimonialBr",
+  tg_retail_offer_br: "ingest.visualStyles.tgRetailOfferBr",
 };
 
 function resolveStyleLabel(
@@ -42,8 +46,12 @@ export function ProjectStyleChip({ project, className }: ProjectStyleChipProps) 
   const { t } = useTranslation();
   const projectQuery = useProject(project);
   const stylesQuery = useStyles(project);
+  const configuredStyle = projectQuery.data?.data.visual_style?.trim();
   const styleId =
-    projectQuery.data?.data.visual_style?.trim() || DEFAULT_VISUAL_STYLE;
+    configuredStyle ||
+    (projectQuery.data?.data.content_profile === "commercial_br"
+      ? "tg_ugc_natural_br"
+      : DEFAULT_VISUAL_STYLE);
   const styles = stylesQuery.data?.data ?? [];
   const loading =
     projectQuery.isLoading || (stylesQuery.isLoading && !stylesQuery.data);

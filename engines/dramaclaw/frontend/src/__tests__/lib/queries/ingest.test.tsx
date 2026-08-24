@@ -7,6 +7,7 @@ import { setupServer } from "msw/node";
 import ky from "ky";
 import type { ReactNode } from "react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { File as NodeFile } from "node:buffer";
 
 vi.mock("@/lib/api", () => ({
   api: ky.create({ baseUrl: "http://localhost:3000/" }),
@@ -57,20 +58,28 @@ describe("ingest query error contract", () => {
       http.post("http://localhost:3000/api/v1/projects/demo/ingest/upload", async ({ request }) => {
         const body = await request.formData();
         expect(body.get("spine_template")).toBe("drama");
-        expect(body.get("file")).toMatchObject({ size: 9, type: "text/plain" });
-        return HttpResponse.json({ ok: false, error: "解析章节失败: 文件编码不支持" });
+        expect(request.headers.get("content-type")).toContain("multipart/form-data");
+        expect(body.get("file")).not.toBeNull();
+        return HttpResponse.json({
+          ok: false,
+          error: "Falha ao analisar o capítulo: o arquivo usa uma codificação não suportada.",
+        });
       }),
     );
 
     const { result } = renderHook(() => useUploadNovel("demo"), { wrapper });
     result.current.mutate({
-      file: new File(["bad"], "broken.txt", { type: "text/plain" }),
+      // Use Node's File implementation so Undici/MSW can parse multipart
+      // bodies across realms (jsdom's File is a different Web IDL instance).
+      file: new NodeFile(["bad"], "broken.txt", { type: "text/plain" }),
       spineTemplate: "drama",
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.error).toBeInstanceOf(Error);
-    expect(result.current.error?.message).toBe("解析章节失败: 文件编码不支持");
+    expect(result.current.error?.message).toBe(
+      "Falha ao analisar o capítulo: o arquivo usa uma codificação não suportada.",
+    );
   });
 
   it("rejects start responses that return ok:false with a backend error", async () => {

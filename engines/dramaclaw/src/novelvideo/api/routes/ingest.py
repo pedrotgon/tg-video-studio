@@ -112,11 +112,37 @@ async def get_ingest_knowledge_graph(
         ) from exc
 
 
-def _unsupported_format_response(filename: str) -> dict:
+def _commercial_br_error(message: str, project_config: dict | None = None) -> str:
+    """Keep legacy DramaClaw errors stable while localizing TG errors."""
+    if not isinstance(project_config, dict) or project_config.get("content_profile") != "commercial_br":
+        return message
+    if "解析章节失败" in message and "文件编码" in message:
+        return "Falha ao analisar o capítulo: o arquivo usa uma codificação não suportada."
+    if "解析章节失败" in message and "未检测到" in message:
+        return "Falha ao analisar o capítulo: nenhum capítulo válido foi encontrado."
+    if "解析章节失败" in message:
+        return "Falha ao analisar o capítulo. Verifique o arquivo e tente novamente."
+    if "不支持的文件类型" in message:
+        return f"Tipo de arquivo não suportado. Formatos aceitos: {supported_novel_extensions_label()}"
+    if "文件超过" in message:
+        return message.replace("文件超过", "O arquivo excede").replace("上限，请压缩文件或拆分正文后重新上传。", ". Comprima ou divida o texto e tente novamente.")
+    if "正文共" in message:
+        return message.replace("正文共", "O texto tem").replace("字，超过单次导入上限", " caracteres e excede o limite por importação").replace("字。请拆分后重新上传。", " caracteres. Divida o conteúdo e tente novamente.")
+    if "保存上传文件失败" in message:
+        return "Não foi possível salvar o arquivo enviado. Tente novamente."
+    if "非法文件名" in message:
+        return "O nome do arquivo não é válido. Escolha outro arquivo."
+    return message
+
+
+def _unsupported_format_response(filename: str, project_config: dict | None = None) -> dict:
     suffix = Path(filename).suffix.lower() or "无扩展名"
     return {
         "ok": False,
-        "error": f"不支持的文件类型: {suffix}，当前支持: {supported_novel_extensions_label()}",
+        "error": _commercial_br_error(
+            f"不支持的文件类型: {suffix}，当前支持: {supported_novel_extensions_label()}",
+            project_config,
+        ),
         "error_type": "unsupported",
     }
 
@@ -183,14 +209,15 @@ async def upload_novel(
     logger.info("[%s] upload_novel: %s", project, file.filename)
     resolved = await resolve_project_scope(project, user, required_role="editor")
     project_dir = resolved.project_dir
+    project_config = load_project_config_file_from_state_dir(resolved.state_dir)
     uploads_dir = project_dir / "uploads"
     uploads_dir.mkdir(parents=True, exist_ok=True)
 
     safe_name = sanitize_upload_filename(file.filename)
     if not is_safe_upload_target(uploads_dir, safe_name):
-        return {"ok": False, "error": "非法文件名"}
+        return {"ok": False, "error": _commercial_br_error("非法文件名", project_config)}
     if not is_supported_novel_path(safe_name):
-        return _unsupported_format_response(safe_name)
+        return _unsupported_format_response(safe_name, project_config)
     dest = uploads_dir / safe_name
     staging_dir = uploads_dir / ".staging"
     staging_dir.mkdir(exist_ok=True)
@@ -207,9 +234,6 @@ async def upload_novel(
             billable_chars = count_billable_novel_chars(content)
             if billable_chars > MAX_NOVEL_IMPORT_CHARS:
                 return _text_too_large_response(billable_chars)
-            project_config = load_project_config_file_from_state_dir(
-                resolved.state_dir
-            )
             requested_spine_template = str(
                 spine_template
                 or project_config.get("spine_template")
@@ -228,14 +252,14 @@ async def upload_novel(
             )
             return {
                 "ok": False,
-                "error": f"解析章节失败: {exc}",
+                "error": _commercial_br_error(f"解析章节失败: {exc}", project_config),
                 "error_type": "parse",
                 "format": exc.source_format,
                 "detail": str(exc),
             }
         except Exception:
             logger.warning("[%s] failed to build chapter preview", project, exc_info=True)
-            return {"ok": False, "error": "解析章节失败"}
+            return {"ok": False, "error": _commercial_br_error("解析章节失败", project_config)}
 
         has_chapters = bool(preview.get("chapters"))
         format_check = build_import_format_check(
@@ -246,7 +270,9 @@ async def upload_novel(
         if not has_chapters:
             return {
                 "ok": False,
-                "error": "解析章节失败: 未检测到有效章节内容",
+                "error": _commercial_br_error(
+                    "解析章节失败: 未检测到有效章节内容", project_config
+                ),
                 "format_check": format_check,
             }
 
@@ -263,7 +289,7 @@ async def upload_novel(
             os.replace(staged_path, dest)
         except OSError:
             logger.exception("[%s] failed to persist uploaded novel: %s", project, safe_name)
-            return {"ok": False, "error": "保存上传文件失败"}
+            return {"ok": False, "error": _commercial_br_error("保存上传文件失败", project_config)}
 
         data.update(preview)
         data["format_check"] = format_check

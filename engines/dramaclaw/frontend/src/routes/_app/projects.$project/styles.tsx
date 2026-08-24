@@ -1036,7 +1036,15 @@ function StylesPage() {
   const { data: stylesRes, isLoading, isRefetching, refetch } = useStyles(project);
   const { data: projectRes } = useProject(project);
 
-  const styles = stylesRes?.data ?? [];
+  const styles = useMemo(
+    () =>
+      [...(stylesRes?.data ?? [])].sort((a, b) => {
+        const aCommercial = a.id.startsWith("tg_") ? 0 : 1;
+        const bCommercial = b.id.startsWith("tg_") ? 0 : 1;
+        return aCommercial - bCommercial || a.name.localeCompare(b.name, "pt-BR");
+      }),
+    [stylesRes?.data],
+  );
   const projectVisualStyle = projectRes?.data?.visual_style;
 
   const [selectedId, setSelectedId] = useState<string | null>(null);

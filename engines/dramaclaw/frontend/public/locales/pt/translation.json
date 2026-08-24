@@ -62,8 +62,8 @@
       "eyebrow": "Interface",
       "title": "A guided pipeline and a free-form canvas",
       "lede": "The mainline breaks a novel into episodes, characters, storyboards, first frames, video, and the final cut, one page per step. The canvas projects any of those shots onto a node graph where you can rework them freely and sync the result back. Both sides read from the same assets.",
-      "windowTitle": "DramaClaw — Episode 03 · Canvas",
-      "alt": "Sketch of the DramaClaw desktop canvas: episode tabs across the top, shot outline on the left, node canvas in the middle, parameter panel on the right.",
+      "windowTitle": "TG Criativo — Criativo 03 · Canvas",
+      "alt": "Esboço do Canvas TG Criativo: abas de criativos no topo, estrutura de cenas à esquerda, nós no centro e parâmetros à direita.",
       "caption": "Illustration (canvas view)"
     },
     "capability": {
@@ -129,7 +129,7 @@
       },
       "v120": {
         "title": "Transparent feature credits, external agents welcome",
-        "description": "Feature prices, estimated charges, and usage history live in one place, and local agents such as Claude Code can drive DramaClaw CE over MCP."
+        "description": "Preços de recursos, estimativas e histórico de uso ficam em um só lugar; agentes locais podem operar o TG Criativo pelo MCP."
       }
     },
     "faq": {
@@ -138,7 +138,7 @@
       "items": {
         "macGatekeeper": {
           "question": "macOS says the developer cannot be verified. Now what?",
-          "answer": "Find DramaClaw in Finder → Applications, Control-click the icon, choose Open, then confirm with Open in the dialog. You only do this once; after that it launches normally."
+          "answer": "No Finder, abra Aplicativos, clique com Control no app TG Criativo, escolha Abrir e confirme. Isso só é necessário no primeiro uso."
         },
         "winSmartScreen": {
           "question": "Windows says it protected my PC. Now what?",
@@ -151,7 +151,7 @@
         "update": {
           "question": "How do I upgrade?",
           "answer": "You don't have to. The app checks on launch, downloads new versions in the background and applies them next time it starts. To install a specific version by hand, see",
-          "linkLabel": "GitHub Releases"
+          "linkLabel": "Lançamentos do motor"
         },
         "storage": {
           "question": "Where do projects and exports live?",
@@ -160,7 +160,7 @@
         "openSource": {
           "question": "Is it open source?",
           "answer": "It is licensed under Elastic-2.0: use, modify and self-host freely, but don't resell it as a hosted service. The source lives at",
-          "linkLabel": "github.com/dramaclaw/dramaclaw"
+          "linkLabel": "Código-fonte do motor"
         }
       }
     },
@@ -169,7 +169,7 @@
     }
   },
   "header": {
-    "partyFounding105": "庆祝建党105周年",
+    "partyFounding105": "Campanha especial 2026",
     "settings": "Configurações",
     "settingsWithWarning": "Configurações incompletas",
     "settingsWarningBubble": "Configuração pendente",
@@ -179,7 +179,7 @@
       "open": "Abrir conta",
       "changeAvatar": "Alterar avatar",
       "selectLanguage": "Selecionar idioma",
-      "languageChinese": "中文",
+      "languageChinese": "Chinês",
       "languageEnglish": "Inglês",
       "avatarDialog": {
         "title": "Alterar avatar",
@@ -211,7 +211,7 @@
     "taskSuccess": "Done · {{name}}",
     "taskFailure": "Failed · {{name}}",
     "companion": {
-      "entry": "Companion",
+      "entry": "Companheiro",
       "title": "Choose your companion",
       "titleBadgeAlt": "My OK buddy",
       "importCta": "Import companion",
@@ -245,7 +245,7 @@
     "debug": {
       "suffix": "Depuração",
       "auto": "Automático",
-      "companionPicker": "Companion",
+    "companionPicker": "Companheiro",
       "festivalPreview": "Festival",
       "noFestival": "Sem festival",
       "stateSimulation": "Estado sim",
@@ -274,7 +274,7 @@
         "thumbsUp": "Polegares para cima",
         "codeLing": "Code-Ling",
         "codeYu": "Code-Yu",
-        "codeXia": "Code-Xia",
+      "codeXia": "Código TG",
         "codeNing": "Code-Ning",
         "founderMedal": "Medalha comemorativa de ouro",
         "redStar": "Estrela Vermelha Brilhante",
@@ -425,25 +425,25 @@
       "title": "Script Format Check",
       "close": "Fechar",
       "viewDetails": "View details",
-      "recommended": "Standard script example:\nEpisode 1\n1-1 City Cafe DAY INT\nCharacters: Lin Xia, Chen Mo\n△ Afternoon light crosses the window as Lin Xia places a letter on the table.\nLin Xia: The answer you wanted is right here.",
+      "recommended": "Exemplo de roteiro comercial:\nCriativo 01\nCENA 1 — SALA — DIA\nPessoa: porta-voz\n△ A luz da manhã entra pela janela enquanto a pessoa mostra o produto.\nPessoa: O próximo passo começa aqui.",
       "lineLabel": "Line {{line}}",
       "noIssues": "No specific issues found"
     },
-    "title": "Xia Director",
-    "upgrading": "Xia Director is being upgraded. Stay tuned!",
-    "description": "Open Xia Director beside the current creation page.",
-    "toggle": "Expand or collapse Xia Director",
-    "close": "Collapse Xia Director",
+    "title": "Diretor IA",
+    "upgrading": "O Diretor IA está em atualização. Tente novamente em instantes.",
+    "description": "Abra o Diretor IA ao lado da criação atual.",
+    "toggle": "Expandir ou recolher o Diretor IA",
+    "close": "Recolher o Diretor IA",
     "resize": "Drag to resize chat",
     "openExternal": "Open in new window",
-    "iframeTitle": "Xia Director",
+    "iframeTitle": "Diretor IA",
     "newChat": "New chat",
     "expandSessions": "Expand sessions",
     "collapseSessions": "Collapse sessions",
     "sessionActions": "Session actions",
     "deleteSessionConfirm": "Delete this conversation?",
     "noSessions": "No sessions yet",
-    "chatTitle": "Xia Director",
+    "chatTitle": "Diretor IA",
     "globalScope": "Global",
     "connected": "Conectado",
     "connecting": "Connecting",
@@ -453,11 +453,11 @@
     "emptyTitle": "Start a conversation",
     "emptyDescription": "Ask about project progress, failed tasks, or have the assistant organize your creative plan.",
     "syncingHistoryTitle": "Initializing conversation",
-    "syncingHistoryDescription": "Connecting to Xia Director and syncing chat history. Please wait.",
-    "disclaimer": "Xia Director can make mistakes. Check key story, character, and asset details.",
-    "placeholder": "After uploading a script, ask Xia Director to advance episodes, visuals, audio, or final video",
+    "syncingHistoryDescription": "Conectando ao Diretor IA e sincronizando o histórico. Aguarde.",
+    "disclaimer": "O Diretor IA pode cometer erros. Confira história, pessoas e ativos importantes.",
+    "placeholder": "Depois de enviar um roteiro, peça ao Diretor IA para avançar criativos, cenas, áudio ou vídeo final",
     "waiting": "Waiting for chat service...",
-    "waitingResponse": "Waiting for Xia Director",
+    "waitingResponse": "Aguardando o Diretor IA",
     "waitingResponses": [
       "Understanding what you want to move forward",
       "Reviewing the current conversation context",
@@ -520,19 +520,19 @@
     "ingestAutomationUploading": "Uploading novel: {{filename}}",
     "ingestAutomationStarted": "Started novel ingest: {{filename}}",
     "ingestAutomationFailed": "Novel upload or ingest failed: {{message}}",
-    "ingestAutomationNoProject": "Open a project before uploading a novel through Xia Director.",
+    "ingestAutomationNoProject": "Abra um projeto antes de enviar um roteiro pelo Diretor IA.",
     "ingestAutomationMissingFile": "Could not read the uploaded novel file. Select it again.",
     "attachmentOnlyPrompt": "Please analyze the file I uploaded.",
     "attachmentAnalysisUploading": "Uploading file for analysis: {{filename}}",
-    "settingsHint": "Account and login are managed by SuperTale. These settings only control chat display and attachment behavior."
+    "settingsHint": "Conta e acesso são gerenciados pelo TG Video Studio. Estas configurações controlam apenas o chat e os anexos."
   },
   "freezone": {
     "chat": {
-      "title": "Xia Director",
-      "description": "Open Xia Director beside the Freezone canvas.",
-      "toggle": "Open Freezone Xia Director",
-      "close": "Collapse Freezone Xia Director",
-      "resize": "Drag to resize Freezone Xia Director"
+      "title": "Diretor IA",
+      "description": "Abra o Diretor IA ao lado do Canvas.",
+      "toggle": "Abrir o Diretor IA no Canvas",
+      "close": "Recolher o Diretor IA",
+      "resize": "Arraste para redimensionar o Diretor IA"
     },
     "canvases": {
       "defaultSection": "Default canvas",
@@ -1138,7 +1138,7 @@
     },
     "community": {
       "label": "Community works",
-      "heading": "DramaClaw TV",
+      "heading": "TG Criativo TV",
       "likes": "{{count}} likes",
       "openWork": "Open work \"{{title}}\"",
       "works": {
@@ -1680,7 +1680,7 @@
     "novelFormat": {
       "button": "Premium drama format guide",
       "title": "Premium drama format",
-      "intro": "Premium drama scripts need explicit episode and scene boundaries. DramaClaw splits the script by scene headers before generating visuals, dialogue, and audio line by line; it does not invent scene breaks for headerless prose.",
+      "intro": "Roteiros comerciais precisam de limites claros entre criativos e cenas. O TG Criativo organiza o texto antes de gerar imagem, fala e áudio; não inventa cenas quando faltam marcações.",
       "standardStatus": "Standard · ready to import",
       "standardStatusHint": "Several industry formats are supported. Complete location, time, and INT/EXT metadata can be parsed reliably.",
       "warningStatus": "Repairable · import allowed",
@@ -1732,6 +1732,9 @@
     },
     "visualStyles": {
       "tgUgcNaturalBr": "TG UGC natural",
+      "tgProductDemoBr": "TG demonstração de produto",
+      "tgTestimonialBr": "TG depoimento brasileiro",
+      "tgRetailOfferBr": "TG oferta de varejo",
       "anime": "Anime",
       "chinesePeriodDrama": "Drama de época",
       "guomanFantasy": "Fantasia ilustrada",
@@ -1934,9 +1937,9 @@
     }
   },
   "pikoMiniGame": {
-    "statusEntry": "Piko Break",
-    "statusTooltip": "Play a one-minute Piko game",
-    "libraryTitle": "Piko Break",
+    "statusEntry": "Pausa criativa",
+    "statusTooltip": "Abrir uma pausa criativa de um minuto",
+    "libraryTitle": "Pausa criativa",
     "librarySubtitle": "Choose a game",
     "title": "Piko a bit, find your spark",
     "idleHint": "Press Space to fire",
@@ -2913,9 +2916,9 @@
       "planning": "Planejando criativos",
       "refresh": "Atualizar",
       "refreshed": "Criativos atualizados",
-      "selectedEpisodeSummary": "{{lines}} source lines · {{beats}} Beats · {{identities}} identities · {{scenes}} scenes · {{props}} props · {{status}}",
-      "scriptReady": "Script ready",
-      "scriptPending": "Script pending",
+      "selectedEpisodeSummary": "{{lines}} linhas de fonte · {{beats}} quadros · {{identities}} identidades · {{scenes}} ambientes · {{props}} objetos · {{status}}",
+      "scriptReady": "Roteiro pronto",
+      "scriptPending": "Roteiro pendente",
       "stats": {
         "totalEpisodes": "Criativos",
         "completedEpisodes": "Concluído",
@@ -2925,10 +2928,10 @@
         "totalProps": "Objetos",
         "totalKeyEvents": "Pontos-chave"
       },
-      "identityCount": "{{count}} identities",
-      "shotCount": "{{count}} shots",
-      "sceneCount": "{{count}} scenes",
-      "propCount": "{{count}} props",
+      "identityCount": "{{count}} identidades",
+      "shotCount": "{{count}} quadros",
+      "sceneCount": "{{count}} ambientes",
+      "propCount": "{{count}} objetos",
       "noIdentities": "Identidades não planejadas",
       "noScenes": "Ambientes não planejados",
       "noProps": "Objetos não planejados",
@@ -3092,7 +3095,7 @@
   "titleBar": {
     "back": "Voltar",
     "switchToEnglish": "Inglês",
-    "switchToChinese": "中文",
+    "switchToChinese": "Alternar para chinês",
     "minimize": "Minimize",
     "maximize": "Maximize",
     "close": "Fechar"
@@ -4197,67 +4200,67 @@
   "settings": {
     "title": "Configurações",
     "close": "Fechar",
-    "navigationLabel": "Settings categories",
-    "statusConfigured": "{{page}} is configured",
-    "statusNotConfigured": "{{page}} is not configured",
-    "secretSavedBadge": "Saved",
-    "secretSavedPlaceholder": "Saved · {{preview}} (enter a new value to replace)",
+    "navigationLabel": "Categorias de configuração",
+    "statusConfigured": "{{page}} está configurado",
+    "statusNotConfigured": "{{page}} não está configurado",
+    "secretSavedBadge": "Salvo",
+    "secretSavedPlaceholder": "Salvo · {{preview}} (informe um novo valor para substituir)",
     "pages": {
-      "models": "Models & Channels",
-      "storage": "Media Storage"
+      "models": "Modelos e canais",
+      "storage": "Armazenamento de mídia"
     },
     "modelConfig": {
-      "title": "Model Config",
-      "description": "Choose the official gateway, configure your own NewAPI, or combine local and official services.",
-      "baseUrlHint": "The CE runtime configures the Local NewAPI URL automatically.",
-      "effectiveBadge": "Active: {{channel}}",
-      "guide": "Configuration guide",
+      "title": "Configuração de modelos",
+      "description": "Escolha o gateway oficial, configure seu NewAPI ou combine serviços locais e oficiais.",
+      "baseUrlHint": "O runtime CE configura automaticamente a URL do NewAPI local.",
+      "effectiveBadge": "Ativo: {{channel}}",
+      "guide": "Guia de configuração",
       "loading": "Carregando…",
-      "requestFailed": "Request failed, please retry.",
-      "activateMode": "Set as active",
-      "configureBeforeActivate": "Configure this mode before activating it.",
-      "modeActivated": "{{mode}} is now active.",
-      "statusConfigured": "Configured",
-      "statusNotConfigured": "Not configured",
+      "requestFailed": "A solicitação falhou. Tente novamente.",
+      "activateMode": "Definir como ativo",
+      "configureBeforeActivate": "Configure este modo antes de ativá-lo.",
+      "modeActivated": "{{mode}} agora está ativo.",
+      "statusConfigured": "Configurado",
+      "statusNotConfigured": "Não configurado",
       "statusActive": "Ativos",
-      "gatewayWarningIconLabel": "Model gateway is not configured",
-      "gatewayNotConfiguredImpact": "The active model gateway is not configured. Text, image, video, and audio model calls will fail; configure the official channel or initialize Local NewAPI before generating content.",
+      "gatewayWarningIconLabel": "Gateway de modelos não configurado",
+      "gatewayNotConfiguredImpact": "O gateway ativo não está configurado. Chamadas de texto, imagem, vídeo e áudio falharão; configure um canal oficial ou inicialize o NewAPI local antes de gerar conteúdo.",
       "modes": {
-        "official": "Official",
-        "custom": "Custom",
-        "hybrid": "Local + Official Hybrid"
+        "official": "Oficial",
+        "custom": "Personalizado",
+        "hybrid": "Híbrido local + oficial"
       },
       "fields": {
-        "baseUrl": "New API URL",
-        "gatewayBaseUrl": "Gateway URL",
-        "apiKey": "API Key",
-        "sqlDsn": "Database DSN",
-        "sqlitePath": "SQLite Path",
-        "adminUsername": "Admin Username"
+        "baseUrl": "URL do NewAPI",
+        "gatewayBaseUrl": "URL do gateway",
+        "apiKey": "Chave de API",
+        "sqlDsn": "DSN do banco",
+        "sqlitePath": "Caminho do SQLite",
+        "adminUsername": "Usuário administrador"
       },
       "official": {
-        "description": "Enter the platform official channel API Key, then save.",
-        "save": "Save & Enable",
-        "enable": "Switch to Official",
-        "saved": "Saved and switched to the official channel.",
-        "enabled": "Switched to the official channel.",
-        "missingFields": "Please fill in the API Key.",
-        "registerLink": "Register at RelayClaw",
-        "mediaCatalogTitle": "Official media model catalog",
-        "mediaCatalogStatus": "Version {{version}} · {{count}} models · {{source}}",
+        "description": "Informe a chave de API do canal oficial e salve.",
+        "save": "Salvar e ativar",
+        "enable": "Mudar para oficial",
+        "saved": "Salvo e alterado para o canal oficial.",
+        "enabled": "Alterado para o canal oficial.",
+        "missingFields": "Informe a chave de API.",
+        "registerLink": "Cadastrar no provedor",
+        "mediaCatalogTitle": "Catálogo oficial de modelos de mídia",
+        "mediaCatalogStatus": "Versão {{version}} · {{count}} modelos · {{source}}",
         "mediaCatalogSources": {
-          "bundled": "Bundled",
-          "remote": "Online update"
+          "bundled": "Incluído",
+          "remote": "Atualização online"
         },
-        "mediaCatalogAutoUpdate": "Automatically update official models",
-        "mediaCatalogAutoUpdateHint": "Check periodically in the background and apply compatible updates immediately when Settings opens.",
-        "mediaCatalogCheckNow": "Check for updates",
-        "mediaCatalogUpdated": "The official media model catalog was updated.",
-        "mediaCatalogUpToDate": "The official media model catalog is up to date.",
-        "mediaCatalogCheckFailed": "Could not check the official media model catalog. Try again later."
+        "mediaCatalogAutoUpdate": "Atualizar modelos oficiais automaticamente",
+        "mediaCatalogAutoUpdateHint": "Verifique periodicamente e aplique atualizações compatíveis ao abrir Configurações.",
+        "mediaCatalogCheckNow": "Verificar atualizações",
+        "mediaCatalogUpdated": "O catálogo oficial de modelos foi atualizado.",
+        "mediaCatalogUpToDate": "O catálogo oficial de modelos está atualizado.",
+        "mediaCatalogCheckFailed": "Não foi possível verificar o catálogo oficial. Tente novamente mais tarde."
       },
       "custom": {
-        "description": "CE uses a local SQLite-backed NewAPI. DramaClaw connects the database, creates a runtime token, and enables the local channel automatically.",
+        "description": "A edição CE usa um NewAPI local com SQLite. O TG Criativo conecta o banco, cria um token de runtime e habilita o canal local automaticamente.",
         "init": "Initialize Local NewAPI",
         "repair": "Check & Repair",
         "initialized": "Local NewAPI is ready.",
@@ -4276,7 +4279,7 @@
         "setupConfirmPassword": "Confirm Password",
         "setupPasswordPlaceholder": "At least 8 characters",
         "setupConfirmPasswordPlaceholder": "Enter it again",
-        "setupPasswordOnlyOnce": "This username and password are sent to your NewAPI instance only when creating the first admin on a fresh NewAPI install. If NewAPI is already initialized, entering a password here will not change the existing admin password. DramaClaw does not save the password or use it for later operations; keep it for logging into the NewAPI admin console after first-time setup.",
+        "setupPasswordOnlyOnce": "Este usuário e senha são enviados ao NewAPI apenas ao criar o primeiro administrador. Se o NewAPI já estiver inicializado, informar uma senha aqui não altera o administrador existente. O TG Criativo não salva nem reutiliza essa senha.",
         "setupRequired": "Local NewAPI has not been initialized yet. Enter the setup password and confirmation, then try again.",
         "setupAlreadyInitializedPasswordIgnored": "Your NewAPI instance is already initialized. This run did not call the NewAPI setup endpoint and did not change the existing admin password; the password you entered was ignored and cleared.",
         "setupPasswordMissingUsername": "Enter the admin username.",
@@ -4408,13 +4411,13 @@
         "multimodalRequiredBadge": "Multimodal required",
         "cogneeDescription": "Novel import and knowledge retrieval require both an understanding model and an embedding model; together they form the Cognee novel knowledge base.",
         "groups": {
-          "xiahua": "XiaHua",
-          "xialiao": "XiaLiao",
-          "xiatan": "XiaTang",
-          "xiajing": "XiaJing",
-          "xiadao": "XiaDao",
-          "xiage": "XiaGe",
-          "novelImport": "XiaLiao · Novel Knowledge Base (Cognee)"
+          "xiahua": "Imagem e vídeo",
+          "xialiao": "Importação de roteiro",
+          "xiatan": "Áudio e voz",
+          "xiajing": "Direção de cena",
+          "xiadao": "Direção visual",
+          "xiage": "Assistência criativa",
+          "novelImport": "Importação de roteiro · Base de conhecimento"
         },
         "features": {
           "HERMES": "AI Director chat model",
@@ -4464,7 +4467,7 @@
       },
       "mediaModels": {
         "title": "Image / Video / Audio Generation Models",
-        "description": "Models come from the current custom local configuration. Add image or video models and configure the capabilities shown in XiaHua.",
+        "description": "Os modelos vêm da configuração local atual. Adicione modelos de imagem ou vídeo e escolha as capacidades exibidas no TG Criativo.",
         "addModel": "Add model",
         "addModelTitle": "Add media model",
         "editModelTitle": "Edit media model",
@@ -4475,9 +4478,9 @@
         "displayName": "Display name",
         "mediaType": "Media type",
         "sortOrder": "Sort order",
-        "enabled": "Enable in XiaHua",
+        "enabled": "Ativar no TG Criativo",
         "capabilitiesJson": "Capability config JSON",
-        "commonCapabilities": "XiaHua capabilities",
+        "commonCapabilities": "Capacidades do TG Criativo",
         "resolutionOptions": "Resolutions",
         "ratioOptions": "Aspect ratios",
         "customOptionPlaceholder": "Enter custom values, separated by commas",
@@ -4498,7 +4501,7 @@
         "referenceVideoTotalMaxSeconds": "Maximum total video (seconds)",
         "humanReview": "Supports human review",
         "supportedModes": "Video generation modes",
-        "capabilitiesHint": "Uses the same config contract as the EE media catalog. Save the complete configuration to apply it in XiaHua.",
+        "capabilitiesHint": "Usa o mesmo contrato do catálogo de mídia. Salve a configuração completa para aplicar as capacidades.",
         "applyModelEdit": "Apply to config",
         "missingModelFields": "Enter a model ID and display name, then choose a provider.",
         "invalidCapabilitiesJson": "Capability config must be a valid JSON object.",
@@ -4536,7 +4539,7 @@
       "configured": "Configured",
       "notConfigured": "Not configured",
       "warningIconLabel": "Reference media storage is not configured",
-      "notConfiguredImpact": "Reference media storage is not configured. Text-only flows and text-to-image usually still work; features that need to upload local reference images will fail, including XiaHua reference images, character references, identity images, image-to-image, video first frames, and image-to-video. Configure Aliyun OSS or Cloudinary.",
+      "notConfiguredImpact": "O armazenamento de mídia de referência não está configurado. Fluxos somente de texto normalmente funcionam; recursos que enviam imagens locais exigem um provedor de armazenamento válido.",
       "showSecret": "Show",
       "hideSecret": "Hide",
       "fieldsHint": "Saved values are stored in the local CE settings database; full AccessKeys are not returned. Leave saved credentials blank and enter only the fields you want to replace.",
@@ -4617,11 +4620,11 @@
     "downloadPresetPaths": "Download Preset Paths",
     "downloadPresetPathsDesc": "Used by node toolbar download menu for quick-save directories (up to 8).",
     "storyboardGenKeepStyleConsistent": "Keep grid variants aligned with references",
-    "storyboardGenKeepStyleConsistentDesc": "When enabled, multi-variant grid prompt appends \"图片风格与参考图保持一致\".",
+      "storyboardGenKeepStyleConsistentDesc": "Quando ativado, o prompt de variações mantém o estilo visual da imagem de referência.",
     "storyboardGenDisableTextInImage": "Disallow descriptive text in grid variants",
-    "storyboardGenDisableTextInImageDesc": "When enabled, multi-variant grid prompt appends \"禁止添加描述文本\".",
+      "storyboardGenDisableTextInImageDesc": "Quando ativado, o prompt impede texto descritivo dentro da imagem.",
     "ignoreAtTagWhenCopyingAndGenerating": "Ignore @ tags when copying/saving text",
-    "ignoreAtTagWhenCopyingAndGeneratingDesc": "When enabled, copied text and embedded grid metadata remove tags like \"@图1\"; generation requests only remove \"@\" and keep \"图1\".",
+      "ignoreAtTagWhenCopyingAndGeneratingDesc": "Quando ativado, textos copiados removem marcadores de referência antes da geração.",
     "useUploadFilenameAsNodeTitle": "Use uploaded filename as node title",
     "useUploadFilenameAsNodeTitleDesc": "When enabled, newly uploaded images use the file name as the node title by default (still editable via double-click).",
     "downloadPathPlaceholder": "Input folder path, e.g. /Users/name/Pictures/BeatWorkbench or D:\\\\Images\\\\BeatWorkbench",
@@ -4635,11 +4638,11 @@
     "missingAnyApiKeyMessage": "Backend provider is not configured.",
     "openProvidersSettings": "View providers",
     "aboutAppName": "Beat Workbench",
-    "aboutIntro": "SuperTale candidate generation, free image experimentation, and asset commit workbench.",
+    "aboutIntro": "Geração de candidatos, experimentação visual e organização de ativos do TG Criativo.",
     "aboutVersionLabel": "Version",
     "aboutVersionUnknown": "Unknown",
     "aboutAuthorLabel": "Author",
-    "aboutAuthor": "痕继痕迹",
+      "aboutAuthor": "Traços de autoria",
     "aboutRepositoryLabel": "Repository",
     "autoCheckUpdateOnLaunch": "Auto check updates on launch",
     "autoCheckUpdateOnLaunchDesc": "Check for updates once every time the app starts.",
@@ -4650,7 +4653,7 @@
     "showStoryboardGenAdvancedRatioControls": "Show advanced grid ratio controls",
     "showStoryboardGenAdvancedRatioControlsDesc": "When enabled, show cell/overall ratio info and the Overall/Cell mode switch. When disabled, multi-variant grid uses cell-ratio mode by default.",
     "storyboardGenAutoInferEmptyFrame": "Auto infer empty variants",
-    "storyboardGenAutoInferEmptyFrameDesc": "When enabled, empty grid cells automatically append \"依据之前的内容进行推测\" during generation prompt construction.",
+      "storyboardGenAutoInferEmptyFrameDesc": "Quando ativado, células vazias usam o contexto anterior para orientar a geração.",
     "showNodePrice": "Show node price in the header",
     "showNodePriceDesc": "Continuously estimate the current run cost from the selected model, resolution, and extra options.",
     "priceDisplayCurrencyMode": "Display currency",
