@@ -21,6 +21,7 @@ import {
   Video,
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AssetLibraryModal } from "@/features/canvas/ui/AssetLibraryModal";
@@ -520,6 +521,11 @@ export function AssetLibraryPanel({
   onRestoreMainlineDefault,
   reloadToken,
 }: AssetLibraryPanelProps) {
+  const { t } = useTranslation();
+  const label = (key: string, fallback: string) => {
+    const translated = t(key);
+    return translated === key ? fallback : translated;
+  };
   const canvasKind = resolveCanvasKind(metadata);
   const beatTabLabel =
     canvasKind === "default" || canvasKind === "blank"
@@ -545,9 +551,9 @@ export function AssetLibraryPanel({
     if (!mainlineAvailable) setPanelTab("canvases");
   }, [mainlineAvailable]);
   const panelTabItems: Array<{ id: PanelTab; label: string }> = [
-    { id: "canvases", label: "项目画布" },
-    ...(mainlineAvailable ? [{ id: "library" as const, label: "主线资产" }] : []),
-    { id: "assets", label: "资产库" },
+    { id: "canvases", label: label("canvas.panel.projectCanvas", "项目画布") },
+    ...(mainlineAvailable ? [{ id: "library" as const, label: label("canvas.panel.mainlineAssets", "主线资产") }] : []),
+    { id: "assets", label: label("canvas.panel.assetLibrary", "资产库") },
   ];
   const [tab, setTab] = useState<AssetTab>("beat");
   const [query, setQuery] = useState("");
@@ -742,7 +748,7 @@ export function AssetLibraryPanel({
           <button
             type="button"
             onClick={() => setCollapsed(!collapsed)}
-            aria-label={collapsed ? "展开素材抽屉" : "收起素材抽屉"}
+            aria-label={collapsed ? label("canvas.panel.expandAssets", "展开素材抽屉") : label("canvas.panel.collapseAssets", "收起素材抽屉")}
             aria-expanded={!collapsed}
             className={`group/btn relative flex h-10 w-10 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 ${
               collapsed
@@ -767,7 +773,7 @@ export function AssetLibraryPanel({
           <span
             className="pointer-events-none absolute left-11 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#101116]/95 px-2 py-1 text-[11px] font-medium text-white/75 opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-md transition-opacity duration-150 group-hover/handle:opacity-100"
           >
-            {collapsed ? "展开" : "收起"}
+            {collapsed ? label("canvas.panel.expand", "展开") : label("canvas.panel.collapse", "收起")}
           </span>
         </div>
 
@@ -808,13 +814,13 @@ export function AssetLibraryPanel({
               <button
                 type="button"
                 onClick={() => setAssetManagerOpen(true)}
-                aria-label="资产管理"
-                title="资产管理"
+                aria-label={label("canvas.panel.assetManagement", "资产管理")}
+                title={label("canvas.panel.assetManagement", "资产管理")}
                 className="group/assets relative ml-auto mb-1.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[6px] border border-white/[0.10] text-white/60 transition-colors hover:border-white/[0.22] hover:bg-white/[0.06] hover:text-white/90"
               >
                 <BookOpen className="h-3.5 w-3.5" />
                 <span className="pointer-events-none absolute right-0 top-8 z-20 whitespace-nowrap rounded-[6px] border border-white/10 bg-[#101116]/95 px-2 py-1 text-[11px] font-medium text-white/75 opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-md transition-opacity duration-150 group-hover/assets:opacity-100">
-                  资产管理
+                  {label("canvas.panel.assetManagement", "资产管理")}
                 </span>
               </button>
             </div>

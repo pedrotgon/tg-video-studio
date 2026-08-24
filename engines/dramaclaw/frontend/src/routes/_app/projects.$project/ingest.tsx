@@ -100,6 +100,7 @@ const SPINE_TEMPLATE_OPTIONS: { value: "drama" | "narrated"; labelKey: string }[
 ];
 
 const VISUAL_STYLE_OPTIONS: { value: string; labelKey: string }[] = [
+  { value: "tg_ugc_natural_br", labelKey: "ingest.visualStyles.tgUgcNaturalBr" },
   {
     value: "chinese_period_drama",
     labelKey: "ingest.visualStyles.chinesePeriodDrama",
@@ -167,6 +168,7 @@ function unparsedBodyFromChapter(chapter: Chapter): string {
 }
 
 const ETHNICITY_OPTIONS: { value: string; labelKey: string }[] = [
+  { value: "Brazilian", labelKey: "ingest.ethnicities.brazilian" },
   { value: "Chinese", labelKey: "ingest.ethnicities.chinese" },
   { value: "Japanese", labelKey: "ingest.ethnicities.japanese" },
   { value: "Korean", labelKey: "ingest.ethnicities.korean" },

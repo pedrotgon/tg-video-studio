@@ -2,6 +2,19 @@
 // Copyright (c) 2026 ClaymoreLab
 import "@testing-library/jest-dom/vitest";
 
+// jsdom does not provide the browser animation/scroll primitives used by
+// ScrollTrigger during route tests. Keep the shim local to Vitest; production
+// continues to use the browser implementations.
+if (typeof window.requestAnimationFrame !== "function") {
+  window.requestAnimationFrame = (callback: FrameRequestCallback): number =>
+    window.setTimeout(() => callback(Date.now()), 16);
+  window.cancelAnimationFrame = (id: number): void => window.clearTimeout(id);
+}
+Object.defineProperty(window, "scrollTo", {
+  configurable: true,
+  value: () => undefined,
+});
+
 // jsdom v29 + Node.js >=22 exposes a broken localStorage (plain object without
 // Storage methods) when --localstorage-file is not set. Provide a spec-compliant
 // in-memory replacement so zustand/persist and other code that relies on

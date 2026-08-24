@@ -1,12 +1,12 @@
 import React from 'react';
-import { Clapperboard, Sparkles, Zap } from 'lucide-react';
+import { Clapperboard, Star, Zap } from 'lucide-react';
 import { TabType } from '../types';
 
 interface SidebarProps { activeTab: TabType; onSelectTab: (tab: TabType) => void; }
 
 const items: Array<{ id: TabType; label: string; detail: string; icon: typeof Zap }> = [
   { id: 'simple', label: 'Simples', detail: '1 clique', icon: Zap },
-  { id: 'complex', label: 'Criatividade', detail: 'Estúdio', icon: Sparkles },
+  { id: 'complex', label: 'Criativo', detail: 'Estúdio', icon: Star },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => (

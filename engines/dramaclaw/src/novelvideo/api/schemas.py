@@ -41,11 +41,26 @@ class ErrorResponse(BaseModel):
 
 class ProjectCreate(BaseModel):
     name: str
+    content_profile: Optional[str] = None
+    market: Optional[str] = None
+    campaign: Optional[dict[str, Any]] = None
+    output: Optional[dict[str, Any]] = None
+    brand: Optional[dict[str, Any]] = None
+    spine_template: Optional[Literal["drama", "narrated"]] = None
+    aspect_ratio: Optional[Literal["2:3", "9:16", "16:9"]] = None
+    visual_style: Optional[str] = None
+    narration_style: Optional[str] = None
+    add_subtitles: Optional[bool] = None
 
 
 class ProjectSummary(BaseModel):
     id: str = ""
     name: str
+    display_name: Optional[str] = None
+    content_profile: Optional[str] = None
+    market: Optional[str] = None
+    campaign: Optional[dict[str, Any]] = None
+    creative_count: Optional[int] = None
     owner_type: str = "user"
     owner_id: str = ""
     owner_username: str = ""

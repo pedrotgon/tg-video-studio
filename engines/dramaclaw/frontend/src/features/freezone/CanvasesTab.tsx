@@ -321,7 +321,9 @@ function CanvasSelect({
     ? canvasSelectLabel(currentItem, t)
     : loading
       ? t("freezone.canvases.loading")
-      : currentCanvasId;
+      : currentCanvasId === "local"
+        ? t("freezone.canvases.personalCanvasName")
+        : currentCanvasId;
   // 同步/删除都是点完菜单就关，转圈要是画在菜单里就等于没画。
   // 顶掉触发器上的那个箭头：位置一样大，行内一格都不用动。
   const busy = restoringMainline || deletingCurrent;
@@ -625,10 +627,12 @@ function creatorUsernameFromSummary(item: FreezoneCanvasSummary): string | null 
 function displayNameForCanvasSummary(item: CanvasDisplaySummary, t: Translate): string {
   const rawDisplayName = rawDisplayNameFromSummary(item);
   if (rawDisplayName) {
+    if (rawDisplayName === "local") return t("freezone.canvases.personalCanvasName");
     const creator = creatorUsernameFromSummary(item);
     return creator ? t("freezone.canvases.userCreatedName", { user: creator, name: rawDisplayName }) : rawDisplayName;
   }
-  return item.displayName ?? describeCanvasSummary(item, t);
+  const displayName = item.displayName ?? describeCanvasSummary(item, t);
+  return displayName === "local" ? t("freezone.canvases.personalCanvasName") : displayName;
 }
 
 function normalizeCanvasName(value: string): string {

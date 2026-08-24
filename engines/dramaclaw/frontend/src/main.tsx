@@ -6,7 +6,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "./components/theme-provider";
 import { loadClusterConfig } from "@/lib/cluster-config";
-import { isCeRuntime, loadRuntimeConfig } from "@/lib/runtime-config";
+import {
+  applyRuntimeConfigFallback,
+  isCeRuntime,
+  loadRuntimeConfig,
+} from "@/lib/runtime-config";
 import { initDevBackendWatch } from "@/lib/dev-backend-watch";
 import { setApiQueryClient } from "@/lib/api";
 import { setAppRouter } from "@/lib/app-router";
@@ -45,8 +49,11 @@ const queryClient = new QueryClient({
   },
 });
 
+const BOOTSTRAP_CONFIG_TIMEOUT_MS = 4_000;
+
 const router = createRouter({
   routeTree,
+  basepath: "/criativo",
   // Prefetch route chunks on link hover/focus so navigation is instant
   // once the user commits.
   defaultPreload: "intent",
@@ -92,7 +99,20 @@ function AppRouterShell() {
 }
 
 async function bootstrap() {
-  await Promise.all([loadClusterConfig(), loadRuntimeConfig()]);
+  // A stopped API must not leave the SPA on its initial spinner forever. The
+  // route-level query state can render the actionable offline diagnostic.
+  let configLoaded = false;
+  const configLoad = Promise.all([loadClusterConfig(), loadRuntimeConfig()]).then(() => {
+    configLoaded = true;
+  }).catch((error) => {
+    // eslint-disable-next-line no-console
+    console.warn("[bootstrap] config load failed:", error);
+  });
+  await Promise.race([
+    configLoad,
+    new Promise<void>((resolve) => setTimeout(resolve, BOOTSTRAP_CONFIG_TIMEOUT_MS)),
+  ]);
+  if (!configLoaded) applyRuntimeConfigFallback();
   initDevBackendWatch();
   installVersionUpdateWatch();
   const root = getOrCreateReactRoot(document.getElementById("root")!);

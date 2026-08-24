@@ -1,0 +1,10 @@
+{
+  "id": "tg_ugc_natural_br",
+  "name": "TG UGC Natural BR",
+  "style_instructions": "Vídeo vertical de aparência natural, brasileiro e contemporâneo. Luz suave de janela ou ambiente real, câmera na altura dos olhos, textura de pele realista, enquadramento espontâneo e fala direta para a câmera. Preserve a identidade TG: Forest, Champagne e detalhes discretos, sem aparência de anúncio genérico.",
+  "avoid_instructions": "Evitar estética artificial, pele plástica, excesso de glamour, texto ilegível, logotipos falsos, marcas d'água, mãos deformadas e cenários incompatíveis com o Brasil.",
+  "style_tag": "TG UGC NATURAL, BRASIL CONTEMPORÂNEO",
+  "label": "TG UGC natural",
+  "style_family": "live_action",
+  "animation_subtype": ""
+}

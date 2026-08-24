@@ -1,48 +1,41 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/brand/dclogo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DramaClaw 虾导 — 通用 AIGC 视频引擎 / General-purpose AIGC Video Engine</title>
+    <title>TG Criativo — Estúdio de campanhas e criativos</title>
     <meta
       name="description"
-      content="A general-purpose AIGC video engine: script to finished film in one pipeline — dramas, ads, product videos, otome games, and more. | 通用 AIGC 视频引擎 —— 从剧本到成片一条流水线，漫剧、广告、电商、乙游皆可"
+      content="TG Criativo: campanhas, Canvas, roteiro, cenas, montagem e exportação em um único estúdio."
     />
     <link rel="canonical" href="https://dramaclaw.cdnfg.com/" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="DramaClaw" />
-    <meta property="og:title" content="DramaClaw 虾导 — 通用 AIGC 视频引擎 / General-purpose AIGC Video Engine" />
+    <meta property="og:site_name" content="TG Criativo" />
+    <meta property="og:title" content="TG Criativo — Estúdio de campanhas e criativos" />
     <meta
       property="og:description"
-      content="A general-purpose AIGC video engine: script to finished film in one pipeline — dramas, ads, product videos, otome games, and more. | 通用 AIGC 视频引擎 —— 从剧本到成片一条流水线，漫剧、广告、电商、乙游皆可"
+      content="Campanhas comerciais brasileiras do briefing ao MP4 final."
     />
-    <meta property="og:url" content="https://dramaclaw.cdnfg.com/" />
-    <meta property="og:image" content="https://dramaclaw.cdnfg.com/brand/dclogo.png" />
+    <meta property="og:url" content="http://localhost:5173/criativo/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="DramaClaw 虾导 — 通用 AIGC 视频引擎 / General-purpose AIGC Video Engine" />
+    <meta name="twitter:title" content="TG Criativo — Estúdio de campanhas e criativos" />
     <meta
       name="twitter:description"
-      content="A general-purpose AIGC video engine: script to finished film in one pipeline — dramas, ads, product videos, otome games, and more. | 通用 AIGC 视频引擎 —— 从剧本到成片一条流水线，漫剧、广告、电商、乙游皆可"
+      content="Campanhas comerciais brasileiras do briefing ao MP4 final."
     />
-    <meta name="twitter:image" content="https://dramaclaw.cdnfg.com/brand/dclogo.png" />
     <script>
       (function () {
         try {
           var stored = localStorage.getItem("supertale-app");
-          var theme = "system";
+          var theme = "light";
           if (stored) {
             var parsed = JSON.parse(stored);
             if (parsed && parsed.state && parsed.state.theme) {
               theme = parsed.state.theme;
             }
           }
-          var resolved =
-            theme === "system"
-              ? window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light"
-              : theme;
+          var resolved = theme === "dark" ? "light" : theme;
           document.documentElement.classList.add(resolved);
           var pathname = window.location.pathname;
           if (pathname === "/login" || pathname.indexOf("/watch/") === 0) {
@@ -50,7 +43,7 @@
             document.documentElement.style.backgroundColor = "#181818";
           }
         } catch (e) {
-          document.documentElement.classList.add("dark");
+          document.documentElement.classList.add("light");
         }
       })();
     </script>

@@ -29,6 +29,7 @@ from novelvideo.api.schemas import (
     ProjectUpdate,
 )
 from novelvideo.config import ensure_project_dirs_at_paths
+from novelvideo.commercial_br import build_commercial_creatives
 from novelvideo.embedding_models import (
     PROJECT_EMBEDDING_DIMENSION_KEY,
     PROJECT_EMBEDDING_MODEL_KEY,
@@ -144,11 +145,18 @@ async def _summary_for_record(
     paths._state_dir_override = Path(record.state_dir)
     paths._runtime_dir_override = Path(record.runtime_dir)
     config = load_project_config_file_from_state_dir(record.state_dir)
+    campaign = config.get("campaign") if isinstance(config.get("campaign"), dict) else None
+    creatives = config.get("creatives") if isinstance(config.get("creatives"), list) else []
     status = record.status or "active"
     episode_count, beat_count = _project_counts(record.owner_username, record.name, status)
     return ProjectSummary(
         id=record.id,
         name=record.name,
+        display_name=str(campaign.get("name")) if campaign and campaign.get("name") else None,
+        content_profile=config.get("content_profile"),
+        market=config.get("market"),
+        campaign=campaign,
+        creative_count=len(creatives) if creatives else None,
         owner_type=record.owner_type,
         owner_id=record.owner_id,
         owner_username=record.owner_username,
@@ -468,14 +476,64 @@ async def create_project(
             runtime_dir=record.runtime_dir,
         )
         embedding_binding = embedding_model_binding_for_new_project()
-        save_project_config_in_state_dir(
-            record.state_dir,
-            config={
-                "user": user["username"],
-                PROJECT_EMBEDDING_MODEL_KEY: embedding_binding.internal_model,
-                PROJECT_EMBEDDING_DIMENSION_KEY: embedding_binding.dimensions,
-            },
-        )
+        project_config = {
+            "user": user["username"],
+            PROJECT_EMBEDDING_MODEL_KEY: embedding_binding.internal_model,
+            PROJECT_EMBEDDING_DIMENSION_KEY: embedding_binding.dimensions,
+        }
+        if body.content_profile:
+            project_config.update(
+                {
+                    "content_profile": body.content_profile,
+                    "market": body.market or "pt-BR",
+                    "spine_template": body.spine_template or "narrated",
+                    "visual_style": body.visual_style or "tg_ugc_natural_br",
+                    "narration_style": body.narration_style or "third_person",
+                    "ethnicity": "Brazilian" if body.content_profile == "commercial_br" else "Chinese",
+                    "add_subtitles": body.add_subtitles if body.add_subtitles is not None else True,
+                }
+            )
+            if body.aspect_ratio:
+                project_config["aspect_ratio"] = body.aspect_ratio
+            if body.campaign is not None:
+                project_config["campaign"] = body.campaign
+            if body.output is not None:
+                project_config["output"] = body.output
+            if body.brand is not None:
+                project_config["brand"] = body.brand
+            if body.content_profile == "commercial_br" and body.campaign and body.output:
+                creatives = build_commercial_creatives(body.campaign, body.output)
+                project_config["creatives"] = creatives
+        save_project_config_in_state_dir(record.state_dir, config=project_config)
+        if project_config.get("content_profile") == "commercial_br":
+            # Materializa o planejamento como episódios do motor existente. Os
+            # episódios ainda não têm mídia: cada etapa seguinte é explícita.
+            from novelvideo.models import NovelEpisode
+            from novelvideo.sqlite_store import SQLiteStore
+
+            creatives = project_config.get("creatives") or []
+            store = SQLiteStore(
+                f"{user['username']}/{body.name}",
+                output_dir=record.output_dir,
+                state_dir=record.state_dir,
+            )
+            try:
+                await store.initialize()
+                await store.add_episodes(
+                    [
+                        NovelEpisode(
+                            number=int(item["number"]),
+                            title=str(item["title"]),
+                            content_summary=str(item["promise"]),
+                            main_conflict=str(item["hook"]),
+                            cliffhanger=str(item["cta"]),
+                            key_events=[str(item["proof"])],
+                        )
+                        for item in creatives
+                    ]
+                )
+            finally:
+                await store.close()
     except Exception:
         try:
             await registry.delete_uncommitted_project(record.id)
@@ -486,7 +544,15 @@ async def create_project(
         except Exception:
             logger.warning("failed to cleanup uncommitted project directories", exc_info=True)
         raise
-    return {"ok": True, "data": {"id": record.id, "project_id": record.id, "name": body.name}}
+    return {
+        "ok": True,
+        "data": {
+            "id": record.id,
+            "project_id": record.id,
+            "name": body.name,
+            "display_name": (body.campaign or {}).get("name") if body.campaign else None,
+        },
+    }
 
 
 @router.get("/projects/{project}")

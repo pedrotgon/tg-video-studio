@@ -19,7 +19,6 @@ import {
   Share2,
   Trash2,
   Undo2,
-  XIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,6 +78,7 @@ import { useAppStore } from "@/stores/app-store";
 import { cn } from "@/lib/utils";
 import type { DashboardView } from "@/stores/app-store";
 import type { ProjectStatus, ProjectSummary } from "@/types/project";
+import type { CommercialBrCampaign, CommercialBrOutput, CommercialBrBrand } from "@/types/project";
 import { PROJECT_SECTION_ROUTES } from "@/components/layout/project-navigation-routes";
 import {
   normalizeLastEpisodeLocation,
@@ -101,7 +101,17 @@ const SORT_OPTIONS: { value: SortKey; labelKey: string }[] = [
   { value: "name-desc", labelKey: "project.sort.nameDesc" },
 ];
 
-const PROJECT_NAME_PATTERN = /^[a-zA-Z0-9_]+$/;
+function internalProjectName(displayName: string): string {
+  const slug = displayName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 80);
+  return slug || `campanha_${Date.now()}`;
+}
+
+const WIZARD_FIELD_CLASS = "h-10 rounded-lg border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring/30";
 
 const PROJECT_CARD_MIN_HEIGHT_CLASS = "min-h-[12.75rem]";
 const RECENTLY_CREATED_PROJECT_KEY = "supertale-dashboard-recent-created-project";
@@ -382,7 +392,9 @@ function ProjectCard({
         {!isDeleted && (
           <div className="mx-auto mt-2 flex w-[90%] min-w-0 items-center gap-1.5 text-xs font-medium text-muted-foreground tabular-nums">
             <span className="tabular-nums">
-              {t("project.card.episodes", { count: summary.episodeCount ?? 0 })}
+              {summary.contentProfile === "commercial_br"
+                ? t("project.card.creatives", { count: summary.creativeCount ?? summary.episodeCount ?? 0 })
+                : t("project.card.episodes", { count: summary.episodeCount ?? 0 })}
             </span>
             {relativeEdited ? (
               <>
@@ -626,9 +638,9 @@ function ProjectRow({
         {!isDeleted && summary.episodeCount != null && (
           <div className="hidden shrink-0 items-center gap-1.5 text-[11px] tabular-nums text-muted-foreground/80 md:flex">
             <span>
-              {t("project.card.episodes", {
-                count: summary.episodeCount ?? 0,
-              })}
+              {summary.contentProfile === "commercial_br"
+                ? t("project.card.creatives", { count: summary.creativeCount ?? summary.episodeCount ?? 0 })
+                : t("project.card.episodes", { count: summary.episodeCount ?? 0 })}
             </span>
           </div>
         )}
@@ -1078,6 +1090,18 @@ function ProjectDashboard() {
   const [sort, setSort] = useState<SortKey>("updated-desc");
   const [createOpen, setCreateOpen] = useState(false);
   const [newName, setNewName] = useState("");
+  const [objective, setObjective] = useState("conversion");
+  const [primaryChannel, setPrimaryChannel] = useState("instagram_reels");
+  const [creativeFormat, setCreativeFormat] = useState("ugc_direct");
+  const [audience, setAudience] = useState("");
+  const [offer, setOffer] = useState("");
+  const [corePromise, setCorePromise] = useState("");
+  const [cta, setCta] = useState("");
+  const [variants, setVariants] = useState(5);
+  const [duration, setDuration] = useState<CommercialBrOutput["duration_seconds"]>(30);
+  const [aspectRatio, setAspectRatio] = useState<CommercialBrOutput["aspect_ratio"]>("9:16");
+  const [moreContext, setMoreContext] = useState("");
+  const [moreContextOpen, setMoreContextOpen] = useState(false);
   const [recentlyCreatedProject, setRecentlyCreatedProject] = useState<
     string | null
   >(() => readRecentlyCreatedProject());
@@ -1168,7 +1192,7 @@ function ProjectDashboard() {
     () => (trimmedNewName ? all.find((p) => p.name === trimmedNewName) : null),
     [all, trimmedNewName],
   );
-  const hasInvalidProjectName = !!trimmedNewName && !PROJECT_NAME_PATTERN.test(trimmedNewName);
+  const hasInvalidProjectName = false;
   const createNameError = hasInvalidProjectName
     ? t("project.nameInvalid")
     : existingProject?.status === "active"
@@ -1179,15 +1203,43 @@ function ProjectDashboard() {
           ? t("project.nameExistsDeleted")
           : null;
   const handleCreate = async () => {
-    const name = trimmedNewName;
-    if (!name || createNameError) return;
+    const name = internalProjectName(trimmedNewName);
+    if (!trimmedNewName || createNameError || !audience.trim() || !offer.trim() || !corePromise.trim() || !cta.trim()) return;
+    const campaign: CommercialBrCampaign = {
+      name: trimmedNewName,
+      objective,
+      primary_channel: primaryChannel,
+      creative_format: creativeFormat,
+      audience: audience.trim(),
+      offer: offer.trim(),
+      core_promise: corePromise.trim(),
+      cta: cta.trim(),
+      tone: moreContext.trim(),
+    };
+    const output: CommercialBrOutput = { variants, duration_seconds: duration, aspect_ratio: aspectRatio, captions: true };
+    const brand: CommercialBrBrand = { tone: "direto, acolhedor e confiante", primary_color: "#19382B", accent_color: "#C5A880", logo_asset_id: null };
     try {
-      const res = await createProject.mutateAsync(name);
-      const createdName = res.data.name || name;
+      const res = await createProject.mutateAsync({
+        name,
+        content_profile: "commercial_br",
+        market: "pt-BR",
+        campaign,
+        output,
+        brand,
+        spine_template: "narrated",
+        aspect_ratio: aspectRatio === "4:5" || aspectRatio === "1:1" ? "9:16" : aspectRatio,
+        visual_style: "tg_ugc_natural_br",
+        narration_style: "third_person",
+        add_subtitles: true,
+      });
+      const createdName = res.data.display_name || res.data.name || name;
       setRecentlyCreatedProject(createdName);
       window.localStorage.setItem(RECENTLY_CREATED_PROJECT_KEY, createdName);
       setNewName("");
       setCreateOpen(false);
+      if (res.data.id || res.data.project_id) {
+        navigate({ to: PROJECT_SECTION_ROUTES.freezone, params: { project: res.data.id || res.data.project_id || name } });
+      }
     } catch {
       toast.error(t("project.toasts.createFailed"));
     }
@@ -1289,6 +1341,22 @@ function ProjectDashboard() {
     setPending(null);
   };
 
+  if (allSummaries.isError) {
+    return (
+      <div className="mx-auto flex min-h-[420px] w-full max-w-xl items-center justify-center px-6">
+        <div className="w-full rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+          <h1 className="text-xl font-semibold text-foreground">Central de Projetos indisponível</h1>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            Não foi possível conectar ao backend do TG Criativo. Verifique se a API está em execução e tente novamente.
+          </p>
+          <Button className="mt-5" onClick={() => void allSummaries.refetch()}>
+            Tentar novamente
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       {/* Header strip */}
@@ -1315,68 +1383,49 @@ function ProjectDashboard() {
             </div>
           )}
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-            <DialogContent className="gap-4 overflow-hidden rounded-2xl border border-white/8 bg-background/68 p-7 shadow-none backdrop-blur-3xl sm:max-w-md">
+            <DialogContent className="max-h-[90vh] gap-4 overflow-y-auto rounded-2xl border border-border bg-background p-6 shadow-xl sm:max-w-2xl">
               <DialogHeader className="gap-2">
                 <DialogTitle className="flex items-center gap-2 text-lg font-medium tracking-tight">
                   <span aria-hidden="true">✨</span>
-                  <span>{t("project.create")}</span>
+                  <span>Nova campanha</span>
                 </DialogTitle>
                 <p className="text-xs leading-5 text-muted-foreground">
-                  {t("project.emptyDescription")}
+                  Defina o briefing comercial e gere variações prontas para produção.
                 </p>
               </DialogHeader>
-              <div className="mt-2 flex flex-col gap-2">
-                <div className="relative">
-                  <Input
-                    id="project-name"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder={t("project.namePlaceholder")}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleCreate();
-                      }
-                    }}
-                    aria-invalid={!!createNameError || undefined}
-                    aria-describedby={createNameError ? "project-name-error" : undefined}
-                    autoFocus
-                    className="h-11 rounded-[8px] border-white/12 bg-white/[0.04] px-3 pr-10 text-sm placeholder:text-muted-foreground/70 focus-visible:border-white/25 focus-visible:ring-2 focus-visible:ring-white/8 dark:bg-white/[0.04]"
-                  />
-                  {newName && (
-                    <button
-                      type="button"
-                      onClick={() => setNewName("")}
-                      className="absolute right-2 top-1/2 inline-flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/[0.08] hover:text-foreground"
-                      aria-label={t("project.clearName")}
-                    >
-                      <XIcon className="size-3.5" aria-hidden="true" />
-                    </button>
-                  )}
-                </div>
-                {createNameError && (
-                  <p
-                    id="project-name-error"
-                    className="text-xs text-destructive"
-                  >
-                    {createNameError}
-                  </p>
-                )}
+              <div className="grid gap-4 md:grid-cols-2">
+                <label className="flex flex-col gap-1.5 md:col-span-2">
+                  <span className="text-xs font-semibold text-foreground">Nome da campanha *</span>
+                  <Input id="project-name" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Ex.: Black Friday — curso de vendas" autoFocus className={WIZARD_FIELD_CLASS} />
+                  {createNameError && <span className="text-xs text-destructive">{createNameError}</span>}
+                </label>
+                <label className="flex flex-col gap-1.5"><span className="text-xs font-semibold">Objetivo *</span><select value={objective} onChange={(e) => setObjective(e.target.value)} className={WIZARD_FIELD_CLASS}><option value="conversion">Conversão</option><option value="awareness">Reconhecimento</option><option value="leads">Geração de leads</option><option value="engagement">Engajamento</option></select></label>
+                <label className="flex flex-col gap-1.5"><span className="text-xs font-semibold">Canal principal *</span><select value={primaryChannel} onChange={(e) => setPrimaryChannel(e.target.value)} className={WIZARD_FIELD_CLASS}><option value="instagram_reels">Instagram Reels</option><option value="tiktok">TikTok</option><option value="instagram_stories">Instagram Stories</option><option value="instagram_feed">Instagram Feed</option><option value="youtube_shorts">YouTube Shorts</option></select></label>
+                <label className="flex flex-col gap-1.5"><span className="text-xs font-semibold">Formato criativo *</span><select value={creativeFormat} onChange={(e) => setCreativeFormat(e.target.value)} className={WIZARD_FIELD_CLASS}><option value="ugc_direct">UGC direto</option><option value="product_demo">Demonstração de produto</option><option value="testimonial">Depoimento</option><option value="retail_offer">Oferta de varejo</option><option value="brand_story">História de marca</option><option value="educational">Educativo</option></select></label>
+                <label className="flex flex-col gap-1.5"><span className="text-xs font-semibold">Público-alvo *</span><Input value={audience} onChange={(e) => setAudience(e.target.value)} placeholder="Ex.: Mulheres empreendedoras, 25–44" className={WIZARD_FIELD_CLASS} /></label>
+                <label className="flex flex-col gap-1.5"><span className="text-xs font-semibold">Oferta / produto *</span><Input value={offer} onChange={(e) => setOffer(e.target.value)} placeholder="Ex.: Curso online de vendas" className={WIZARD_FIELD_CLASS} /></label>
+                <label className="flex flex-col gap-1.5 md:col-span-2"><span className="text-xs font-semibold">Promessa principal *</span><Input value={corePromise} onChange={(e) => setCorePromise(e.target.value)} placeholder="Qual transformação a pessoa terá?" className={WIZARD_FIELD_CLASS} /></label>
+                <label className="flex flex-col gap-1.5 md:col-span-2"><span className="text-xs font-semibold">CTA *</span><Input value={cta} onChange={(e) => setCta(e.target.value)} placeholder="Ex.: Conheça agora" className={WIZARD_FIELD_CLASS} /></label>
+                <label className="flex flex-col gap-1.5"><span className="text-xs font-semibold">Quantidade de variações</span><select value={variants} onChange={(e) => setVariants(Number(e.target.value))} className={WIZARD_FIELD_CLASS}>{[1, 3, 5, 7, 10].map((value) => <option key={value} value={value}>{value} {value === 1 ? "variação" : "variações"}</option>)}</select></label>
+                <label className="flex flex-col gap-1.5"><span className="text-xs font-semibold">Duração</span><select value={duration} onChange={(e) => setDuration(Number(e.target.value) as CommercialBrOutput["duration_seconds"])} className={WIZARD_FIELD_CLASS}><option value={15}>15 segundos</option><option value={30}>30 segundos</option><option value={45}>45 segundos</option><option value={60}>60 segundos</option></select></label>
+                <label className="flex flex-col gap-1.5"><span className="text-xs font-semibold">Proporção</span><select value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value as CommercialBrOutput["aspect_ratio"])} className={WIZARD_FIELD_CLASS}><option value="9:16">9:16 — vertical</option><option value="1:1">1:1 — quadrado</option><option value="4:5">4:5 — feed</option><option value="16:9">16:9 — horizontal</option></select></label>
+                <div className="flex items-end"><button type="button" onClick={() => setMoreContextOpen((open) => !open)} className="h-10 text-left text-xs font-semibold text-primary hover:underline">{moreContextOpen ? "Ocultar detalhes opcionais" : "Adicionar detalhes opcionais"}</button></div>
+                {moreContextOpen && <label className="flex flex-col gap-1.5 md:col-span-2"><span className="text-xs font-semibold">Tom, roteiro próprio, objeções e observações</span><textarea value={moreContext} onChange={(e) => setMoreContext(e.target.value)} placeholder="Inclua referências, termos obrigatórios ou restrições." className="min-h-24 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" /></label>}
               </div>
-              <DialogFooter className="-mx-7 -mb-7 border-t-0 bg-transparent p-7 pt-3 sm:flex-row sm:justify-end">
+              <DialogFooter className="border-t border-border pt-4 sm:flex-row sm:justify-end">
                 <Button
                   variant="outline"
                   onClick={() => setCreateOpen(false)}
-                  className="h-10 w-18 rounded-md border-white/18 bg-white/[0.06] px-0 text-sm font-normal text-foreground/80 hover:border-white/28 hover:bg-white/[0.1] hover:text-foreground"
+                  className="h-10 rounded-md px-4 text-sm font-normal"
                 >
                   {t("common.cancel")}
                 </Button>
                 <Button
                   onClick={handleCreate}
                   disabled={
-                    createProject.isPending || !trimmedNewName || !!createNameError
+                    createProject.isPending || !trimmedNewName || !!createNameError || !audience.trim() || !offer.trim() || !corePromise.trim() || !cta.trim()
                   }
-                  className="h-10 w-18 rounded-md bg-primary px-0 text-sm font-normal text-primary-foreground shadow-lg shadow-primary/15 hover:bg-primary/90"
+                  className="h-10 rounded-md px-4 text-sm font-normal"
                 >
                   {createProject.isPending && (
                     <Loader2

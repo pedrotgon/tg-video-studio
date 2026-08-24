@@ -3185,9 +3185,17 @@ function CharactersPageContent() {
   const isNarratedFirstPerson =
     projectConfig?.spine_template === "narrated" &&
     projectConfig?.narration_style === "first_person";
-  const mainCopy = characterMainCopyForSpineTemplate(
+  const rawMainCopy = characterMainCopyForSpineTemplate(
     projectConfig?.spine_template,
   );
+  const mainCopy = {
+    ...rawMainCopy,
+    label: t("characters.mainCopy.label"),
+    makeMain: t("characters.mainCopy.makeMain"),
+    unsetMain: t("characters.mainCopy.unsetMain"),
+    mainSet: t("characters.mainCopy.mainSet"),
+    mainUnset: t("characters.mainCopy.mainUnset"),
+  };
   const filteredCharacters = useMemo(
     () => filterCharacters(characters, searchQuery),
     [characters, searchQuery],

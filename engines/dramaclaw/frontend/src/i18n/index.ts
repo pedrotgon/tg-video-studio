@@ -39,7 +39,7 @@ i18n
       // 按 BUILD_ID 加 query 破缓存：每次构建 URL 变化拉到新文件，同一构建内仍走缓存。
       // 用 BUILD_ID 而非 APP_VERSION —— 后者在 CI 不注入时是个固定默认值，两次发版
       // 长得一样，缓存就破不掉了。
-      loadPath: `/locales/{{lng}}/{{ns}}.json?v=${encodeURIComponent(BUILD_ID)}`,
+      loadPath: `${import.meta.env.BASE_URL}locales/{{lng}}/{{ns}}.json?v=${encodeURIComponent(BUILD_ID)}`,
     },
     interpolation: {
       escapeValue: false,
@@ -55,8 +55,9 @@ function syncResolvedLanguage() {
   if (useAppStore.getState().language !== lng) {
     useAppStore.setState({ language: lng });
   }
-  if (typeof document !== "undefined" && document.documentElement.lang !== lng) {
-    document.documentElement.lang = lng;
+  const htmlLanguage = lng === "pt" ? "pt-BR" : lng;
+  if (typeof document !== "undefined" && document.documentElement.lang !== htmlLanguage) {
+    document.documentElement.lang = htmlLanguage;
   }
 }
 

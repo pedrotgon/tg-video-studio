@@ -8,6 +8,7 @@ import { queryKeys } from "@/lib/query-keys";
 import type { OkResponse } from "@/types/api";
 import type {
   ProjectConfig,
+  CreateProjectPayload,
   ProjectRole,
   ProjectStatus,
   ProjectSummary,
@@ -37,10 +38,10 @@ export function useProject(project: string) {
 export function useCreateProject() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (name: string) =>
+    mutationFn: (payload: CreateProjectPayload) =>
       api
-        .post("api/v1/projects", { json: { name } })
-        .json<OkResponse<{ id?: string; project_id?: string; name: string }>>(),
+        .post("api/v1/projects", { json: payload })
+        .json<OkResponse<{ id?: string; project_id?: string; name: string; display_name?: string }>>(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.projects() });
       queryClient.invalidateQueries({ queryKey: queryKeys.projectSummaries() });
@@ -73,6 +74,11 @@ type SummaryPayload = {
   id?: string;
   project_id?: string;
   name: string;
+  display_name?: string | null;
+  content_profile?: string | null;
+  market?: string | null;
+  campaign?: ProjectSummary["campaign"] | null;
+  creative_count?: number | null;
   owner_type?: "user" | "team" | null;
   owner_id?: string | null;
   owner_username?: string | null;
@@ -93,7 +99,12 @@ function toSummary(p: SummaryPayload): ProjectSummary {
   }
   return {
     id,
-    name: p.name,
+    name: p.display_name ?? p.name,
+    internalName: p.name,
+    contentProfile: p.content_profile ?? undefined,
+    market: p.market ?? undefined,
+    campaign: p.campaign ?? undefined,
+    creativeCount: p.creative_count ?? undefined,
     status: p.status,
     ownerType: p.owner_type ?? undefined,
     ownerId: p.owner_id ?? undefined,
@@ -111,6 +122,9 @@ function toSummary(p: SummaryPayload): ProjectSummary {
 export function useAllProjectSummaries(): {
   data: ProjectSummary[] | undefined;
   isLoading: boolean;
+  isError: boolean;
+  error: unknown;
+  refetch: () => Promise<unknown>;
 } {
   const query = useQuery({
     queryKey: queryKeys.projectSummaries(),
@@ -129,7 +143,13 @@ export function useAllProjectSummaries(): {
     [query.data],
   );
 
-  return { data, isLoading: query.isLoading };
+  return {
+    data,
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useProjectSummaries(status: ProjectStatus): {

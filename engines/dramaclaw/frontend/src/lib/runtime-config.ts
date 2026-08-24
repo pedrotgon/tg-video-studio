@@ -28,6 +28,15 @@ function fallbackRuntimeConfig(): RuntimeConfig {
     : { edition: "ee", authRequired: true };
 }
 
+/**
+ * Lets the bootstrap render the local CE surface when the runtime endpoint is
+ * unreachable. A later full page reload will re-read the authoritative API
+ * configuration; this only prevents an infinite auth spinner offline.
+ */
+export function applyRuntimeConfigFallback(): void {
+  runtimeConfig = fallbackRuntimeConfig();
+}
+
 export async function loadRuntimeConfig(): Promise<void> {
   try {
     const response = await fetch("/api/v1/config", { credentials: "include", cache: "no-store" });
@@ -42,7 +51,7 @@ export async function loadRuntimeConfig(): Promise<void> {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.warn("[runtime-config] load failed:", error);
-    runtimeConfig = fallbackRuntimeConfig();
+    applyRuntimeConfigFallback();
   }
 }
 

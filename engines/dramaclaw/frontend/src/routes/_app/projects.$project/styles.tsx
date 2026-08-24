@@ -386,6 +386,10 @@ function StyleDetailPanel({
   const updateProject = useUpdateProject(project);
 
   const preset = isPreset(style);
+  const localizedStyleName =
+    preset && BUILTIN_STYLE_LABEL_KEYS[style.id]
+      ? t(BUILTIN_STYLE_LABEL_KEYS[style.id])
+      : style.name;
   const original = useMemo(() => extractConfig(style), [style]);
   const [fields, setFields] = useState<StyleConfig>(original);
   const [editingName, setEditingName] = useState(style.name);
@@ -513,7 +517,7 @@ function StyleDetailPanel({
       {/* Header row */}
       <div className="flex items-center gap-1.5 px-4 pt-4 pb-2">
         <span className="min-w-0 truncate text-sm font-semibold text-foreground">
-          {editingName}
+          {localizedStyleName}
         </span>
         <button
           type="button"

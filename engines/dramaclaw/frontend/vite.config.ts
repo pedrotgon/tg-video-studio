@@ -70,6 +70,10 @@ export default defineConfig(({ mode }) => {
   const apiTarget = env.VITE_API_URL || DEFAULT_API_TARGET;
 
   return {
+    // DramaClaw is mounted at /criativo/ by the TG shell. The upstream route
+    // tree still uses root-relative route definitions; TanStack Router applies
+    // this basepath while Vite emits assets with the same public prefix.
+    base: "/criativo/",
     plugins: [
       TanStackRouterVite(),
       react(),

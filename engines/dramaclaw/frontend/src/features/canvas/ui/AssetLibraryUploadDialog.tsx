@@ -7,6 +7,7 @@
 // 顶部类目 tab 按标签筛。这里只负责收集参数，真正的上传仍由 AssetLibraryModal
 // 执行（进度条和失败重试都在那边的卡片上）。
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import {
   ChevronDown,
@@ -89,6 +90,9 @@ export function AssetLibraryUploadDialog({
   onSubmit,
   onClose,
 }: AssetLibraryUploadDialogProps) {
+  const translation = useTranslation();
+  const ptBR = translation.i18n?.language?.startsWith('pt') ?? false;
+  const ui = (pt: string, legacy: string) => (ptBR ? pt : legacy);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [picked, setPicked] = useState<PickedFile[]>([]);
   const pickedRef = useRef<PickedFile[]>([]);
@@ -176,16 +180,16 @@ export function AssetLibraryUploadDialog({
     <div
       className="fixed inset-0 z-[310] flex items-center justify-center"
       role="dialog"
-      aria-label="上传资产"
+      aria-label={ui('Enviar ativo', '上传资产')}
     >
       <div className="absolute inset-0 bg-black/55" onClick={onClose} />
       <div className="relative flex w-[min(940px,92vw)] flex-col overflow-hidden rounded-[10px] border border-white/[0.12] bg-[#1b1c22] shadow-[0_18px_48px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-between border-b border-white/[0.08] px-5 py-3.5">
-          <h3 className="text-sm font-semibold text-text-dark">上传资产</h3>
+          <h3 className="text-sm font-semibold text-text-dark">{ui('Enviar ativo', '上传资产')}</h3>
           <button
             type="button"
             onClick={onClose}
-            title="关闭"
+            title={ui('Fechar', '关闭')}
             className="inline-flex h-7 w-7 items-center justify-center rounded-md text-text-muted/90 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
           >
             <X className="h-4 w-4" />
@@ -208,7 +212,7 @@ export function AssetLibraryUploadDialog({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                aria-label="选择文件"
+                aria-label={ui('Selecionar arquivos', '选择文件')}
                 className="flex h-[120px] w-[120px] items-center justify-center rounded-md border border-dashed border-white/[0.16] text-text-muted/60 transition-colors hover:border-white/[0.30] hover:text-text-dark"
               >
                 <Plus className="h-7 w-7" strokeWidth={1.5} />
@@ -270,11 +274,11 @@ export function AssetLibraryUploadDialog({
           <div className="w-[240px] shrink-0 space-y-4">
             <div className="relative">
               <div className="mb-1.5 text-xs text-text-muted/90">
-                保存位置 <span className="text-red-400">*</span>
+                {ui('Local de salvamento', '保存位置')} <span className="text-red-400">*</span>
               </div>
               <button
                 type="button"
-                aria-label="选择保存位置"
+                aria-label={ui('Selecionar local de salvamento', '选择保存位置')}
                 onClick={() => {
                   setFolderOpen((prev) => !prev);
                   setCategoryOpen(false);
@@ -286,7 +290,7 @@ export function AssetLibraryUploadDialog({
                     selectedFolder ? 'text-text-dark' : 'text-text-muted/55'
                   }
                 >
-                  {selectedFolder?.label ?? '请选择文件夹'}
+                  {selectedFolder?.label ?? ui('Selecione uma pasta', '请选择文件夹')}
                 </span>
                 {folderOpen ? (
                   <ChevronUp className="h-3.5 w-3.5 text-text-muted/70" />
@@ -297,11 +301,11 @@ export function AssetLibraryUploadDialog({
               {folderOpen && (
                 <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-[6px] border border-white/[0.12] bg-[#232429] py-1 shadow-[0_12px_28px_rgba(0,0,0,0.45)]">
                   <div className="flex items-center justify-between border-b border-white/[0.08] px-3 py-1.5 text-xs text-text-dark">
-                    项目资产库
+                    {ui('Biblioteca de ativos do projeto', '项目资产库')}
                     <button
                       type="button"
-                      aria-label="新建文件夹"
-                      title="新建文件夹"
+                      aria-label={ui('Nova pasta', '新建文件夹')}
+                      title={ui('Nova pasta', '新建文件夹')}
                       onClick={() => setNewFolderOpen(true)}
                       className="inline-flex h-5 w-5 items-center justify-center rounded text-text-muted/80 transition-colors hover:bg-white/[0.10] hover:text-text-dark"
                     >
@@ -332,10 +336,10 @@ export function AssetLibraryUploadDialog({
             </div>
 
             <div className="relative">
-              <div className="mb-1.5 text-xs text-text-muted/90">标签</div>
+              <div className="mb-1.5 text-xs text-text-muted/90">{ui('Categoria', '标签')}</div>
               <button
                 type="button"
-                aria-label="选择标签"
+                aria-label={ui('Selecionar categoria', '选择标签')}
                 onClick={() => {
                   setCategoryOpen((prev) => !prev);
                   setFolderOpen(false);
@@ -347,7 +351,7 @@ export function AssetLibraryUploadDialog({
                     selectedCategory ? 'text-text-dark' : 'text-text-muted/55'
                   }
                 >
-                  {selectedCategory?.label ?? '请选择'}
+                  {selectedCategory?.label ?? ui('Selecione', '请选择')}
                 </span>
                 {categoryOpen ? (
                   <ChevronUp className="h-3.5 w-3.5 text-text-muted/70" />
@@ -371,7 +375,7 @@ export function AssetLibraryUploadDialog({
                           : 'text-text-muted/85'
                       }`}
                     >
-                      {item.label}
+                      {ptBR ? ({ other: 'Outros', character: 'Pessoas', scene: 'Ambientes', prop: 'Objetos', style: 'Estilos', audio: 'Áudio' } as Record<string, string>)[item.key] : item.label}
                     </button>
                   ))}
                 </div>
@@ -382,7 +386,7 @@ export function AssetLibraryUploadDialog({
 
         <div className="flex items-end justify-between gap-4 px-5 pb-4">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-text-muted/60">
-            <span>支持的文件格式</span>
+            <span>{ui('Formatos aceitos', '支持的文件格式')}</span>
             {media.map((kind) => {
               const Icon = MEDIA_ICON[kind];
               return (
@@ -400,7 +404,7 @@ export function AssetLibraryUploadDialog({
               className="px-4 text-text-muted hover:text-text-dark"
               onClick={onClose}
             >
-              取消
+              {ui('Cancelar', '取消')}
             </Button>
             <Button
               size="sm"
@@ -408,7 +412,7 @@ export function AssetLibraryUploadDialog({
               disabled={!canSubmit}
               onClick={handleSubmit}
             >
-              保存
+              {ui('Salvar', '保存')}
             </Button>
           </div>
         </div>

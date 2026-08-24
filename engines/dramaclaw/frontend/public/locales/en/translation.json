@@ -803,6 +803,13 @@
     "batchPortraitsUnavailable": "Not implemented yet",
     "searchPlaceholder": "Search characters…",
     "protagonist": "Narrator lead",
+    "mainCopy": {
+      "label": "Narrator lead",
+      "makeMain": "Set as narrator lead",
+      "unsetMain": "Unset narrator lead",
+      "mainSet": "Narrator lead set",
+      "mainUnset": "Narrator lead unset"
+    },
     "supporting": "Support",
     "antagonist": "Villain",
     "identitiesCount": "{{count}} identities",
@@ -3088,6 +3095,25 @@
     "close": "Close"
   },
   "canvas": {
+    "minimap": "Canvas minimap",
+    "snapAlign": {
+      "enable": "Enable snap alignment",
+      "disable": "Disable snap alignment"
+    },
+    "fps": {
+      "enable": "Show FPS",
+      "disable": "Hide FPS"
+    },
+    "panel": {
+      "projectCanvas": "Project canvas",
+      "mainlineAssets": "Mainline assets",
+      "assetLibrary": "Asset library",
+      "assetManagement": "Asset management",
+      "expandAssets": "Expand asset drawer",
+      "collapseAssets": "Collapse asset drawer",
+      "expand": "Expand",
+      "collapse": "Collapse"
+    },
     "storyboardGroup": {
       "headerCount": "Storyboard · {{count}} nodes",
       "label": "Storyboard group",

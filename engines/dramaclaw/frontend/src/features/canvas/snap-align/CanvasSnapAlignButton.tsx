@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Elastic-2.0
 // Copyright (c) 2026 ClaymoreLab
 import { Magnet } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import {
   CANVAS_CONTROL_ICON_BUTTON_ACTIVE_CLASS,
@@ -15,6 +16,7 @@ interface CanvasSnapAlignButtonProps {
 export function CanvasSnapAlignButton({
   placement = 'bottom-right',
 }: CanvasSnapAlignButtonProps) {
+  const { t } = useTranslation();
   const enabled = useSnapAlignStore((state) => state.enabled);
   const toggle = useSnapAlignStore((state) => state.toggle);
   const isTop = placement === 'top-right';
@@ -34,7 +36,7 @@ export function CanvasSnapAlignButton({
             : 'text-text-muted hover:bg-white/10 hover:text-text'
         }`}
         aria-pressed={enabled}
-        aria-label={enabled ? '关闭对齐吸附' : '开启对齐吸附'}
+        aria-label={enabled ? t('canvas.snapAlign.disable') : t('canvas.snapAlign.enable')}
       >
         <Magnet className="h-3.5 w-3.5" />
       </button>
@@ -43,7 +45,7 @@ export function CanvasSnapAlignButton({
           isTop ? 'top-full mt-1.5' : 'bottom-full mb-1.5'
         }`}
       >
-        {enabled ? '关闭对齐吸附' : '开启对齐吸附'}
+        {enabled ? t('canvas.snapAlign.disable') : t('canvas.snapAlign.enable')}
       </span>
     </div>
   );

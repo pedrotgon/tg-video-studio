@@ -31,6 +31,7 @@ import { AccessoryUnlockPrompt } from "@/features/rewards/AccessoryUnlockPrompt"
 import { VersionUpdateDialog } from "@/features/version-update/VersionUpdateDialog";
 import { PikoInspirationStation } from "@/features/piko-mini-game/PikoInspirationStation";
 import { ProductSurfaceUnavailable } from "@/components/product-surface-unavailable";
+import { TgCreativeRail } from "@/components/layout/tg-creative-rail";
 import {
   surfaceAccess,
   useProductSurfaces,
@@ -39,6 +40,17 @@ import {
 
 export function shouldRedirectMissingUsernameToLogin(): boolean {
   return authRequired();
+}
+
+const SESSION_CHECK_TIMEOUT_MS = 4000;
+
+function validateSessionWithTimeout(validateSession: () => Promise<boolean>): Promise<boolean> {
+  return Promise.race([
+    validateSession(),
+    new Promise<boolean>((resolve) => {
+      window.setTimeout(() => resolve(false), SESSION_CHECK_TIMEOUT_MS);
+    }),
+  ]);
 }
 
 function AppLayout() {
@@ -55,6 +67,11 @@ function AppLayout() {
   const routeProject = params.project ?? null;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const projectSummaries = useAllProjectSummaries();
+  const backendStatus = (
+    projectSummaries.error as { response?: { status?: number } } | undefined
+  )?.response?.status;
+  const backendUnavailable =
+    projectSummaries.isError && backendStatus !== 401 && backendStatus !== 403;
   const canonicalProject = routeProject
     ? canonicalProjectRouteParam(routeProject, projectSummaries.data)
     : null;
@@ -123,11 +140,15 @@ function AppLayout() {
       }
       let cancelled = false;
       setValidated(false);
-      validateSession().then((ok) => {
+      validateSessionWithTimeout(validateSession).then((ok) => {
         if (cancelled) return;
         if (!ok) {
           validatedUsernameRef.current = null;
-          navigate({ to: "/login" });
+          if (authRequired()) {
+            navigate({ to: "/login" });
+          } else {
+            setValidated(true);
+          }
           return;
         }
         validatedUsernameRef.current = useAuthStore.getState().username;
@@ -143,11 +164,15 @@ function AppLayout() {
     }
     let cancelled = false;
     setValidated(false);
-    validateSession().then((ok) => {
+    validateSessionWithTimeout(validateSession).then((ok) => {
       if (cancelled) return;
       if (!ok) {
         validatedUsernameRef.current = null;
-        navigate({ to: "/login" });
+        if (authRequired()) {
+          navigate({ to: "/login" });
+        } else {
+          setValidated(true);
+        }
       } else {
         validatedUsernameRef.current = username;
         setValidated(true);
@@ -176,6 +201,26 @@ function AppLayout() {
     );
   }
 
+  if (backendUnavailable && !routeProject) {
+    return (
+      <div className="flex h-dvh items-center justify-center bg-background px-6">
+        <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+          <h1 className="text-xl font-semibold text-foreground">Central de Projetos indisponível</h1>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            Não foi possível conectar ao backend do TG Criativo. Verifique se a API está em execução e tente novamente.
+          </p>
+          <button
+            className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
+            onClick={() => window.location.reload()}
+            type="button"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!username || !validated) {
     return (
       <div className="flex h-dvh items-center justify-center">
@@ -188,6 +233,7 @@ function AppLayout() {
     <TaskCenterProvider projectId={canonicalProject}>
       <div className="flex h-dvh flex-col overflow-hidden">
         <div className="flex min-h-0 flex-1 overflow-hidden">
+          <TgCreativeRail />
           <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
             <Header />
             <MyBuddyCompanion />
@@ -219,13 +265,19 @@ function AppLayout() {
                 >
                   {requiredSurfaceCode && productSurfaces.error ? (
                     <ProductSurfaceUnavailable
-                      message="暂时无法确认功能开放状态，请稍后重试。"
+                      message="Não foi possível confirmar a disponibilidade agora. Tente novamente em instantes."
                       retry={() => void productSurfaces.refetch()}
                     />
                   ) : requiredSurfaceCode && !requiredSurface ? (
                     <ProductSurfaceUnavailable message="功能开放配置不完整，请联系管理员。" />
                   ) : requiredSurface && !requiredSurface.available ? (
-                    <ProductSurfaceUnavailable message={requiredSurface.unavailable_message} />
+                    <ProductSurfaceUnavailable
+                      message={
+                        /[\u3400-\u9fff]/.test(requiredSurface.unavailable_message)
+                          ? "Este recurso ainda não está disponível nesta configuração."
+                          : requiredSurface.unavailable_message
+                      }
+                    />
                   ) : (
                     <Outlet />
                   )}

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Elastic-2.0
 // Copyright (c) 2026 ClaymoreLab
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import {
   Check,
@@ -123,6 +124,19 @@ export function AssetLibraryModal({
   allowedMedia,
   onSendFolderToCanvas,
 }: AssetLibraryModalProps) {
+  const translation = useTranslation();
+  const ptBR = translation.i18n?.language?.startsWith('pt') ?? false;
+  const ui = (pt: string, legacy: string) => (ptBR ? pt : legacy);
+  const categoryLabel = (key: AssetCategory, legacy: string) =>
+    ui(
+      ({ other: 'Outros', character: 'Pessoas', scene: 'Ambientes', prop: 'Objetos', style: 'Estilos', audio: 'Áudio' } as Record<AssetCategory, string>)[key],
+      legacy,
+    );
+  const folderLabel = (folder: AssetFolder) => {
+    if (folder.key === 'mainline') return ui('Ativos principais', folder.label);
+    if (folder.key === 'unclassified' || folder.key === 'other') return ui('A classificar', folder.label);
+    return folder.label;
+  };
   // 类目（标签）按用途分，不按媒介分；allowedMedia 只在两个地方起作用：整类都装
   // 不下的类目（如只收音频的「音效」在只要图片的节点里）不出现在 tab 条上，条目
   // 本身再过滤一遍。
@@ -483,7 +497,7 @@ export function AssetLibraryModal({
     if (!pendingUploads.some((p) => p.folder === openFolderKey)) return null;
     const placeholder: AssetFolder = {
       key: openFolderKey,
-      label: systemFolderLabel(openFolderKey) ?? openFolderKey,
+      label: ui('Biblioteca de ativos', systemFolderLabel(openFolderKey) ?? openFolderKey),
       items: [],
       system: true,
       uploadable: true,
@@ -542,7 +556,7 @@ export function AssetLibraryModal({
     if (activeTabKey !== ALL_CATEGORY_KEY) {
       const category = categories.find((c) => c.key === activeTabKey);
       return category
-        ? { folder: category.key, category: category.key, label: category.label }
+        ? { folder: category.key, category: category.key, label: categoryLabel(category.key, category.label) }
         : null;
     }
     if (openFolder?.uploadable) {
@@ -666,10 +680,10 @@ export function AssetLibraryModal({
     selectedKeys.filter((k) => k.startsWith(`${media}:`)).length;
   const hasSelection = selectedCount > 0;
   const tabs: Array<{ key: AssetLibraryTabKey; label: string }> = [
-    { key: ALL_CATEGORY_KEY, label: '全部' },
+    { key: ALL_CATEGORY_KEY, label: ui('Todos', '全部') },
     ...categories.map((category) => ({
       key: category.key,
-      label: category.label,
+      label: categoryLabel(category.key, category.label),
     })),
   ];
 
@@ -694,7 +708,7 @@ export function AssetLibraryModal({
         {/* Title bar：批量操作 / 新建 统一收在右上角 */}
         <div className="flex shrink-0 items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-text-dark">资产库</h2>
+            <h2 className="text-base font-semibold text-text-dark">{ui('Biblioteca de ativos', '资产库')}</h2>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -702,14 +716,14 @@ export function AssetLibraryModal({
               onClick={() => void handleSyncFromMainline()}
               disabled={!project || isSyncing}
               className={headerButtonClass}
-              title="打开时已自动同步；如主线新增了人物 / 场景 / 道具，可点此重新同步"
+              title={ui('Sincroniza automaticamente ao abrir; atualize para buscar novos ativos principais.', '打开时已自动同步；如主线新增了人物 / 场景 / 道具，可点此重新同步')}
             >
               {isSyncing ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
                 <RefreshCw className="h-3.5 w-3.5" />
               )}
-              重新同步
+              {ui('Sincronizar novamente', '重新同步')}
             </button>
             <button
               type="button"
@@ -721,9 +735,9 @@ export function AssetLibraryModal({
               className={`${headerButtonClass} ${
                 bulkMode ? 'bg-white/[0.18] text-text-dark' : ''
               }`}
-              title="进入批量删除模式"
+              title={ui('Entrar no modo de exclusão em lote', '进入批量删除模式')}
             >
-              {bulkMode ? '退出批量' : '批量操作'}
+              {bulkMode ? ui('Sair do lote', '退出批量') : ui('Operações em lote', '批量操作')}
             </button>
             <div className="relative">
               <button
@@ -733,7 +747,7 @@ export function AssetLibraryModal({
                 className={headerButtonClass}
               >
                 <Plus className="h-3.5 w-3.5" />
-                新建
+                {ui('Novo', '新建')}
               </button>
               {createMenuOpen && (
                 <>
@@ -751,7 +765,7 @@ export function AssetLibraryModal({
                       }}
                       className="block w-full px-3 py-1.5 text-left text-xs text-text-muted/85 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
                     >
-                      新建文件夹
+                      {ui('Nova pasta', '新建文件夹')}
                     </button>
                     <button
                       type="button"
@@ -761,7 +775,7 @@ export function AssetLibraryModal({
                       }}
                       className="block w-full px-3 py-1.5 text-left text-xs text-text-muted/85 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
                     >
-                      上传资产
+                      {ui('Enviar ativo', '上传资产')}
                     </button>
                   </div>
                 </>
@@ -817,7 +831,7 @@ export function AssetLibraryModal({
               className="inline-flex items-center gap-0.5 rounded-md px-1.5 py-1 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
-              全部
+              {ui('Todos', '全部')}
             </button>
             <span className="text-text-muted/50">/</span>
             <span className="px-1 text-text-dark">{openFolder.label}</span>
@@ -850,7 +864,7 @@ export function AssetLibraryModal({
               pagedFolders.map((folder) => (
                 <FolderCard
                   key={folder.key}
-                  folder={folder}
+                  folder={{ ...folder, label: folderLabel(folder) }}
                   menuOpen={folderMenuKey === folder.key}
                   onToggleMenu={() =>
                     setFolderMenuKey((prev) =>
@@ -981,7 +995,7 @@ export function AssetLibraryModal({
                           ? selected
                             ? '取消选择'
                             : '选中待删除'
-                          : '主线同步来的素材不能删除'
+                          : ui('Ativos principais sincronizados não podem ser excluídos', '主线同步来的素材不能删除')
                         : disabledSelect
                           ? `最多可选 ${maxSelectable} 个`
                           : selected
@@ -1002,7 +1016,7 @@ export function AssetLibraryModal({
                   {/* Source badge top-right */}
                   {entry.source !== 'upload' && (
                     <span className="pointer-events-none absolute right-2 top-2 rounded bg-black/55 px-1.5 py-0.5 text-[10px] text-white/90">
-                      {SOURCE_LABEL[entry.source]}
+                      {ptBR ? ({ upload: 'Enviado', character: 'Pessoa', scene: 'Ambiente', prop: 'Objeto' } as Record<string, string>)[entry.source] : SOURCE_LABEL[entry.source]}
                     </span>
                   )}
 
@@ -1041,7 +1055,7 @@ export function AssetLibraryModal({
             visiblePending.length === 0 &&
             !libraryError && (
               <div className="mt-3 text-center text-[11px] text-text-muted/70">
-                这里暂无素材，可点右上角「新建 → 上传资产」添加；主线资产已自动同步，也可点「重新同步」。
+                {ui('Ainda não há ativos. Use “Novo → Enviar ativo” ou sincronize os ativos principais.', '这里暂无素材，可点右上角「新建 → 上传资产」添加；主线资产已自动同步，也可点「重新同步」。')}
               </div>
             )}
         </div>
@@ -1063,7 +1077,7 @@ export function AssetLibraryModal({
                   setBulkIds([]);
                 }}
               >
-                退出批量
+                {ui('Sair do lote', '退出批量')}
               </Button>
               <Button
                 size="sm"
@@ -1310,6 +1324,8 @@ function AssetLibraryPagination({
   onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;
 }) {
+  const translation = useTranslation();
+  const ptBR = translation.i18n?.language?.startsWith('pt') ?? false;
   const [sizeMenuOpen, setSizeMenuOpen] = useState(false);
   const stepClass =
     'inline-flex h-7 w-7 items-center justify-center rounded-[6px] text-text-muted/85 transition-colors hover:bg-white/[0.08] hover:text-text-dark disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent';
@@ -1318,7 +1334,7 @@ function AssetLibraryPagination({
     <div className="mr-auto flex items-center gap-1.5">
       <button
         type="button"
-        aria-label="上一页"
+        aria-label={ptBR ? 'Página anterior' : '上一页'}
         disabled={page <= 1}
         onClick={() => onPageChange(page - 1)}
         className={stepClass}
@@ -1353,7 +1369,7 @@ function AssetLibraryPagination({
       )}
       <button
         type="button"
-        aria-label="下一页"
+        aria-label={ptBR ? 'Próxima página' : '下一页'}
         disabled={page >= pageCount}
         onClick={() => onPageChange(page + 1)}
         className={stepClass}
@@ -1364,11 +1380,11 @@ function AssetLibraryPagination({
       <div className="relative ml-1">
         <button
           type="button"
-          aria-label="每页条数"
+        aria-label={ptBR ? 'Itens por página' : '每页条数'}
           onClick={() => setSizeMenuOpen((prev) => !prev)}
           className="inline-flex h-7 items-center gap-1.5 rounded-[6px] border border-white/[0.10] bg-white/[0.04] px-2.5 text-xs text-text-muted/85 transition-colors hover:border-white/[0.20] hover:text-text-dark"
         >
-          {pageSize}条/页
+          {ptBR ? `${pageSize} por página` : `${pageSize}条/页`}
           <ChevronsUpDown className="h-3 w-3 opacity-60" />
         </button>
         {sizeMenuOpen && (
@@ -1390,7 +1406,7 @@ function AssetLibraryPagination({
                     size === pageSize ? 'text-text-dark' : 'text-text-muted/85'
                   }`}
                 >
-                  {size}条/页
+                  {ptBR ? `${size} por página` : `${size}条/页`}
                 </button>
               ))}
             </div>

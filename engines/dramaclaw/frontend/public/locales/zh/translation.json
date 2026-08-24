@@ -803,6 +803,13 @@
     "batchPortraitsUnavailable": "暂未实装",
     "searchPlaceholder": "搜索角色…",
     "protagonist": "解说主角",
+    "mainCopy": {
+      "label": "解说主角",
+      "makeMain": "设为解说主角",
+      "unsetMain": "取消解说主角",
+      "mainSet": "已设为解说主角",
+      "mainUnset": "已取消解说主角"
+    },
     "supporting": "配角",
     "antagonist": "反派",
     "identitiesCount": "{{count}} 个身份",
@@ -3088,6 +3095,25 @@
     "close": "关闭"
   },
   "canvas": {
+    "minimap": "画布缩略图",
+    "snapAlign": {
+      "enable": "开启对齐吸附",
+      "disable": "关闭对齐吸附"
+    },
+    "fps": {
+      "enable": "开启 FPS 显示",
+      "disable": "关闭 FPS 显示"
+    },
+    "panel": {
+      "projectCanvas": "项目画布",
+      "mainlineAssets": "主线资产",
+      "assetLibrary": "资产库",
+      "assetManagement": "资产管理",
+      "expandAssets": "展开素材抽屉",
+      "collapseAssets": "收起素材抽屉",
+      "expand": "展开",
+      "collapse": "收起"
+    },
     "storyboardGroup": {
       "headerCount": "分镜组 {{count}} 个节点",
       "label": "分镜组",

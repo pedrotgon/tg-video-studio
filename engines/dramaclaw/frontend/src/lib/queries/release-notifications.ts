@@ -34,7 +34,9 @@ const RELEASE_FEED_STALE_TIME_MS = 60 * 60 * 1000;
 
 export function normalizeReleaseLocale(locale: string | undefined): "zh" | "en" {
   const two = (locale ?? "").slice(0, 2).toLowerCase();
-  return two === "zh" ? "zh" : "en";
+  if (two === "en") return "en";
+  if (two === "zh") return "zh";
+  return "zh";
 }
 
 export function releaseNotificationsQueryOptions(localeInput: string | undefined) {

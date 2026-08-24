@@ -100,26 +100,6 @@ h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif; letter
 .advanced-toggle:hover { border-color: var(--gold); background: #faf8f5; }
 
 .studio-content { flex: 1; min-height: 0; padding: 20px 24px; display: flex; flex-direction: column; }
-.engine-frame-card {
-  position: relative; flex: 1; min-height: 420px; overflow: hidden; border-radius: 12px;
-  border: 1px solid var(--line); background: #fff; box-shadow: 0 4px 16px -4px rgba(3,26,38,.12);
-}
-.engine-frame-toolbar {
-  height: 40px; padding: 0 12px; display: flex; align-items: center; gap: 7px;
-  color: var(--muted-copy); background: #fff; border-bottom: 1px solid var(--line); font-size: 11px; font-weight: 600;
-}
-.engine-frame-toolbar button { margin-left: auto; display: flex; gap: 6px; align-items: center; border: 0; color: var(--navy); background: transparent; cursor: pointer; font-size: 11px; font-weight: 600; }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #d69e2e; box-shadow: 0 0 0 3px rgba(214,158,46,.1); }
-.status-dot.is-online { background: #22a06b; box-shadow: 0 0 0 3px rgba(34,160,107,.1); }
-.engine-frame-card iframe { display: block; width: 100%; height: calc(100% - 40px); border: 0; opacity: 0; transition: opacity .2s ease; background: #fff; }
-.engine-frame-card iframe.is-loaded { opacity: 1; }
-.engine-loading { position: absolute; inset: 40px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--navy); background: #fff; }
-.engine-loading svg { color: var(--gold); }
-.engine-loading strong { font: 700 14px 'Plus Jakarta Sans', sans-serif; }
-.engine-loading span { color: var(--muted-copy); font-size: 12px; }
-.spin { animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
 .studio-footer { display: none; }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }

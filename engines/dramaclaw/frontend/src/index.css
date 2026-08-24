@@ -17,6 +17,147 @@
   font-display: swap;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   TG Criativo canonical surface — loaded last
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --tg-forest: #19382B;
+  --tg-forest-hover: #234C3B;
+  --tg-champagne: #C5A880;
+  --tg-page: #F7F7F5;
+  --tg-surface: #FFFFFF;
+  --tg-cloud: #F0EEE9;
+  --tg-text: #19382B;
+  --tg-muted: #5F7268;
+  --tg-border: #DED9D0;
+  --tg-success: #238A5A;
+  --tg-warning: #B7791F;
+  --tg-danger: #B54747;
+  --background: var(--tg-page);
+  --foreground: var(--tg-text);
+  --card: var(--tg-surface);
+  --card-foreground: var(--tg-text);
+  --popover: var(--tg-surface);
+  --popover-foreground: var(--tg-text);
+  --primary: var(--tg-forest);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--tg-cloud);
+  --secondary-foreground: var(--tg-text);
+  --muted: var(--tg-cloud);
+  --muted-foreground: var(--tg-muted);
+  --accent: var(--tg-champagne);
+  --accent-foreground: var(--tg-text);
+  --border: var(--tg-border);
+  --input: var(--tg-border);
+  --ring: var(--tg-champagne);
+  --sidebar: var(--tg-forest);
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: var(--tg-champagne);
+  --sidebar-accent: var(--tg-forest-hover);
+  --sidebar-border: rgba(197, 168, 128, .28);
+  --sidebar-ring: var(--tg-champagne);
+  color-scheme: light;
+}
+
+html,
+body,
+#root,
+html.dark,
+html.dark body,
+html.dark #root {
+  background: var(--tg-page) !important;
+  color: var(--tg-text) !important;
+}
+
+html.dark {
+  --background: var(--tg-page);
+  --foreground: var(--tg-text);
+  --card: var(--tg-surface);
+  --card-foreground: var(--tg-text);
+  --popover: var(--tg-surface);
+  --popover-foreground: var(--tg-text);
+  --primary: var(--tg-forest);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--tg-cloud);
+  --secondary-foreground: var(--tg-text);
+  --muted: var(--tg-cloud);
+  --muted-foreground: var(--tg-muted);
+  --accent: var(--tg-champagne);
+  --accent-foreground: var(--tg-text);
+  --border: var(--tg-border);
+  --input: var(--tg-border);
+  --ring: var(--tg-champagne);
+}
+
+.tg-creative-rail {
+  z-index: 30;
+  display: flex;
+  width: 76px;
+  flex: 0 0 76px;
+  flex-direction: column;
+  align-items: center;
+  background: var(--tg-forest);
+  color: #FFFFFF;
+  padding: 14px 10px;
+}
+
+.tg-creative-rail__mark,
+.tg-creative-rail__signature {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(197, 168, 128, .48);
+  border-radius: 12px;
+  color: var(--tg-champagne);
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.tg-creative-rail__nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 28px;
+}
+
+.tg-creative-rail__item {
+  display: flex;
+  width: 56px;
+  min-height: 58px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, .72);
+  font-size: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.tg-creative-rail__item svg { width: 19px; height: 19px; }
+.tg-creative-rail__item:hover,
+.tg-creative-rail__item:focus-visible,
+.tg-creative-rail__item--active {
+  border-color: rgba(197, 168, 128, .55);
+  background: var(--tg-forest-hover);
+  color: var(--tg-champagne);
+  outline: none;
+}
+
+.tg-creative-rail__signature { margin-top: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tg-creative-rail__item { transition: none; }
+}
+
 /* Unlayered TG overrides intentionally outrank Tailwind's layered utilities.
    DramaClaw keeps its full layout and behavior while direct cyan/black utility
    classes are mapped onto the TG forest/champagne palette. */
@@ -1826,4 +1967,66 @@ button:hover .st-keyframe-video-play {
     --ui-glow-accent: 0 0 24px rgba(197,168,128,.18); --font-family-ui-default: 'DM Sans', system-ui, sans-serif;
   }
 
+}
+
+/* TG Criativo final cascade: canonical light tokens follow every upstream rule. */
+:root {
+  --tg-forest: #19382B;
+  --tg-forest-light: #2A5541;
+  --tg-champagne: #C5A880;
+  --tg-champagne-light: #D8C3A5;
+  --tg-off-white: #F7F5F0;
+  --tg-white: #FFFFFF;
+  --tg-ink: #16231D;
+  --tg-muted: #66736B;
+  --tg-border: #E3E1DA;
+  --tg-radius: 12px;
+  --background: var(--tg-off-white);
+  --foreground: var(--tg-ink);
+  --card: var(--tg-white);
+  --card-foreground: var(--tg-ink);
+  --popover: var(--tg-white);
+  --popover-foreground: var(--tg-ink);
+  --primary: var(--tg-forest);
+  --primary-foreground: var(--tg-white);
+  --secondary: var(--tg-off-white);
+  --secondary-foreground: var(--tg-ink);
+  --muted: #EEECE6;
+  --muted-foreground: var(--tg-muted);
+  --accent: var(--tg-champagne);
+  --accent-foreground: var(--tg-ink);
+  --border: var(--tg-border);
+  --input: var(--tg-border);
+  --ring: var(--tg-champagne);
+  color-scheme: light;
+}
+
+html,
+html.dark,
+body,
+html.dark body,
+#root,
+html.dark #root {
+  background: var(--tg-off-white) !important;
+  color: var(--tg-ink) !important;
+}
+
+html.dark {
+  --background: var(--tg-off-white);
+  --foreground: var(--tg-ink);
+  --card: var(--tg-white);
+  --card-foreground: var(--tg-ink);
+  --popover: var(--tg-white);
+  --popover-foreground: var(--tg-ink);
+  --primary: var(--tg-forest);
+  --primary-foreground: var(--tg-white);
+  --secondary: var(--tg-off-white);
+  --secondary-foreground: var(--tg-ink);
+  --muted: #EEECE6;
+  --muted-foreground: var(--tg-muted);
+  --accent: var(--tg-champagne);
+  --accent-foreground: var(--tg-ink);
+  --border: var(--tg-border);
+  --input: var(--tg-border);
+  --ring: var(--tg-champagne);
 }
