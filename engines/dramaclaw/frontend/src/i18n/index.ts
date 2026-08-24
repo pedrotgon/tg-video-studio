@@ -1,0 +1,70 @@
+// SPDX-License-Identifier: Elastic-2.0
+// Copyright (c) 2026 ClaymoreLab
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import HttpBackend from "i18next-http-backend";
+import { useAppStore } from "@/stores/app-store";
+import { BUILD_ID } from "@/lib/app-version";
+
+const SUPPORTED = ["pt", "en", "zh"] as const;
+type Supported = (typeof SUPPORTED)[number];
+
+export function normalize(lng: string | undefined): Supported {
+  const two = (lng ?? "").slice(0, 2).toLowerCase();
+  return (SUPPORTED as readonly string[]).includes(two) ? (two as Supported) : "pt";
+}
+
+function initialLanguage(): Supported {
+  if (typeof window !== "undefined") {
+    const queryLanguage = new URLSearchParams(window.location.search).get("lng");
+    if (queryLanguage) return normalize(queryLanguage);
+  }
+  return normalize(useAppStore.getState().language || "pt");
+}
+
+i18n
+  .use(HttpBackend)
+  .use(initReactI18next)
+  .init({
+    // TG Video Studio defaults to Brazilian Portuguese.
+    lng: initialLanguage(),
+    fallbackLng: "pt",
+    supportedLngs: [...SUPPORTED],
+    // Regional language variants collapse to their two-letter locale.
+    load: "languageOnly",
+    defaultNS: "translation",
+    backend: {
+      // 翻译 JSON 是静态文件、会被浏览器/CDN 长期缓存。不带版本号时，发版后新增的
+      // key 在老用户那里仍读旧缓存 → 直接显示成原始 key（如 ingest.reuploadConfirm.*）。
+      // 按 BUILD_ID 加 query 破缓存：每次构建 URL 变化拉到新文件，同一构建内仍走缓存。
+      // 用 BUILD_ID 而非 APP_VERSION —— 后者在 CI 不注入时是个固定默认值，两次发版
+      // 长得一样，缓存就破不掉了。
+      loadPath: `/locales/{{lng}}/{{ns}}.json?v=${encodeURIComponent(BUILD_ID)}`,
+    },
+    interpolation: {
+      escapeValue: false,
+    },
+  });
+
+// Keep the app-store's `language` field AND `<html lang>` in lockstep with
+// what i18next actually resolved. Without this, the switcher (which reads
+// app-store) can show a different pill than the page is rendered in — the
+// drift we hit when different persistence layers disagreed on the language.
+function syncResolvedLanguage() {
+  const lng = normalize(i18n.resolvedLanguage ?? i18n.language);
+  if (useAppStore.getState().language !== lng) {
+    useAppStore.setState({ language: lng });
+  }
+  if (typeof document !== "undefined" && document.documentElement.lang !== lng) {
+    document.documentElement.lang = lng;
+  }
+}
+
+if (i18n.isInitialized) {
+  syncResolvedLanguage();
+} else {
+  i18n.on("initialized", syncResolvedLanguage);
+}
+i18n.on("languageChanged", syncResolvedLanguage);
+
+export default i18n;
