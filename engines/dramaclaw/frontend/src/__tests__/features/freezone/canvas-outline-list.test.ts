@@ -44,7 +44,7 @@ describe("buildCanvasOutline", () => {
 
     expect(outline.map((item) => [item.id, item.kind, item.name])).toEqual([
       ["a", "node", "封面"],
-      ["b", "node", "视频"],
+      ["b", "node", "Vídeo"],
     ]);
   });
 

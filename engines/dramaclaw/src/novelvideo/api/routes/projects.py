@@ -76,9 +76,9 @@ logger = logging.getLogger("novelvideo.api.projects")
 router = APIRouter()
 VOICE_SOURCE_ROOTS = ("audio", "seedance2_uploads", "assets", "uploads")
 NARRATOR_VOICE_MODE_EXPLANATION = (
-    "第一人称解说使用解说主角声线；第三人称解说使用项目解说声线。"
+    "A narração em primeira pessoa usa a voz da identidade principal; a narração em terceira pessoa usa a voz do projeto."
 )
-SUPPORTED_VOICE_SAMPLE_COPY = "仅支持 mp3 / wav / m4a / aac / ogg"
+SUPPORTED_VOICE_SAMPLE_COPY = "São aceitos somente arquivos mp3, wav, m4a, aac ou ogg."
 
 
 async def _ensure_commercial_plan(
@@ -294,19 +294,19 @@ def _narrator_voice_display_lines(
     if style == "first_person":
         detail = _narrator_identity_detail(resolution)
         return {
-            "heading": "第一人称解说主角声线",
-            "detail": f"当前为第一人称：使用 {detail}",
+            "heading": "Voz do narrador em primeira pessoa",
+            "detail": f"Narração em primeira pessoa usando {detail}",
             "explanation": NARRATOR_VOICE_MODE_EXPLANATION,
         }
 
     if resolution.audio_path:
         detail = _project_relative_path(project_dir, resolution.audio_path)
     else:
-        detail = resolution.error or "第三人称项目解说声线未配置"
+        detail = resolution.error or "Voz de narração do projeto não configurada"
     return {
-        "heading": "第三人称项目解说声线",
+        "heading": "Voz de narração do projeto",
         "detail": detail,
-        "explanation": "第三人称解说使用项目级声线；所有非对白 Beat 使用同一声线。",
+        "explanation": "A narração em terceira pessoa usa a voz do projeto em todos os quadros sem diálogo.",
     }
 
 

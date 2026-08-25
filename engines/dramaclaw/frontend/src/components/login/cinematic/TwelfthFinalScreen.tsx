@@ -39,7 +39,7 @@ export function TwelfthFinalScreen({
       <div className={styles.content}>
         <img
           className={styles.mark}
-          src="/login-cinematic/final-mark.png"
+          src={`${import.meta.env.BASE_URL}login-cinematic/final-mark.png`}
           alt=""
           draggable={false}
           aria-hidden="true"

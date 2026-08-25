@@ -1202,8 +1202,8 @@ def _seedance2_voice_status_payload(
         return {
             "required": False,
             "ready": True,
-            "label": "无音频",
-            "detail": "静音 Beat 不生成音频",
+            "label": "Sem áudio",
+            "detail": "Quadros silenciosos não geram áudio.",
             "speaker": "",
         }
     if audio_type == "dialogue":
@@ -1222,8 +1222,8 @@ def _seedance2_voice_status_payload(
         return {
             "required": True,
             "ready": ready,
-            "label": "声线就绪" if ready else "声线缺失",
-            "detail": "、".join(names) if names else "未指定 speaker",
+            "label": "Voz pronta" if ready else "Voz pendente",
+            "detail": ", ".join(names) if names else "Locutor não definido",
             "speaker": str(beat.get("speaker") or ""),
         }
 
@@ -1239,8 +1239,8 @@ def _seedance2_voice_status_payload(
     return {
         "required": True,
         "ready": bool(status.active_reference_path),
-        "label": "声线就绪" if status.active_reference_path else "声线缺失",
-        "detail": str(status.detail or status.error or "第三人称项目解说声线未配置"),
+        "label": "Voz pronta" if status.active_reference_path else "Voz pendente",
+        "detail": str(status.detail or status.error or "Voz de narração do projeto não configurada"),
         "speaker": "NARRATOR",
     }
 

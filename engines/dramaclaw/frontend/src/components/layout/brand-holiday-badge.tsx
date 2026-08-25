@@ -10,7 +10,7 @@ export function BrandHolidayBadge() {
   return (
     <div className="brand-holiday-badge" aria-label={label}>
       <video
-        src="/brand/party-founding-105.mp4"
+        src={`${import.meta.env.BASE_URL}brand/party-founding-105.mp4`}
         aria-hidden="true"
         autoPlay
         loop

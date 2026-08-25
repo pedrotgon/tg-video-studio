@@ -3,8 +3,8 @@
 export type ViewerPurpose = "mainline" | "freezone" | "asset" | "beat";
 
 export function viewerPurposeLabel(purpose: ViewerPurpose | undefined): string {
-  if (purpose === "freezone") return "自由世界";
-  if (purpose === "asset") return "主线资产取景";
-  if (purpose === "beat") return "主线 Beat 制作";
-  return "主线 pipeline";
+  if (purpose === "freezone") return "Canvas";
+  if (purpose === "asset") return "Biblioteca de ativos";
+  if (purpose === "beat") return "Produção de quadro";
+  return "Fluxo principal";
 }

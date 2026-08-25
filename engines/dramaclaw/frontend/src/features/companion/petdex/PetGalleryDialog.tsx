@@ -625,7 +625,7 @@ export function PetGalleryDialog({
         {mode === "gallery" ? (
           <div className="petdex-gallery-title-badge pointer-events-none absolute left-[14px] -top-[56px] z-10 h-[119px] w-[238px] -rotate-5">
             <img
-              src="/images/companion-title-ok-buddy.png"
+              src={`${import.meta.env.BASE_URL}images/companion-title-ok-buddy.png`}
               alt={t("myBuddy.companion.titleBadgeAlt")}
               className="petdex-gallery-title-badge__image h-full w-full object-contain object-left drop-shadow-[0_12px_18px_rgba(0,0,0,0.45)]"
               draggable={false}

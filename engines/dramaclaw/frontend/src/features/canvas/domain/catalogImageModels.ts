@@ -90,7 +90,7 @@ export function toImageModelDefinition(
       // 配置的模型对不上，后端 `_catalog_image_execution_selection` 直接 400。
       // 加前缀后拆出来正是 (openrouter, google/gemini-2.5-flash-image-preview)。
       requestModel: `${info.providerId}/${info.apiModel}`,
-      modeLabel: referenceImageCount > 0 ? '编辑' : '生成',
+      modeLabel: referenceImageCount > 0 ? 'Editar' : 'Gerar',
     }),
   };
 }
@@ -167,5 +167,5 @@ export const EMPTY_CATALOG_IMAGE_MODEL: ImageModelDefinition = toImageModelDefin
   id: '',
   providerId: '',
   apiModel: '',
-  label: '无可用模型',
+  label: 'Nenhum modelo disponível',
 });

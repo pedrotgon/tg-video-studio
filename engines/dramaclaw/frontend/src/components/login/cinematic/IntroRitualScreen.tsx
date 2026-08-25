@@ -39,7 +39,7 @@ export function IntroRitualScreen({
         <div className={styles.hudBottomRight}>4K · 24FPS</div>
         <img
           className={styles.brandMark}
-          src="/login-cinematic/final-mark.png"
+          src={`${import.meta.env.BASE_URL}login-cinematic/final-mark.png`}
           alt=""
           aria-hidden="true"
           draggable={false}

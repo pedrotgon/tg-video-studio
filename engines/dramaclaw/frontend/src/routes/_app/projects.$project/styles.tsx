@@ -274,6 +274,7 @@ function StyleListItem({
   onSelect: () => void;
 }) {
   const { t } = useTranslation();
+  const [hasPreviewError, setHasPreviewError] = useState(false);
   const preset = isPreset(style);
   const presetLabelKey = BUILTIN_STYLE_LABEL_KEYS[style.id];
   const display =
@@ -292,12 +293,13 @@ function StyleListItem({
           : "border-transparent bg-transparent",
       )}
     >
-      {previewSrc ? (
+      {previewSrc && !hasPreviewError ? (
         <img
           src={previewSrc}
           alt={display}
           loading="lazy"
           className="size-9 shrink-0 rounded-[6px] border border-white/10 object-cover"
+          onError={() => setHasPreviewError(true)}
         />
       ) : (
         <span className="flex size-9 shrink-0 items-center justify-center rounded-[6px] border border-white/10 bg-white/[0.025]">

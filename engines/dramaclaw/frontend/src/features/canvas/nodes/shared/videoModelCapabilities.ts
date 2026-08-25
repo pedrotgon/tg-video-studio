@@ -534,7 +534,7 @@ export function videoSubmitMediaRejectionReason(
   counts: { images: number; videos: number; audios: number },
 ): string | null {
   if (counts.videos > 0 && mode !== "allReference" && mode !== "videoEdit") {
-    return "该模型不支持视频素材";
+    return "Este modelo não aceita vídeo como referência.";
   }
   const videoEditAcceptsAudio =
     mode === "videoEdit" &&
@@ -544,10 +544,10 @@ export function videoSubmitMediaRejectionReason(
     typeof model.referenceAudioMax === "number" &&
     model.referenceAudioMax > 0;
   if (counts.audios > 0 && mode !== "allReference" && !videoEditAcceptsAudio) {
-    return "该模型不支持音频素材";
+    return "Este modelo não aceita áudio como referência.";
   }
   if (counts.images > 1 && !videoModelAcceptsMultipleImages(model)) {
-    return "该模型单次仅支持 1 张图片";
+    return "Este modelo aceita somente uma imagem por vez.";
   }
   return null;
 }
@@ -582,42 +582,42 @@ export function videoModelReferenceDisabledReason(
     const supportsAllReference = isVideoModeSupportedByModel("allReference", model);
     const supportsVideoEdit = isVideoModeSupportedByModel("videoEdit", model);
     if (counts.videos > 0 && !supportsAllReference && !supportsVideoEdit) {
-      return "该模型不支持视频素材";
+      return "Este modelo não aceita vídeo como referência.";
     }
     const supportsVideoEditAudio =
       supportsVideoEdit &&
       typeof model.referenceAudioMax === "number" &&
       model.referenceAudioMax > 0;
     if (counts.audios > 0 && !supportsAllReference && !supportsVideoEditAudio) {
-      return "该模型不支持音频素材";
+      return "Este modelo não aceita áudio como referência.";
     }
     if (counts.images > 1 && !videoModelAcceptsMultipleImages(model)) {
-      return "该模型单次仅支持 1 张图片";
+      return "Este modelo aceita somente uma imagem por vez.";
     }
     return null;
   }
   const modelId = videoModelIdOf(model);
   if (isGrokVideoChannelModel(modelId)) {
     if (counts.videos > 0 || counts.audios > 0) {
-      return "Grok Video Channel 仅支持图片素材";
+      return "Grok Video Channel aceita somente imagens como referência.";
     }
     if (counts.images > 8) {
-      return "Grok Video Channel 最多支持 1 张首帧和 7 张参考图";
+      return "Grok Video Channel aceita uma imagem inicial e até sete referências.";
     }
     return null;
   }
   if (isHappyHorseVideoModel(modelId)) {
     if (counts.audios > 0) {
-      return "该模型不支持音频素材";
+      return "Este modelo não aceita áudio como referência.";
     }
     return null;
   }
   if (isSeedance1xVideoModel(modelId)) {
     if (counts.videos > 0 || counts.audios > 0) {
-      return "该模型仅支持图片素材";
+      return "Este modelo aceita somente imagens como referência.";
     }
     if (counts.images > 1) {
-      return "该模型单次仅支持 1 张图片";
+      return "Este modelo aceita somente uma imagem por vez.";
     }
   }
   return null;

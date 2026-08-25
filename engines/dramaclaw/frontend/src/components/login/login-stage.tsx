@@ -26,7 +26,7 @@ export function Brand({ className }: { className?: string }) {
     <div className={className ?? styles.brand} aria-label="DramaClaw">
       <img
         className={styles.brandLogo}
-        src="/brand/dramaclaw-wordmark.png"
+        src={`${import.meta.env.BASE_URL}brand/dramaclaw-wordmark.png`}
         alt=""
         aria-hidden="true"
       />

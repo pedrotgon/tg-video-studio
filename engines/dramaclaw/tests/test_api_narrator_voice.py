@@ -156,3 +156,21 @@ def test_narrator_voice_delete_renames_file_and_clears_metadata(monkeypatch, tmp
     assert project_config.load_narrator_reference_audio("admin", "demo")["path"] == ""
     assert not target.exists()
     assert list((project_dir / "assets/narrator").glob("voice_*.wav"))
+
+
+def test_narrator_voice_status_uses_pt_br_copy_when_reference_is_missing(tmp_path):
+    from novelvideo.api.routes.projects import _narrator_voice_display_lines
+
+    display = _narrator_voice_display_lines(
+        "third_person",
+        SimpleNamespace(audio_path="", error=""),
+        tmp_path,
+    )
+
+    assert display == {
+        "heading": "Voz de narração do projeto",
+        "detail": "Voz de narração do projeto não configurada",
+        "explanation": (
+            "A narração em terceira pessoa usa a voz do projeto em todos os quadros sem diálogo."
+        ),
+    }

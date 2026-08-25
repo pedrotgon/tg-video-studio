@@ -20,43 +20,29 @@ const CJK = /[\u3400-\u9fff]/;
 
 const findings = [];
 
-/** Path patterns explicitly designated as internal backend contracts, engine schemas, or AI prompt compilers */
-const CONTRACT_PATH_PATTERNS = [
-  /\/features\/freezone\/capabilities\//,
-  /\/features\/freezone\/commit\//,
-  /\/features\/freezone\/context\//,
-  /\/features\/canvas\/application\//,
-  /\/features\/canvas\/domain\//,
-  /scene-environment-contract\.ts$/,
-  /audio-prereqs\.ts$/,
-  /spec-extract\.ts$/,
-  /task-notification-label\.ts$/,
-  /directorManifest\.ts$/,
-  /poses\.ts$/,
-  /viewerApp\.ts$/,
-  /viewerPurpose\.ts$/,
-  /shotMetadataStore\.ts$/,
-  /api-errors\.ts$/,
-  /audio-type\.ts$/,
-  /scene-type\.ts$/,
-  /time-of-day\.ts$/,
-  /login-community\.ts$/,
-  /project-permissions\.ts$/,
-  /character-main-copy\.ts$/,
-  /dom-reconciliation-guard\.ts$/,
-  /skill-i18n\.ts$/,
-  /assetLibraryItems\.ts$/,
-  /assetDropStore\.ts$/,
-  /canvasStore\.ts$/,
-  /huimeng\.ts$/,
-  /media\.ts$/,
-  /use-superchat\.ts$/,
-  /canvasSyncCore\.ts$/,
-  /videoModelCapabilities\.ts$/,
+/**
+ * All React surfaces are audited. Plain TypeScript is included only when it
+ * supplies labels, errors or menu entries rendered by the UI. Prompt compilers
+ * and protocol adapters remain out of scope because their strings are model or
+ * backend contracts, not interface copy.
+ */
+const USER_FACING_TS_PATHS = [
+  /\/features\/viewer-kit\/viewerPurpose\.ts$/,
+  /\/features\/canvas\/domain\/(cameraMovementPresets|catalogImageModels|groupColors|nodeDisplay)\.ts$/,
+  /\/features\/canvas\/nodes\/shared\/videoModelCapabilities\.ts$/,
 ];
 
-function isContractPath(path) {
-  return CONTRACT_PATH_PATTERNS.some((pattern) => pattern.test(path));
+function isUserFacingSource(path) {
+  return path.endsWith(".tsx") || USER_FACING_TS_PATHS.some((pattern) => pattern.test(path));
+}
+
+function isLegacyInputAlias(node) {
+  const parent = node.parent;
+  return (
+    ts.isCallExpression(parent) &&
+    ts.isPropertyAccessExpression(parent.expression) &&
+    parent.expression.name.text === "includes"
+  );
 }
 
 function sourceFiles(directory) {
@@ -75,14 +61,11 @@ function sourceFiles(directory) {
 const allFiles = sourceFiles(resolve(frontend, "src")).filter((p) => {
   if (p.includes("/__tests__/") || p.includes("/__mocks__/")) return false;
   if (p.endsWith(".test.ts") || p.endsWith(".test.tsx")) return false;
-  return true;
+  return isUserFacingSource(p);
 });
 
 for (const path of allFiles) {
   const relPath = relative(root, path);
-
-  // If this file is a known backend contract or schema file, skip checking its internal protocol literals
-  if (isContractPath(path)) continue;
 
   const source = readFileSync(path, "utf8");
   const file = ts.createSourceFile(
@@ -97,7 +80,9 @@ for (const path of allFiles) {
     const stringLike = ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node);
     const jsxText = ts.isJsxText(node);
 
-    if ((stringLike || jsxText) && CJK.test(node.text)) {
+    // Chinese aliases accepted by String#includes are migration inputs for
+    // pre-localized canvases. They are never rendered as interface copy.
+    if ((stringLike || jsxText) && CJK.test(node.text) && !isLegacyInputAlias(node)) {
       const start = jsxText ? node.pos : node.getStart(file);
       const line = file.getLineAndCharacterOfPosition(start).line + 1;
       findings.push({

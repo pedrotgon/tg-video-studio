@@ -1418,7 +1418,7 @@ export const ThreeDWorldNode = memo(({ id, data, selected, width, height }: Thre
           >
             <video
               ref={entryMotionRef}
-              src="/images/btnmotion.mp4"
+              src={`${import.meta.env.BASE_URL}images/btnmotion.mp4`}
               className="block h-auto select-none"
               style={{ width: '100%' }}
               autoPlay={!lowDetailZoom}

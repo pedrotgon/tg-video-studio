@@ -1224,7 +1224,7 @@ function FreezoneChatToggleButton({
       onClick={handleClick}
     >
       <img
-        src="/images/avatar-claw.png"
+        src={`${import.meta.env.BASE_URL}images/avatar-claw.png`}
         alt=""
         className={cn(
           "absolute inset-0 size-full rounded-full object-cover transition-opacity duration-[350ms] ease-out",
@@ -1234,7 +1234,7 @@ function FreezoneChatToggleButton({
       />
       <video
         ref={videoRef}
-        src="/images/avatar-motion.mp4"
+        src={`${import.meta.env.BASE_URL}images/avatar-motion.mp4`}
         muted
         loop
         playsInline

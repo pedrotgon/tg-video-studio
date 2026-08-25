@@ -203,10 +203,10 @@ export function DownloadPage() {
       <header className={styles.top}>
         <div className={styles.topInner}>
           <a className={styles.brand} href="#top" aria-label="DramaClaw">
-            <img className={styles.brandMark} src="/brand/logo-d.png" alt="" aria-hidden="true" />
+            <img className={styles.brandMark} src={`${import.meta.env.BASE_URL}brand/logo-d.png`} alt="" aria-hidden="true" />
             <img
               className={styles.brandWordmark}
-              src="/brand/dramaclaw-wordmark.png"
+              src={`${import.meta.env.BASE_URL}brand/dramaclaw-wordmark.png`}
               alt="DramaClaw"
             />
           </a>
@@ -229,7 +229,7 @@ export function DownloadPage() {
               <img
                 className={clsx(styles.heroWordmark, styles.rise)}
                 data-reveal=""
-                src="/brand/dramaclaw-wordmark.png"
+                src={`${import.meta.env.BASE_URL}brand/dramaclaw-wordmark.png`}
                 alt="DramaClaw"
               />
 
@@ -451,7 +451,7 @@ export function DownloadPage() {
           <div className={styles.footerRow}>
             <img
               className={styles.footerWordmark}
-              src="/brand/dramaclaw-wordmark.png"
+              src={`${import.meta.env.BASE_URL}brand/dramaclaw-wordmark.png`}
               alt="DramaClaw"
             />
             <nav className={styles.footerLinks}>

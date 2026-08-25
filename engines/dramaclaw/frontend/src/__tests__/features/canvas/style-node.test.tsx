@@ -110,7 +110,7 @@ describe("StyleNode", () => {
       "/style-gallery/golden_age/cover.webp",
     );
     // 标题带上分类，换风格时跟着变；卡片里不再有第二处风格名。
-    expect(screen.getByText("风格 · 年代 · 黄金时代")).toBeInTheDocument();
+    expect(screen.getByText("Estilo · 年代 · 黄金时代")).toBeInTheDocument();
     expect(screen.queryByText("黄金时代")).not.toBeInTheDocument();
   });
 

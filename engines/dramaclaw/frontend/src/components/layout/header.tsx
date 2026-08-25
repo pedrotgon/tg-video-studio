@@ -229,7 +229,7 @@ export function Header() {
                 }
               >
                 <img
-                  src="/brand/dramaclaw-wordmark.png"
+                  src={`${import.meta.env.BASE_URL}brand/dramaclaw-wordmark.png`}
                   alt=""
                   aria-hidden="true"
                   className="h-[22.7px] w-auto max-w-[113px] object-contain"
@@ -307,7 +307,7 @@ export function Header() {
             aria-label={t("myBuddy.companion.entry")}
           >
             <img
-              src="/piko/entry/companion-capsule.png"
+              src={`${import.meta.env.BASE_URL}piko/entry/companion-capsule.png`}
               alt=""
               aria-hidden="true"
               className="companion-capsule-entry__icon size-[22px] object-contain [image-rendering:pixelated]"
