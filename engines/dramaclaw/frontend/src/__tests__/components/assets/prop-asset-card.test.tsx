@@ -83,7 +83,7 @@ describe("PropAssetCard", () => {
 
     expect(screen.getByText("Espada Sete Estrelas")).toBeInTheDocument();
     expect(screen.getByText("Arma")).toBeInTheDocument();
-    expect(screen.getByText("Personagem：Li Qing")).toBeInTheDocument();
+    expect(screen.getByText("Personagem: Li Qing")).toBeInTheDocument();
     expect(screen.getByText("Imagem de referência Gerado")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Regerar referência" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Enviar referência" })).toBeInTheDocument();

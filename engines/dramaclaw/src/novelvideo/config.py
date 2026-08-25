@@ -250,7 +250,10 @@ def get_newapi_text_pydantic_model(
         env_base_url="MODEL_BASE_URL",
     )
     if not api_key:
-        raise ValueError("API key not set. Configure DramaClawAPI credentials.")
+        raise ValueError(
+            "A geração com IA ainda não está configurada. "
+            "Abra Configurações > Modelos e canais e informe uma chave de API válida."
+        )
     timeout_seconds = (
         float(timeout_seconds_override)
         if timeout_seconds_override is not None

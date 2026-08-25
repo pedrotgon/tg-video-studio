@@ -287,7 +287,7 @@ describe("asset panel rename behavior", () => {
     nativeConfirm.mockRestore();
   });
 
-  it("shows scene naming rules and submits the selected Chinese scene type as canonical value", async () => {
+  it("shows scene naming rules and submits the selected scene type as canonical value", async () => {
     const user = userEvent.setup();
     let postBody: unknown = null;
     server.use(
@@ -315,7 +315,7 @@ describe("asset panel rename behavior", () => {
       target: { value: "Bathroom_Leak" },
     });
     await user.click(screen.getByRole("combobox", { name: "Scene type" }));
-    await user.click(await screen.findByRole("option", { name: "室外" }));
+    await user.click(await screen.findByRole("option", { name: "Externo" }));
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() => expect(postBody).toBeDefined());
@@ -325,7 +325,7 @@ describe("asset panel rename behavior", () => {
     });
   });
 
-  it("renders extracted scene type codes as Chinese labels in the scene list", async () => {
+  it("renders extracted scene type codes as localized labels in the scene list", async () => {
     server.use(
       http.get("http://localhost:3000/api/v1/projects/demo/scenes", () =>
         HttpResponse.json({
@@ -338,7 +338,7 @@ describe("asset panel rename behavior", () => {
     renderWithProviders(<ScenesPanel project="demo" />);
 
     expect(await screen.findAllByText("Hall")).not.toHaveLength(0);
-    expect(screen.getByText("室内")).toBeInTheDocument();
+    expect(screen.getByText("Interno")).toBeInTheDocument();
     expect(screen.queryByText("interior")).not.toBeInTheDocument();
   });
 

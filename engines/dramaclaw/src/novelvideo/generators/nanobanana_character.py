@@ -175,7 +175,10 @@ class NanoBananaCharacterGenerator:
                 key_name = "OPENAI_API_KEY"
             else:
                 key_name = "GOOGLE_AI_API_KEY"
-            raise ValueError(f"API key not set. " f"Set {key_name} environment variable.")
+            raise ValueError(
+                "A geração de pessoas ainda não está configurada. "
+                f"Informe {key_name} em Configurações > Modelos e canais."
+            )
 
         print(f"[NanoBanana Character] Provider: {self.provider}, Model: {self.model}")
 

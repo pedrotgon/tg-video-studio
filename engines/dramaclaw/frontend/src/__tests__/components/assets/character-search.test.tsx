@@ -72,7 +72,7 @@ describe("CharacterSearch", () => {
       />,
     );
 
-    const input = screen.getByRole("searchbox", { name: "Search characters" });
+    const input = screen.getByRole("searchbox", { name: "Buscar pessoas" });
     expect(input).toHaveValue("jun");
     expect(input).toHaveAttribute("placeholder", "Search cast");
 
@@ -93,7 +93,7 @@ describe("CharacterSearch", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Clear character search" }));
+    await user.click(screen.getByRole("button", { name: "Limpar busca de pessoas" }));
     expect(onValueChange).toHaveBeenCalledWith("");
 
     rerender(
@@ -104,6 +104,8 @@ describe("CharacterSearch", () => {
         totalCount={3}
       />,
     );
-    expect(screen.queryByRole("button", { name: "Clear character search" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Limpar busca de pessoas" }),
+    ).not.toBeInTheDocument();
   });
 });

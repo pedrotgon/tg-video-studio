@@ -1244,7 +1244,7 @@ function DetailsFormCard({
               value={aliases}
               onChange={(e) => setAliases(e.target.value)}
               onBlur={handleBlurAliases}
-              placeholder={`${t("characters.aliasesPlaceholder")}，${t(
+              placeholder={`${t("characters.aliasesPlaceholder")} — ${t(
                 "characters.basics.aliasesHint",
               )}`}
               className={CHARACTER_INPUT_CLASS}
@@ -1305,7 +1305,7 @@ function DetailsFormCard({
               value={facePrompt}
               onChange={(e) => setFacePrompt(e.target.value)}
               onBlur={handleBlurFacePrompt}
-              placeholder="oval face, big eyes…"
+              placeholder={t("characters.basics.facePromptHint")}
             />
           </Field>
         </div>
@@ -2875,7 +2875,7 @@ function AddCharacterDialog({
               {t("characters.basics.facePrompt")}
             </Label>
             <Input
-              placeholder="oval face, big eyes"
+              placeholder={t("characters.basics.facePromptHint")}
               className={inputClass}
               {...register("face_prompt")}
             />

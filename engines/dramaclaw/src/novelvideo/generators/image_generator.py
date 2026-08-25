@@ -218,8 +218,8 @@ class VolcengineImageGenerator:
 
         if not self.api_key:
             raise ValueError(
-                "API key not set. "
-                "Set VOLCENGINE_VISUAL_API_KEY or ARK_API_KEY environment variable."
+                "A geração de imagens ainda não está configurada. "
+                "Abra Configurações > Modelos e canais e informe uma chave de API válida."
             )
 
     def _compress_image(

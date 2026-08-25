@@ -732,7 +732,7 @@ class TaskStateManager:
                 return False
             state.status = "running"
             state.progress = max(float(state.progress or 0.0), 0.01)
-            state.current_task = "任务已开始"
+            state.current_task = "Tarefa iniciada"
             if metadata is not None:
                 state.metadata = self._merge_task_metadata(state.metadata, metadata)
                 state.result = self._merge_metadata_into_result(state.result, state.metadata)

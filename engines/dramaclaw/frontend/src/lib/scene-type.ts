@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Elastic-2.0
 // Copyright (c) 2026 ClaymoreLab
 export const SCENE_TYPE_OPTIONS = [
-  { value: "interior", label: "室内" },
-  { value: "exterior", label: "室外" },
-  { value: "mixed", label: "室内外" },
-  { value: "other", label: "其他" },
+  { value: "interior", label: "Interno" },
+  { value: "exterior", label: "Externo" },
+  { value: "mixed", label: "Interno e externo" },
+  { value: "other", label: "Outro" },
 ] as const;
 
 const SCENE_TYPE_LABELS = new Map<string, string>(

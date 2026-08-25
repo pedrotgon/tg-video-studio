@@ -3930,7 +3930,10 @@ class NanoBananaGridGenerator:
                 key_name = "NEWAPI_API_KEY"
             else:
                 key_name = "GOOGLE_AI_API_KEY"
-            raise ValueError(f"API key not set. Set {key_name} environment variable.")
+            raise ValueError(
+                "A geração de quadros ainda não está configurada. "
+                f"Informe {key_name} em Configurações > Modelos e canais."
+            )
 
         print(f"[NanoBanana Grid] Provider: {self.provider}, Model: {self.model}")
 

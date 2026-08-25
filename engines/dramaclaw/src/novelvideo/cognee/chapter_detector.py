@@ -107,7 +107,7 @@ class ChapterDetector:
             if fallback_content:
                 chapters.append(ChapterInfo(
                     number=1,
-                    title="第1章",
+                    title="Briefing",
                     start_line=0,
                     end_line=len(fallback_content.splitlines()) or len(lines),
                     content=fallback_content,

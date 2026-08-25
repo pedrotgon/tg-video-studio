@@ -196,6 +196,47 @@ async def test_generate_rewrite_applies_output_to_beat_source_text(monkeypatch) 
 
 
 @pytest.mark.asyncio
+async def test_generate_rewrite_uses_edited_beat_source_when_raw_content_is_empty(
+    monkeypatch,
+) -> None:
+    from novelvideo.agents import content_rewriter
+    from novelvideo.api.routes import content
+    from novelvideo.api.schemas import RewriteGenerateRequest
+
+    received: list[str] = []
+
+    async def fake_rewrite_episode_content(source: str, **kwargs):
+        received.append(source)
+        return "Narração revisada"
+
+    monkeypatch.setattr(
+        content_rewriter, "rewrite_episode_content", fake_rewrite_episode_content
+    )
+    monkeypatch.setattr(content, "get_usage_meter", lambda: _UsageMeter())
+
+    async def fake_resolve_project_scope(*args, **kwargs):
+        return SimpleNamespace(
+            ctx=SimpleNamespace(project_id="project-1", requester_user_id="user-1")
+        )
+
+    monkeypatch.setattr(content, "resolve_project_scope", fake_resolve_project_scope)
+    store = _RewriteRouteStore()
+    store.episode.raw_content = ""
+    store.episode.beat_source_text = "Texto comercial editado na interface"
+
+    response = await content.generate_rewrite(
+        project="demo",
+        episode_num=1,
+        body=RewriteGenerateRequest(),
+        user={"username": "admin"},
+        store=store,
+    )
+
+    assert response["ok"] is True
+    assert received == ["Texto comercial editado na interface"]
+
+
+@pytest.mark.asyncio
 async def test_generate_rewrite_uses_evidence_settlement_on_failure(monkeypatch) -> None:
     from novelvideo.agents import content_rewriter
     from novelvideo.api.routes import content

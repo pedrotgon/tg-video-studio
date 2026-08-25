@@ -231,7 +231,7 @@ describe("SceneAssetCard", () => {
     expect(handlers.onOpenStageViewer).toHaveBeenCalledOnce();
   });
 
-  it("renders scene type badges in Chinese", () => {
+  it("renders scene type badges in Portuguese", () => {
     renderCard({
       name: "雨夜巷口",
       scene_type: "exterior",
@@ -241,7 +241,7 @@ describe("SceneAssetCard", () => {
       notes: "",
     });
 
-    expect(screen.getByText("室外")).toBeInTheDocument();
+    expect(screen.getByText("Externo")).toBeInTheDocument();
     expect(screen.queryByText("exterior")).not.toBeInTheDocument();
   });
 });

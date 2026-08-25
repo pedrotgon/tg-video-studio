@@ -122,11 +122,20 @@ async def generate_rewrite(
     这里故意不搬旧任务实现；2.0 后续可以把这个 adapter 包进
     新任务系统，但 adapter 与存储契约先稳定下来。
     """
-    raw_content = (await store.load_episode_content(episode_num) or "").strip()
-    if not raw_content:
+    episode = store.get_episode(episode_num)
+    source_content = str(
+        getattr(episode, "beat_source_text", "")
+        or await store.load_episode_content(episode_num)
+        or getattr(episode, "raw_content", "")
+        or ""
+    ).strip()
+    if not source_content:
         return {
             "ok": False,
-            "error": f"第 {episode_num} 集尚未有原文，请先填写 raw-content",
+            "error": (
+                f"O criativo {episode_num} ainda não possui texto-base. "
+                "Preencha o texto antes de gerar a narração."
+            ),
         }
 
     resolved = await resolve_project_scope(project, user, required_role="editor")
@@ -176,14 +185,13 @@ async def generate_rewrite(
             billing_metadata=model_billing_metadata,
         )
         await store.load_graph_state()
-        episode = store.get_episode(episode_num)
         episode_title = getattr(episode, "title", "") if episode else ""
         narrator_main_name = _resolve_narrator_main_name(store)
 
         from novelvideo.agents.content_rewriter import rewrite_episode_content
 
         rewritten = await rewrite_episode_content(
-            raw_content,
+            source_content,
             episode_title=episode_title,
             protagonist_name=narrator_main_name,
             target_beats=body.target_beats,
@@ -191,7 +199,7 @@ async def generate_rewrite(
             narration_style=body.narration_style or "first_person",
         )
         normalized = rewritten.strip()
-        if normalized == raw_content:
+        if normalized == source_content:
             normalized = ""
         await store.save_adapted_content(episode_num, normalized)
         await store.update_episode(episode_num, beat_source_text=normalized)

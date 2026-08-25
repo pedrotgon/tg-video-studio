@@ -3,6 +3,7 @@
 import asyncio
 import json
 import logging
+import re
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -35,67 +36,110 @@ router = APIRouter()
 _SSE_REVERIFY_INTERVAL_S = 30.0
 _TASK_NOT_FOUND_GRACE_S = 10.0
 _TASK_TYPE_LABELS = {
-    "ingest_fast": "快速导入",
-    "build_characters": "构建角色",
-    "build_scenes": "构建场景",
-    "build_props": "构建道具",
-    "build_episodes": "规划剧集",
-    "identity_planner": "规划身份",
-    "script_writer": "生成剧本",
-    "beat_video_prompt": "生成提示词",
-    "literal_script_writer": "生成解说稿",
-    "director_notes": "导演说明",
-    "episode_scene_planner": "规划场景",
-    "episode_prop_planner": "规划道具",
-    "character_portrait": "角色定妆",
-    "identity_image": "身份定妆",
-    "scene_reference_asset": "场景参考图",
-    "prop_reference_asset": "道具参考图",
-    "sketch_generation": "生成草图",
-    "director_control_to_sketch": "导演台转草图",
-    "sketch_grid_generation": "生成草图网格",
-    "sketch_regen": "重生成草图",
-    "mainline_sketch_from_context": "生成草图",
-    "mainline_frame_from_context": "渲染分镜",
-    "selected_regen": "重生成选区",
-    "grid_regenerate": "重生成网格",
-    "single_video": "生成单镜视频",
-    "global_optimize_video": "全局优化视频",
-    "compose_episode": "合成剧集",
-    "audio_generation": "生成音频",
-    "indextts2_audio_generation": "生成音频",
-    "audio_generation_indextts2": "生成音频",
-    "freezone_video_gen": "自由区视频",
-    "stage_asset": "场景资产",
-    "freezone_gen": "虾画生成",
-    "freezone_edit": "虾画编辑",
-    "freezone_mask_edit": "局部编辑",
-    "freezone_extract": "视频抽帧",
-    "freezone_analyze": "视频分析",
-    "freezone_video_story": "视频解读",
-    "freezone_video_erase": "视频擦除",
-    "freezone_video_upscale": "视频放大",
-    "freezone_audio_separate": "音频分离",
-    "freezone_video_compose": "视频合成",
-    "freezone_text_translate": "字幕翻译",
-    "freezone_text_generate": "AI 文本生成",
-    "freezone_story_script": "生成故事脚本",
-    "freezone_script_to_video_plan": "脚本转视频计划",
-    "freezone_audio_speech": "生成语音",
-    "freezone_audio_eleven_music": "生成音乐",
-    "freezone_image_to_3gs": "图片转世界",
-    "freezone_image_reverse_prompt": "图片反推提示词",
+    "ingest_fast": "Importação rápida",
+    "build_characters": "Criar pessoas",
+    "build_scenes": "Criar ambientes",
+    "build_props": "Criar objetos",
+    "build_episodes": "Planejar criativos",
+    "identity_planner": "Planejar identidades",
+    "script_writer": "Gerar roteiro",
+    "beat_video_prompt": "Gerar instruções de vídeo",
+    "literal_script_writer": "Gerar texto de narração",
+    "director_notes": "Criar direção visual",
+    "episode_scene_planner": "Planejar ambientes",
+    "episode_prop_planner": "Planejar objetos",
+    "character_portrait": "Criar retrato da pessoa",
+    "identity_image": "Criar identidade visual",
+    "scene_reference_asset": "Criar referência do ambiente",
+    "prop_reference_asset": "Criar referência do objeto",
+    "sketch_generation": "Gerar esboço",
+    "director_control_to_sketch": "Converter direção em esboço",
+    "sketch_grid_generation": "Gerar grade de esboços",
+    "sketch_regen": "Gerar esboço novamente",
+    "mainline_sketch_from_context": "Gerar esboço",
+    "mainline_frame_from_context": "Renderizar quadro",
+    "selected_regen": "Gerar seleção novamente",
+    "grid_regenerate": "Gerar grade novamente",
+    "single_video": "Gerar clipe",
+    "global_optimize_video": "Otimizar vídeo",
+    "compose_episode": "Montar criativo",
+    "audio_generation": "Gerar áudio",
+    "indextts2_audio_generation": "Gerar áudio",
+    "audio_generation_indextts2": "Gerar áudio",
+    "freezone_video_gen": "Gerar vídeo no Canvas",
+    "stage_asset": "Processar ambiente",
+    "freezone_gen": "Gerar imagem no Canvas",
+    "freezone_edit": "Editar imagem no Canvas",
+    "freezone_mask_edit": "Editar seleção",
+    "freezone_extract": "Extrair quadros do vídeo",
+    "freezone_analyze": "Analisar vídeo",
+    "freezone_video_story": "Interpretar vídeo",
+    "freezone_video_erase": "Remover elemento do vídeo",
+    "freezone_video_upscale": "Ampliar vídeo",
+    "freezone_audio_separate": "Separar áudio",
+    "freezone_video_compose": "Compor vídeo",
+    "freezone_text_translate": "Traduzir legendas",
+    "freezone_text_generate": "Gerar texto com IA",
+    "freezone_story_script": "Gerar roteiro",
+    "freezone_script_to_video_plan": "Planejar vídeo a partir do roteiro",
+    "freezone_audio_speech": "Gerar voz",
+    "freezone_audio_eleven_music": "Gerar música",
+    "freezone_image_to_3gs": "Converter imagem em ambiente 3D",
+    "freezone_image_reverse_prompt": "Interpretar instrução da imagem",
 }
 _STAGE_ASSET_STEP_LABELS = {
-    "pano_from_master": "Master 生成全景",
-    "pano_from_text": "文生全景",
-    "pano_sharp": "全景转 SOG",
-    "single_face_sharp": "单面转 SOG",
-    "voxel_world_from_360": "全景转体素",
-    "scene_360": "生成 360 全景",
-    "upload_package": "上传场景包",
-    "splat_collision": "生成碰撞体",
+    "pano_from_master": "Gerar panorama a partir da referência",
+    "pano_from_text": "Gerar panorama a partir do texto",
+    "pano_sharp": "Processar panorama",
+    "single_face_sharp": "Processar face do ambiente",
+    "voxel_world_from_360": "Converter panorama em mundo 3D",
+    "scene_360": "Gerar panorama 360°",
+    "upload_package": "Enviar pacote do ambiente",
+    "splat_collision": "Gerar colisões do ambiente",
 }
+_CJK_TEXT = re.compile(r"[\u3400-\u9fff]")
+
+
+def _localize_task_text(value: Any, *, task_type: str, status: str) -> Any:
+    """Prevent backend implementation messages from leaking into the pt-BR UI."""
+    if not isinstance(value, str) or not _CJK_TEXT.search(value):
+        return value
+    label = _TASK_TYPE_LABELS.get(task_type, "Tarefa")
+    if status == "completed":
+        return f"{label} concluída"
+    if status == "failed":
+        return f"{label} não concluída"
+    if status == "cancelled":
+        return f"{label} cancelada"
+    return f"{label} em andamento"
+
+
+def _localize_task_metadata(value: Any, *, task_type: str, status: str, key: str = "") -> Any:
+    """Sanitize implementation metadata before it reaches the Portuguese UI."""
+    if isinstance(value, list):
+        return [
+            _localize_task_metadata(item, task_type=task_type, status=status, key=key)
+            for item in value
+        ]
+    if isinstance(value, dict):
+        return {
+            str(item_key): _localize_task_metadata(
+                item,
+                task_type=task_type,
+                status=status,
+                key=str(item_key),
+            )
+            for item_key, item in value.items()
+        }
+    if not isinstance(value, str) or not _CJK_TEXT.search(value):
+        return value
+    if key == "source_label":
+        return "Origem"
+    if key == "target_label":
+        return "Destino"
+    if key == "scene_name":
+        return "Ambiente"
+    return _localize_task_text(value, task_type=task_type, status=status)
 
 
 def _effective_task_status(t: TaskState) -> str:
@@ -239,6 +283,8 @@ def _serialize_task(t: TaskState, *, ctx: ProjectContext | None = None) -> dict:
         )
     task_type_label = _TASK_TYPE_LABELS.get(t.task_type, t.task_type)
     metadata_display_name = str(metadata.get("display_name") or "").strip()
+    if _CJK_TEXT.search(metadata_display_name):
+        metadata_display_name = ""
     episode_label = f" · ep{t.episode}" if t.episode else ""
     display_name = metadata_display_name or f"{task_type_label}{episode_label}"
     if t.task_type == "stage_asset":
@@ -256,6 +302,19 @@ def _serialize_task(t: TaskState, *, ctx: ProjectContext | None = None) -> dict:
         payload[field] = _serialize_task_timestamp(payload.get(field, ""))
     payload["result"] = _sanitize_task_result_for_client(payload.get("result"), ctx=ctx)
     payload["status"] = _effective_task_status(t)
+    payload["metadata"] = _localize_task_metadata(
+        payload.get("metadata", {}), task_type=t.task_type, status=payload["status"]
+    )
+    payload["current_task"] = _localize_task_text(
+        payload.get("current_task"), task_type=t.task_type, status=payload["status"]
+    )
+    payload["logs"] = [
+        _localize_task_text(item, task_type=t.task_type, status=payload["status"])
+        for item in payload.get("logs", [])
+    ]
+    payload["error"] = _localize_task_text(
+        payload.get("error"), task_type=t.task_type, status=payload["status"]
+    )
     return {
         **payload,
         "error_code": metadata.get("error_code"),
@@ -509,12 +568,23 @@ async def stream_project_task(
                 payload = {
                     "status": effective_status,
                     "progress": round(task.progress, 3),
-                    "current_task": task.current_task,
-                    "logs": task.logs[-100:],
+                    "current_task": _localize_task_text(
+                        task.current_task,
+                        task_type=task.task_type,
+                        status=effective_status,
+                    ),
+                    "logs": [
+                        _localize_task_text(
+                            item, task_type=task.task_type, status=effective_status
+                        )
+                        for item in task.logs[-100:]
+                    ],
                 }
                 if is_terminal:
                     payload["result"] = task.result
-                    payload["error"] = task.error
+                    payload["error"] = _localize_task_text(
+                        task.error, task_type=task.task_type, status=effective_status
+                    )
                     if isinstance(task.metadata, dict):
                         payload["error_code"] = task.metadata.get("error_code")
 

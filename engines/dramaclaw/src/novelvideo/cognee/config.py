@@ -1135,8 +1135,9 @@ def init_cognee() -> None:
     )
     if not api_key:
         raise ValueError(
-            "未设置 Cognee LLM Key。请配置 DramaClaw 模型网关；"
-            "CE 在设置页配置，EE 通过 NEWAPI_API_KEY 配置。"
+            "A geração com IA ainda não está configurada. "
+            "Abra Configurações > Modelos e canais, informe uma chave de API "
+            "válida e tente novamente."
         )
 
     llm_model = _normalize_llm_model(

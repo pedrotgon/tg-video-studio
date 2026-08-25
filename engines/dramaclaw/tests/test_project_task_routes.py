@@ -171,8 +171,8 @@ def test_project_task_serialization_exposes_localized_display_name() -> None:
 
     payload = _serialize_task(task)
 
-    assert payload["display_name"] == "规划场景 · ep1"
-    assert payload["task_type_label"] == "规划场景"
+    assert payload["display_name"] == "Planejar ambientes · ep1"
+    assert payload["task_type_label"] == "Planejar ambientes"
 
 
 def test_project_task_serialization_prefers_business_display_name() -> None:
@@ -194,9 +194,10 @@ def test_project_task_serialization_prefers_business_display_name() -> None:
 
     payload = _serialize_task(task)
 
-    assert payload["display_name"] == "生成草图 · EP1 / Beat 3"
-    assert payload["task_type_label"] == "虾画编辑"
-    assert payload["metadata"]["source_label"] == "导演合成图"
+    assert payload["display_name"] == "Editar imagem no Canvas"
+    assert payload["task_type_label"] == "Editar imagem no Canvas"
+    assert payload["metadata"]["source_label"] == "Origem"
+    assert payload["metadata"]["target_label"] == "Destino"
 
 
 def test_project_task_serialization_treats_stale_full_progress_as_completed() -> None:
@@ -217,7 +218,7 @@ def test_project_task_serialization_treats_stale_full_progress_as_completed() ->
     payload = _serialize_task(task)
 
     assert payload["status"] == "completed"
-    assert payload["display_name"] == "图片转世界"
+    assert payload["display_name"] == "Converter imagem em ambiente 3D"
 
 
 def test_project_task_serialization_normalizes_timestamp_fields_to_utc_z() -> None:
