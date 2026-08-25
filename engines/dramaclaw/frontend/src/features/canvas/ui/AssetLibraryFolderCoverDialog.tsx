@@ -63,18 +63,18 @@ export function AssetLibraryFolderCoverDialog({
     <div
       className="fixed inset-0 z-[320] flex items-center justify-center"
       role="dialog"
-      aria-label="修改封面"
+      aria-label="Modificar capa"
     >
       <div className="absolute inset-0 bg-black/55" onClick={onClose} />
       <div className="relative flex max-h-[80vh] w-[min(720px,92vw)] flex-col overflow-hidden rounded-[10px] border border-white/[0.12] bg-[#1b1c22] shadow-[0_18px_48px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-between border-b border-white/[0.08] px-5 py-3.5">
           <h3 className="text-sm font-semibold text-text-dark">
-            修改封面 · {folder.label}
+            Alterar capa · {folder.label}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            title="关闭"
+            title="Fechar"
             className="inline-flex h-7 w-7 items-center justify-center rounded-md text-text-muted/90 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
           >
             <X className="h-4 w-4" />
@@ -84,7 +84,7 @@ export function AssetLibraryFolderCoverDialog({
         <div className="ui-scrollbar min-h-0 flex-1 overflow-y-auto px-5 py-4">
           {images.length === 0 ? (
             <div className="py-10 text-center text-xs text-text-muted/70">
-              这个文件夹里还没有图片素材，先上传一张再来设封面。
+              Ainda não há elementos de imagem nesta pasta. Carregue um antes de definir a capa.
             </div>
           ) : (
             <div
@@ -125,7 +125,7 @@ export function AssetLibraryFolderCoverDialog({
             className="px-4 text-text-muted hover:text-text-dark"
             onClick={onClose}
           >
-            取消
+            Cancelar
           </Button>
           <Button
             size="sm"
@@ -134,7 +134,7 @@ export function AssetLibraryFolderCoverDialog({
             onClick={() => void handleSubmit()}
           >
             {submitting && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
-            保存
+            Salvar
           </Button>
         </div>
       </div>

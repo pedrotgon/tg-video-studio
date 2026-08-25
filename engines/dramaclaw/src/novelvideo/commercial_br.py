@@ -1,151 +1,216 @@
-"""Planejamento persistível de campanhas comerciais brasileiras.
+"""Planejamento determinístico de campanhas comerciais brasileiras.
 
-O planejador cria variações editoriais reais e não finge geração de mídia. As
-etapas de imagem, voz, vídeo e montagem continuam explícitas no motor.
+Transforma qualquer briefing em variações editoriais revisáveis. Não chama a
+geração de mídia nem representa roteiro, imagem ou vídeo como concluído.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 from typing import Any
 
+
+COMMERCIAL_PLAN_VERSION = 2
 
 CREATIVE_BLUEPRINTS = (
     {
         "angle": "dor_imediata",
-        "approach": "Começar pela falta de tempo e mostrar uma entrada possível na rotina.",
-        "hook": "Sua agenda está cheia, mas você ainda quer cuidar de si?",
-        "promise": "Um começo curto e organizado para encaixar o treino no dia.",
-        "proof": "Mostrar o cronômetro, o espaço real de casa e a primeira sequência sem cortes milagrosos.",
-        "cta": "Conheça o programa e escolha seu primeiro treino.",
-        "scenes": ("celular com agenda cheia", "tapete em um canto da sala", "sequência curta com cronômetro"),
+        "label": "Dor imediata",
+        "hook": "Para {audience}: o que ainda dificulta alcançar {promise}?",
+        "approach": "Reconhecer a dificuldade atual do público e apresentar {offer} como próximo passo possível.",
+        "proof": "Mostrar uma situação cotidiana do público, o problema real e como {offer} entra nesse contexto.",
+        "scenes": (
+            "situação real do público",
+            "problema em primeiro plano",
+            "oferta apresentada como próximo passo",
+        ),
     },
     {
         "angle": "prova_pratica",
-        "approach": "Demonstrar o produto em uso, com foco no que a pessoa consegue fazer agora.",
-        "hook": "Veja como transformar alguns minutos livres em movimento de verdade.",
-        "promise": "Uma demonstração clara para entender o programa antes de começar.",
-        "proof": "Gravar o passo a passo de uma sequência e identificar cada etapa na tela.",
-        "cta": "Veja a demonstração completa.",
-        "scenes": ("apresentação do programa", "demonstração de um exercício", "checagem da sequência concluída"),
+        "label": "Demonstração prática",
+        "hook": "Veja, na prática, como funciona {offer}.",
+        "approach": "Demonstrar o uso da oferta sem atalhos, promessas inventadas ou resultados simulados.",
+        "proof": "Registrar uma demonstração contínua com detalhes verificáveis e resultado compatível com o briefing.",
+        "scenes": (
+            "oferta apresentada",
+            "uso ou funcionamento demonstrado",
+            "resultado observável e contextualizado",
+        ),
     },
     {
-        "angle": "objeção",
-        "approach": "Responder à dúvida de quem acredita que precisa de academia ou equipamento.",
-        "hook": "Você acha que precisa de academia para começar?",
-        "promise": "Um caminho em casa para dar o primeiro passo com o que você já tem.",
-        "proof": "Comparar o ambiente necessário com o espaço comum usado na demonstração, sem prometer resultado.",
-        "cta": "Tire a dúvida e conheça o plano.",
-        "scenes": ("pergunta direta para a câmera", "espaço doméstico preparado", "lista visual do que é necessário"),
+        "angle": "objecao",
+        "label": "Quebra de objeção",
+        "hook": "Ainda tem dúvida se {offer} faz sentido para você?",
+        "approach": "Responder à principal objeção com linguagem direta, contexto e limites transparentes.",
+        "proof": "Contrastar a dúvida comum com fatos, demonstrações ou condições realmente informadas no briefing.",
+        "scenes": (
+            "objeção apresentada na tela",
+            "resposta demonstrada",
+            "condições e limites esclarecidos",
+        ),
     },
     {
         "angle": "comparacao",
-        "approach": "Contrastar improviso e constância para apresentar organização como benefício.",
-        "hook": "Treinar quando dá ou seguir uma rotina que cabe no seu dia?",
-        "promise": "Mais clareza para sair do improviso e saber qual é o próximo passo.",
-        "proof": "Exibir duas rotinas lado a lado e destacar o calendário simples do programa.",
-        "cta": "Compare as opções e conheça o programa.",
-        "scenes": ("rotina improvisada em post-its", "calendário semanal simples", "pessoa iniciando a sessão planejada"),
+        "label": "Comparação",
+        "hook": "Qual é a diferença entre continuar como está e experimentar {offer}?",
+        "approach": "Comparar o cenário atual com a proposta da oferta sem desqualificar concorrentes nem inventar dados.",
+        "proof": "Usar critérios observáveis relacionados a {promise} em uma comparação lado a lado.",
+        "scenes": (
+            "cenário atual",
+            "oferta aplicada ao mesmo contexto",
+            "diferenças resumidas lado a lado",
+        ),
     },
     {
         "angle": "depoimento",
-        "approach": "Usar um relato cotidiano, sem promessa absoluta, para criar identificação.",
-        "hook": "Eu também dizia que não tinha tempo para treinar.",
-        "promise": "Uma experiência realista de quem encontrou um formato mais fácil de manter.",
-        "proof": "Depoimento em ambiente cotidiano com detalhes verificáveis da rotina, sem antes e depois.",
-        "cta": "Conheça o formato que fez sentido para essa rotina.",
-        "scenes": ("relato olhando para a câmera", "detalhe da rotina em casa", "encerramento com convite transparente"),
+        "label": "Depoimento",
+        "hook": "Eu queria {promise}, mas precisava de uma solução que coubesse na minha realidade.",
+        "approach": "Criar um relato cotidiano e verificável, sem antes e depois enganoso ou garantia absoluta.",
+        "proof": "Relacionar a experiência com {offer} a detalhes concretos da rotina e da decisão de compra.",
+        "scenes": (
+            "relato direto para a câmera",
+            "oferta inserida na rotina",
+            "aprendizado e convite transparente",
+        ),
     },
     {
         "angle": "passo_a_passo",
-        "approach": "Ensinar três ações simples para reduzir a fricção de começar.",
-        "hook": "Três passos para parar de adiar o primeiro treino.",
-        "promise": "Um roteiro simples para preparar o espaço, escolher a sessão e começar.",
-        "proof": "Mostrar os três passos numerados sendo realizados em sequência.",
-        "cta": "Salve os passos e conheça o programa.",
-        "scenes": ("separar o espaço", "selecionar a sessão", "iniciar o exercício"),
+        "label": "Passo a passo",
+        "hook": "Três passos para começar com {offer}.",
+        "approach": "Ensinar uma sequência curta que reduza a fricção e torne a oferta compreensível.",
+        "proof": "Executar cada passo em ordem e mostrar o que a pessoa precisa para continuar.",
+        "scenes": (
+            "passo 1: preparar",
+            "passo 2: aplicar",
+            "passo 3: conferir e avançar",
+        ),
     },
     {
         "angle": "beneficio",
-        "approach": "Explorar o ganho de praticidade sem transformar benefício em garantia.",
-        "hook": "O melhor do treino em casa pode ser a praticidade.",
-        "promise": "Mais conveniência para cuidar da rotina sem deslocamento.",
-        "proof": "Mostrar a transição entre trabalho, preparação e treino no mesmo ambiente.",
-        "cta": "Veja se essa praticidade combina com você.",
-        "scenes": ("fim de uma tarefa", "troca rápida de ambiente", "sessão iniciada em casa"),
+        "label": "Benefício principal",
+        "hook": "E se {promise} pudesse começar com uma escolha mais simples?",
+        "approach": "Traduzir o benefício central em uma situação concreta, sem transformá-lo em garantia.",
+        "proof": "Mostrar como {offer} contribui para o benefício no contexto informado pelo público.",
+        "scenes": (
+            "necessidade do público",
+            "benefício em contexto",
+            "oferta conectada ao próximo passo",
+        ),
     },
     {
         "angle": "bastidores",
-        "approach": "Revelar como a experiência foi pensada para pessoas com dias corridos.",
-        "hook": "Por trás de um treino curto existe uma escolha: facilitar o começo.",
-        "promise": "Entender a lógica do programa para usar cada sessão com intenção.",
-        "proof": "Mostrar a organização do conteúdo, a seleção de sessões e o espaço de prática.",
-        "cta": "Conheça os bastidores do programa.",
-        "scenes": ("organização das sessões", "seleção de um objetivo", "prática em ambiente real"),
+        "label": "Bastidores",
+        "hook": "O que existe por trás de {offer}?",
+        "approach": "Revelar processo, cuidado ou escolhas que sustentam a proposta comercial.",
+        "proof": "Mostrar etapas reais, pessoas, materiais ou decisões disponíveis no briefing.",
+        "scenes": (
+            "origem da oferta",
+            "processo ou preparação",
+            "resultado pronto para o público",
+        ),
     },
     {
-        "angle": "urgencia",
-        "approach": "Criar ação imediata sem urgência falsa: o próximo momento disponível é agora.",
-        "hook": "Se você tem alguns minutos hoje, já pode dar um primeiro passo.",
-        "promise": "Começar com uma sessão compatível com o tempo disponível.",
-        "proof": "Exibir a escolha de duração e o início da sessão, sem contador artificial.",
-        "cta": "Escolha sua sessão e comece hoje.",
-        "scenes": ("relógio marcando tempo disponível", "seletor de duração", "primeiro movimento"),
+        "angle": "acao_agora",
+        "label": "Ação imediata",
+        "hook": "Se {promise} importa para você, qual é o menor passo possível hoje?",
+        "approach": "Criar movimento sem urgência falsa, escassez inventada ou pressão enganosa.",
+        "proof": "Apresentar uma ação simples e a consequência imediata realmente oferecida.",
+        "scenes": (
+            "momento de decisão",
+            "primeira ação possível",
+            "CTA claro e sem pressão falsa",
+        ),
     },
     {
         "angle": "oferta",
-        "approach": "Apresentar o que está incluído e deixar a decisão clara, sem inventar condição.",
-        "hook": "Antes de decidir, veja exatamente o que o programa oferece.",
-        "promise": "Uma visão objetiva do conteúdo para avaliar se a oferta serve para sua rotina.",
-        "proof": "Listar apenas itens informados no briefing e mostrar a navegação do programa.",
-        "cta": "Confira a oferta completa.",
-        "scenes": ("visão geral do programa", "detalhes da oferta", "tela final com CTA"),
+        "label": "Oferta objetiva",
+        "hook": "Antes de decidir, veja exatamente o que {offer} oferece.",
+        "approach": "Explicar a oferta, para quem ela serve e o próximo passo sem inventar preço ou condição.",
+        "proof": "Listar somente benefícios, entregáveis e condições presentes no briefing.",
+        "scenes": (
+            "visão geral da oferta",
+            "entregáveis e condições",
+            "CTA final com decisão informada",
+        ),
     },
 )
+
+
+def _text(value: Any, fallback: str) -> str:
+    normalized = " ".join(str(value or "").split())
+    return normalized or fallback
+
+
+def commercial_plan_fingerprint(
+    campaign: dict[str, Any], output: dict[str, Any]
+) -> str:
+    payload = json.dumps(
+        {"version": COMMERCIAL_PLAN_VERSION, "campaign": campaign, "output": output},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def build_commercial_creatives(
     campaign: dict[str, Any], output: dict[str, Any]
 ) -> list[dict[str, Any]]:
-    """Build distinct, reviewable creative plans for the existing pipeline."""
+    """Cria planos distintos e específicos para o briefing recebido."""
 
     count = max(1, min(10, int(output.get("variants", 5))))
-    duration = int(output.get("duration_seconds", 30))
-    ratio = str(output.get("aspect_ratio", "9:16"))
-    audience = str(campaign.get("audience", "seu público"))
-    channel = str(campaign.get("primary_channel", "instagram_reels"))
+    duration = max(15, min(60, int(output.get("duration_seconds", 30))))
+    ratio = _text(output.get("aspect_ratio"), "9:16")
+    audience = _text(campaign.get("audience"), "o público definido")
+    offer = _text(campaign.get("offer"), "a oferta")
+    promise = _text(campaign.get("core_promise"), "o benefício principal")
+    requested_cta = _text(campaign.get("cta"), "Saiba mais")
+    channel = _text(campaign.get("primary_channel"), "instagram_reels")
+    tone = _text(campaign.get("tone"), "direto, humano e confiável")
+    context = {"audience": audience, "offer": offer, "promise": promise}
+
     creatives: list[dict[str, Any]] = []
     for index in range(count):
-        blueprint = CREATIVE_BLUEPRINTS[index % len(CREATIVE_BLUEPRINTS)]
+        blueprint = CREATIVE_BLUEPRINTS[index]
+        hook = blueprint["hook"].format(**context)
+        approach = blueprint["approach"].format(**context)
+        proof = blueprint["proof"].format(**context)
+        visuals = tuple(scene.format(**context) for scene in blueprint["scenes"])
+        voiceovers = (hook, f"{promise}. {approach}", f"{proof} {requested_cta}.")
         scenes = [
             {
                 "order": scene_index + 1,
-                "visual": scene,
-                "voiceover": blueprint["hook"] if scene_index == 0 else blueprint["promise"],
-                "on_screen": f"{scene_index + 1}. {scene.capitalize()}",
+                "visual": visual,
+                "voiceover": voiceovers[scene_index],
+                "on_screen": hook
+                if scene_index == 0
+                else (promise if scene_index == 1 else requested_cta),
             }
-            for scene_index, scene in enumerate(blueprint["scenes"])
+            for scene_index, visual in enumerate(visuals)
         ]
-        script = "\n".join(
-            [
-                f"GANCHO: {blueprint['hook']}",
-                f"ABORDAGEM: {blueprint['approach']}",
-                f"PROMESSA: {blueprint['promise']}",
-                f"PROVA: {blueprint['proof']}",
-                f"CTA: {blueprint['cta']}",
-            ]
-        )
+        script_lines = [f"CRIATIVO {index + 1:02d} — {blueprint['label'].upper()}"]
+        for scene in scenes:
+            script_lines.extend(
+                (
+                    f"CENA {scene['order']} — {scene['visual'].upper()}",
+                    f"NARRAÇÃO: {scene['voiceover']}",
+                    f"TEXTO NA TELA: {scene['on_screen']}",
+                )
+            )
         creatives.append(
             {
                 "number": index + 1,
-                "title": f"Criativo {index + 1:02d} · {blueprint['angle']}",
+                "title": f"Criativo {index + 1:02d} · {blueprint['label']}",
                 "angle": blueprint["angle"],
-                "approach": blueprint["approach"],
-                "hook": blueprint["hook"],
-                "promise": blueprint["promise"],
-                "proof": blueprint["proof"],
-                "cta": blueprint["cta"],
+                "approach": approach,
+                "hook": hook,
+                "promise": promise,
+                "proof": proof,
+                "cta": requested_cta,
                 "audience": audience,
-                "script": script,
+                "tone": tone,
+                "script": "\n".join(script_lines),
                 "scenes": scenes,
                 "duration_seconds": duration,
                 "aspect_ratio": ratio,

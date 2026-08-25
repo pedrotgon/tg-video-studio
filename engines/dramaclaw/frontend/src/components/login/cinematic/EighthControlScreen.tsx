@@ -4,23 +4,23 @@ import styles from "./eighth-control-screen.module.css";
 const decisions = [
   {
     id: "KEEP",
-    title: "保留",
-    body: "锁定当前角色、镜头或片段，让它成为后续生成的基准。",
+    title: "Preservar",
+    body: "Fixar o personagem, câmera ou fragmento atual como base para geração subsequente.",
   },
   {
     id: "REWRITE",
-    title: "重写",
-    body: "只替换冲突、对白或镜头方向，不推翻已经成立的世界。",
+    title: "Reescrever",
+    body: "Só substituir conflitos, diálogos ou direções de câmera, não rejeitando o mundo já estabelecido.",
   },
   {
     id: "EXTEND",
-    title: "延展",
-    body: "从当前片段继续向前，生成下一场、预告或完整分支。",
+    title: "Expandir",
+    body: "Continuar para o próximo episódio, previsão ou toda a branca. ",
   },
   {
     id: "REJECT",
-    title: "推翻",
-    body: "回到上一个节点，换一条叙事路径，让故事重新进入生产线。",
+    title: "Reverter ",
+    body: "Retornar ao último nó e escolher uma nova caminhada na história. ",
   },
 ];
 
@@ -56,9 +56,9 @@ export function EighthControlScreen({
     <section className={styles.layer} style={style}>
       <div className={styles.header}>
         <p>CONTROL 08</p>
-        <h2>只为创作完整的作品企划</h2>
+        <h2>Seu foco é criar um plano completo de produção</h2>
         <span>
-          DramaClaw 关注的是一部剧如何持续生产：文本入项，角色一致性，场景复用，镜头推进，团队协作交付。
+          DramaClaw se concentra no processo de produção contínua de uma série: importação de texto, consistência de personagem, reutilização de cenários, avanço das cenas e colaboração da equipe para entrega. 
         </span>
       </div>
 
@@ -76,8 +76,8 @@ export function EighthControlScreen({
         <div className={styles.consoleBody}>
           <div className={styles.statement}>
             <small>CURRENT OUTPUT</small>
-            <strong>夜航协议 · 镜头序列 08</strong>
-            <p>一艘未登记运输舰拖着整座城市的秘密进入夜层。</p>
+            <strong>Protocolo de Noite Vagar · Sequência de Cena 08</strong>
+            <p>Um navio não registrado carrega toda a secretária de uma cidade em si entrou na camada da noite. </p>
           </div>
 
           <div className={styles.decisionGrid}>

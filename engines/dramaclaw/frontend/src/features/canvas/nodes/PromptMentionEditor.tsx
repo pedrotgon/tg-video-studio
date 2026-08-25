@@ -103,14 +103,14 @@ function buildChipElement(candidate: MentionCandidate): HTMLElement {
   span.className = 'mention-chip';
   const label = mentionChipLabel(candidate);
   if (candidate.imageUrl) {
-    span.title = '双击替换引用';
+    span.title = 'Clique duas vezes para substituir a referência';
     const img = document.createElement('img');
     img.src = candidate.imageUrl;
     img.alt = '';
     img.draggable = false;
     span.appendChild(img);
   } else if (candidate.videoUrl) {
-    span.title = '双击替换引用';
+    span.title = 'Clique duas vezes para substituir a referência';
     // 没有静态首帧图时，用 muted 静止 <video> 显示首帧——与候选行 / 引用行一致。
     const video = document.createElement('video');
     video.src = candidate.videoUrl;
@@ -130,7 +130,7 @@ function buildChipElement(candidate: MentionCandidate): HTMLElement {
     play.setAttribute('aria-hidden', 'true');
     span.appendChild(play);
   } else {
-    span.title = '双击替换引用';
+    span.title = 'Clique duas vezes para substituir a referência';
   }
   const labelEl = document.createElement('span');
   labelEl.className = 'mention-chip-label';

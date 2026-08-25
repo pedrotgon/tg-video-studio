@@ -510,7 +510,7 @@ describe("freezone preset auto refresh guard", () => {
     expect((patch?.sources as Array<{ id: string; current?: boolean; label?: string }>)).toEqual([
       expect.objectContaining({ id: "custom-local", current: true }),
     ]);
-    expect((patch?.sources as Array<{ label?: string }>).some((source) => source.label === "正面世界")).toBe(false);
+    expect((patch?.sources as Array<{ label?: string }>).some((source) => source.label === "Mundo positivo")).toBe(false);
   });
 
   it("does not rewrite the canvas node after a director-world source slot commit", () => {

@@ -18,7 +18,7 @@ describe("ThreeDWorldNode source scope", () => {
       sources: [
         {
           id: "custom-local",
-          label: "图片 3DGS",
+          label: "Imagem 3DGS",
           source_type: "sog",
           source_kind: "custom",
           ply_url: "/static/projects/demo/freezone/_outputs/custom.sog",
@@ -26,7 +26,7 @@ describe("ThreeDWorldNode source scope", () => {
         },
         {
           id: "legacy:master:sog:/static/projects/demo/director_worlds/公寓楼电梯间/v1/master.sog",
-          label: "正面世界",
+          label: "Mundo positivo",
           source_type: "sog",
           source_kind: "master",
           ply_url: "/static/projects/demo/director_worlds/公寓楼电梯间/v1/master.sog",
@@ -37,7 +37,7 @@ describe("ThreeDWorldNode source scope", () => {
     expect(isCandidateDirectorWorldNode(data)).toBe(true);
     expect(isSceneDirectorWorldNode(data)).toBe(false);
     expect(directorSourcesForNode(data, [])).toEqual([
-      expect.objectContaining({ id: "custom-local", label: "图片 3DGS" }),
+      expect.objectContaining({ id: "custom-local", label: "Imagem 3DGS" }),
     ]);
   });
 
@@ -71,7 +71,7 @@ describe("ThreeDWorldNode source scope", () => {
       sources: [
         {
           id: "custom-local",
-          label: "图片 3DGS",
+          label: "Imagem 3DGS",
           source_type: "sog",
           source_kind: "custom",
           ply_url: "/static/projects/demo/freezone/_outputs/custom.sog",
@@ -79,7 +79,7 @@ describe("ThreeDWorldNode source scope", () => {
         },
         {
           id: "legacy:master:sog:/static/projects/demo/director_worlds/公寓楼电梯间/v1/master.sog",
-          label: "正面世界",
+          label: "Mundo positivo",
           source_type: "sog",
           source_kind: "master",
           ply_url: "/static/projects/demo/director_worlds/公寓楼电梯间/v1/master.sog",
@@ -104,7 +104,7 @@ describe("ThreeDWorldNode source scope", () => {
     expect(isCandidateDirectorWorldNode(data)).toBe(true);
     expect(isSceneDirectorWorldNode(data)).toBe(false);
     expect(directorSourcesForNode(data, [])).toEqual([
-      expect.objectContaining({ id: "custom-local", label: "图片 3DGS" }),
+      expect.objectContaining({ id: "custom-local", label: "Imagem 3DGS" }),
     ]);
   });
 
@@ -115,14 +115,14 @@ describe("ThreeDWorldNode source scope", () => {
       sources: [
         {
           id: "legacy:master:sog:/static/projects/demo/director_worlds/公寓楼电梯间/v1/master.sog",
-          label: "正面世界",
+          label: "Mundo positivo",
           source_type: "sog",
           source_kind: "master",
           ply_url: "/static/projects/demo/director_worlds/公寓楼电梯间/v1/master.sog",
         },
         {
           id: "legacy:reverse:sog:/static/projects/demo/director_worlds/公寓楼电梯间/v1/reverse.sog",
-          label: "背面世界",
+          label: "O mundo nas costas",
           source_type: "sog",
           source_kind: "reverse",
           ply_url: "/static/projects/demo/director_worlds/公寓楼电梯间/v1/reverse.sog",
@@ -148,8 +148,8 @@ describe("ThreeDWorldNode source scope", () => {
     expect(isCandidateDirectorWorldNode(data)).toBe(true);
     expect(isSceneDirectorWorldNode(data)).toBe(false);
     expect(directorSourcesForNode(data, [])).toEqual([
-      expect.objectContaining({ label: "正面世界" }),
-      expect.objectContaining({ label: "背面世界" }),
+      expect.objectContaining({ label: "Mundo positivo" }),
+      expect.objectContaining({ label: "O mundo nas costas" }),
     ]);
   });
 });

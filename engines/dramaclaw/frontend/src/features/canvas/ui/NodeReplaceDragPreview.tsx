@@ -75,7 +75,7 @@ export function NodeReplaceDragPreview() {
             }`}
           >
             <Replace className="h-3 w-3 shrink-0" />
-            {overTarget ? '松开替换该素材' : '拖到左侧同类型素材上替换'}
+            {overTarget ? 'Solte para substituir o material' : 'Arraste para substituir no mesmo tipo de filmagem à esquerda'}
           </div>
         </div>
       </div>

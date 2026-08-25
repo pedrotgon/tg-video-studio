@@ -39,8 +39,8 @@ describe("ImageGenNode director combined world entry", () => {
     expect(source).toContain("onCaptureCanvasNode={handleDirectorOutputCanvasNode}");
     expect(source).not.toContain("autoCommitDirectorCombined");
     expect(source).toContain("meta.captureBundle");
-    expect(source).toContain("label: '导演合成图'");
-    expect(source).toContain("label: '纯背景图'");
+    expect(source).toContain("label: 'Diagrama de Composição do Diretor'");
+    expect(source).toContain("label: 'Imagem de fundo pura'");
     expect(source).toContain("addPanoCaptureGroup");
     expect(source).toContain("kind: 'director_render'");
     expect(source).not.toContain("freezone/assets-updated");
@@ -53,8 +53,8 @@ describe("ImageGenNode director combined world entry", () => {
     );
 
     expect(source).toContain("meta.captureBundle");
-    expect(source).toContain("label: '导演合成图'");
-    expect(source).toContain("label: '纯背景图'");
+    expect(source).toContain("label: 'Diagrama de Composição do Diretor'");
+    expect(source).toContain("label: 'Imagem de fundo pura'");
     expect(source).toContain("director_control_bundle");
   });
 

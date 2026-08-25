@@ -50,14 +50,14 @@ describe("hydrateAssetDragPayload", () => {
       sources: [
         {
           id: "front",
-          label: "正面世界",
+          label: "Mundo positivo",
           source_type: "sog",
           source_kind: "master",
           ply_url: "/static/demo/director_worlds/公寓楼电梯间/v1/master.sog",
         },
         {
           id: "reverse",
-          label: "背面世界",
+          label: "O mundo nas costas",
           source_type: "sog",
           source_kind: "reverse",
           ply_url: "/static/demo/director_worlds/公寓楼电梯间/v1/reverse.sog",
@@ -101,8 +101,8 @@ describe("hydrateAssetDragPayload", () => {
     expect(hydrated.activeSourceId).toBe("reverse");
     expect(hydrated.plyUrl).toBe("/static/demo/director_worlds/公寓楼电梯间/v1/reverse.sog");
     expect(hydrated.modelSources).toEqual([
-      expect.objectContaining({ id: "front", label: "正面世界" }),
-      expect.objectContaining({ id: "reverse", label: "背面世界" }),
+      expect.objectContaining({ id: "front", label: "Mundo positivo" }),
+      expect.objectContaining({ id: "reverse", label: "O mundo nas costas" }),
     ]);
     expect(hydrated.scene).toBe(scene);
     expect(hydrated.scenesBySourceId).toEqual({ reverse: scene });

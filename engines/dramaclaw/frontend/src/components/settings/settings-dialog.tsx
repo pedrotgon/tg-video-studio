@@ -4263,13 +4263,13 @@ function LocalMediaModelEditor({
                 </p>
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    ["text_to_video", "文生视频"],
-                    ["first_frame", "首帧"],
-                    ["first_last_frame", "首尾帧"],
-                    ["image_to_video", "图生视频"],
-                    ["image_reference", "图片参考"],
-                    ["all_reference", "全能参考"],
-                    ["video_edit", "视频编辑"],
+                    ["text_to_video", "Vídeo de cultura"],
+                    ["first_frame", "Primeiro quadro"],
+                    ["first_last_frame", "Primeiros e últimos quadros"],
+                    ["image_to_video", "Vídeo de imagem"],
+                    ["image_reference", "Referência de imagens"],
+                    ["all_reference", "Referência Todo-Poderosa"],
+                    ["video_edit", "Edição de vídeo"],
                   ].map(([value, label]) => {
                     const selected = stringOptions("supportedModes");
                     return (

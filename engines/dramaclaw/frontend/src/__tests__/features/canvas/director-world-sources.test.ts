@@ -213,7 +213,7 @@ describe("directorWorldSources", () => {
       mode: "beat",
       project: "demo",
       scene_id: "scene-1",
-      display_name: "导演世界",
+      display_name: "Mundo do diretor",
       source: {
         source_type: "sog",
         source_kind: "master",
@@ -228,7 +228,7 @@ describe("directorWorldSources", () => {
         id: "upstream-pano:pano-1",
         source_type: "pano360",
         source_kind: "pano",
-        label: "360 图",
+        label: "Diagramas 360",
         pano_url: "/static/demo/pano.png",
       },
     ]);

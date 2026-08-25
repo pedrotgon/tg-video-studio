@@ -26,7 +26,7 @@ describe("StyleTriggerChip", () => {
 
     render(<StyleTriggerChip onOpen={onOpen} />);
 
-    await user.click(screen.getByRole("button", { name: "风格" }));
+    await user.click(screen.getByRole("button", { name: "Estilo" }));
 
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
@@ -34,9 +34,9 @@ describe("StyleTriggerChip", () => {
   // 「查不到模板」不等于「没选风格」—— 那个 id 照样会跟着生成请求发出去，
   // chip 说成「风格」会让用户以为自己没选，出图带了风格反而像是撞了鬼。
   it.each([
-    ["loading" as const, "风格 · 加载中"],
-    ["failed" as const, "风格 · 加载失败"],
-    ["missing" as const, "风格 · 已失效"],
+    ["loading" as const, "Estilo · Carregando"],
+    ["failed" as const, "Estilo · Falha no carregamento"],
+    ["missing" as const, "Estilo · Expirado"],
   ])("tells the truth in the %s state", (state, label) => {
     render(<StyleTriggerChip state={state} onOpen={vi.fn()} />);
 
@@ -49,7 +49,7 @@ describe("StyleTriggerChip", () => {
 
     render(<StyleTriggerChip state="failed" onOpen={onOpen} />);
 
-    await user.click(screen.getByRole("button", { name: "风格 · 加载失败" }));
+    await user.click(screen.getByRole("button", { name: "Estilo · Falha no carregamento" }));
 
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
@@ -122,7 +122,7 @@ describe("StyleThumbnail", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "清除风格" }));
+    await user.click(screen.getByRole("button", { name: "Limpeza de estilo" }));
 
     expect(onClear).toHaveBeenCalledTimes(1);
     expect(onOpen).not.toHaveBeenCalled();

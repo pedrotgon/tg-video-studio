@@ -532,12 +532,12 @@ function StyleDetailPanel({
         </button>
         {isProjectDefault && (
           <span className="shrink-0 inline-flex items-center rounded-md border border-white/8 bg-white/[0.03] px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/80">
-            项目默认
+            Projeto padrão
           </span>
         )}
         {dirty && (
           <span className="shrink-0 inline-flex items-center rounded-md border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 text-[10px] font-medium text-amber-500/80">
-            未保存
+            Não salvado
           </span>
         )}
       </div>
@@ -547,7 +547,7 @@ function StyleDetailPanel({
         <DialogContent className="rounded-xl border border-white/8 bg-background/68 p-6 shadow-none backdrop-blur-3xl sm:max-w-sm">
           <DialogHeader className="gap-1.5">
             <DialogTitle className="text-sm font-medium tracking-tight">
-              {t("styles.renameTitle", "重命名风格")}
+              {t("styles.renameTitle", "Configuração de estilo de renomeação incompleta. Por favor, contate o administrador.")}
             </DialogTitle>
           </DialogHeader>
           <Input
@@ -579,7 +579,7 @@ function StyleDetailPanel({
               {createStyle.isPending ? (
                 <Loader2 className="size-3 animate-spin" />
               ) : null}
-              {t("common.save", "保存")}
+              {t("common.save", "Salvar")}
             </Button>
           </DialogFooter>
         </DialogContent>

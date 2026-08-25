@@ -36,12 +36,12 @@ export function CameraMovementPickerPopover({
       onClick={(event) => event.stopPropagation()}
     >
       <div className="flex h-10 items-center justify-between px-4">
-        <span className="text-sm font-medium text-text-dark">运镜</span>
+        <span className="text-sm font-medium text-text-dark">Espelho Corrente</span>
         <button
           type="button"
           onClick={onClose}
           className="flex size-6 items-center justify-center rounded-md text-text-muted/90 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
-          aria-label="关闭"
+          aria-label="Fechar"
         >
           <X className="size-3.5" />
         </button>
@@ -49,7 +49,7 @@ export function CameraMovementPickerPopover({
 
       {templates.length === 0 ? (
         <div className="flex h-32 items-center justify-center text-[12px] text-text-muted">
-          {isLoading ? '加载中…' : '暂无可用运镜模板'}
+          {isLoading ? 'Carregando...' : 'Nenhum modelo de espelho de transporte disponível'}
         </div>
       ) : (
         <div className="ui-scrollbar grid max-h-[420px] grid-cols-4 gap-3 overflow-y-auto px-4 pb-4 pt-2">
@@ -70,7 +70,7 @@ export function CameraMovementPickerPopover({
           onClick={() => onConfirm(null)}
           className="h-8 rounded-md px-3 text-[12px] font-medium text-text-dark/78 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
         >
-          清除
+          Limpar
         </button>
         <button
           type="button"
@@ -78,7 +78,7 @@ export function CameraMovementPickerPopover({
           disabled={!draftId}
           className="h-8 min-w-[50px] rounded-md bg-primary px-3 text-[13px] text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-text-muted"
         >
-          使用
+          Uso
         </button>
       </div>
     </div>
@@ -139,7 +139,7 @@ function PresetCard({ preset, isSelected, onSelect }: PresetCardProps) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-[11px] text-text-muted">
-            无预览
+            Sem pré-visualização
           </div>
         )}
       </div>

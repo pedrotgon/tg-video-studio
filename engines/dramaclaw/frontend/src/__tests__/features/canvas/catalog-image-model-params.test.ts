@@ -50,7 +50,7 @@ const JOB_REF = {
 const PARAMETERS: MediaModelParameterDefinition[] = [
   {
     key: "styles",
-    label: "风格",
+    label: "Estilo",
     control: "multiselect",
     requestPath: "extra_body.styles",
     options: ["anime", "photoreal", "sketch"],

@@ -30,7 +30,7 @@ beforeAll(async () => {
         translation: {
           characters: {
             projectStyle: {
-              label: "风格",
+              label: "Estilo",
               configureHint: "在导入页面配置项目风格",
               loading: "读取风格",
             },

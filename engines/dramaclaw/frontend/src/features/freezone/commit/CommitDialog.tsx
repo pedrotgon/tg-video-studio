@@ -45,29 +45,29 @@ import { nodeDataAfterCommittedSlot } from "./committedNodePatch";
 // Backend PushTargetKind type 仍保留这些 kind (兼容旧 canvas / 旧 client 传入),
 // 只是 UI 不主动列出。
 const KIND_LABELS: Record<PushTargetKind, string> = {
-  frame: "首帧",
-  sketch: "草图",
-  director_render: "导演合成资产",
-  selected_background: "当前背景",
-  identity: "角色身份图",
-  identity_costume: "身份服装图",
-  identity_portrait: "年龄身份肖像",
-  portrait: "角色肖像",
-  scene_master: "场景主图",
-  scene_reverse_master: "反面场景图",
-  scene_spatial_layout: "Scene Spatial Layout (空间布局图)",
+  frame: "Quadro principal",
+  sketch: "Esboço",
+  director_render: "Composição dirigida",
+  selected_background: "Fundo atual",
+  identity: "Identidade visual",
+  identity_costume: "Figurino",
+  identity_portrait: "Retrato de identidade",
+  portrait: "Retrato de Personagem",
+  scene_master: "Cena principal",
+  scene_reverse_master: "Cena em ângulo reverso",
+  scene_spatial_layout: "Layout espacial da cena",
   scene_360: "Scene 360 (DEPRECATED — use Director Pano 360)",
-  scene_director_world: "导演世界",
-  scene_director_pano_360: "Director Pano 360 (3GS 全景图)",
-  scene_3gs_active_ply: "3D 世界（当前入口）",
-  scene_3gs_master_ply: "3D 世界（正面）",
-  scene_3gs_reverse_ply: "3D 世界（背面）",
-  scene_3gs_pano_ply: "3D 世界（360）",
-  scene_3gs_custom_scene: "3D 世界（自定义场景）",
-  scene_3gs_collision_glb: "3D 世界碰撞体",
-  prop_ref: "Prop Reference (道具参考)",
-  video: "Video (beat 视频)",
-  beat_audio: "Audio (beat 音频)",
+  scene_director_world: "Mundo do diretor",
+  scene_director_pano_360: "Panorama dirigido 360 (3GS)",
+  scene_3gs_active_ply: "Mundo 3D (atual)",
+  scene_3gs_master_ply: "Mundo 3D (frontal)",
+  scene_3gs_reverse_ply: "Mundo 3D (traseiro)",
+  scene_3gs_pano_ply: "Mundo 3D (360)",
+  scene_3gs_custom_scene: "Mundo 3D (cena personalizada)",
+  scene_3gs_collision_glb: "Colisões do mundo 3D",
+  prop_ref: "Referência de objeto ou produto",
+  video: "Vídeo da tomada",
+  beat_audio: "Áudio da tomada",
 };
 
 // 用户主动选择面板里隐藏的 slot kinds (defaultTarget 仍可被推断到,只是不
@@ -320,7 +320,7 @@ export function CommitDialog({
           setCharacter(chars[0].name);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "加载选项失败");
+        setError(err instanceof Error ? err.message : "Falha de Carga");
       }
     })();
     return () => {
@@ -468,7 +468,7 @@ export function CommitDialog({
         if (cancelled) return;
         setIdentityOptions([]);
         setIdentityId(null);
-        setError(err instanceof Error ? err.message : "加载 identity_id 失败");
+        setError(err instanceof Error ? err.message : "Falha de Carga identity_id");
       } finally {
         if (!cancelled) setIdentitiesLoading(false);
       }
@@ -481,7 +481,7 @@ export function CommitDialog({
   const displayedIdentityOptions = identityOptionsForSelect(identityOptions, identityId);
 
   const target = buildTarget(kind, episode, beat, character, identityId, sceneId, propId);
-  const targetLabel = target ? renderTargetLabel(target) : "目标未完整";
+  const targetLabel = target ? renderTargetLabel(target) : "Mundo do Diretor Incompleto";
   const nodeSourceLabel =
     typeof sourceLabelOverride === "string" && sourceLabelOverride.trim()
       ? sourceLabelOverride.trim()
@@ -492,14 +492,14 @@ export function CommitDialog({
     ? directorWorldSourceDisplayName(nodeData, sourceUrl, nodeSourceLabel)
     : "";
   const commitSourceTitle = target?.kind === "scene_director_world"
-    ? "导演世界状态"
+    ? "Mundo do Diretor do Escena"
     : mediaType === "model"
       ? modelSourceLabel
       : mediaLabel;
   const commitSourceSubtitle = target?.kind === "scene_director_world"
-    ? "提交当前导演世界 manifest"
+    ? "Enviar Manifeste do Mundo do Diretor"
     : mediaType === "model"
-      ? "提交当前 3D 世界到主线场景"
+      ? "Enviar Mundo 3D Apresentado para Escena Principal"
       : sourceLabel;
   const commitSourceBadge = target?.kind === "scene_director_world"
     ? "WORLD"
@@ -549,9 +549,9 @@ export function CommitDialog({
     setSubmitting(true);
     try {
       const target = buildTarget(kind, episode, beat, character, identityId, sceneId, propId);
-      if (!target) throw new Error("目标不完整");
+      if (!target) throw new Error("Mundo do Diretor Incompleto");
       if (mediaType === "model" && isDirectorWorldSourceSlotTarget(target) && !modelSlotKinds.includes(target.kind)) {
-        throw new Error("无来源没有可提交的 3D 世界素材；请切换到具体世界来源后再提交到主线槽位。");
+        throw new Error("Nenhum Fonte Disponível para Mundo 3D; Por favor, altere para uma fonte específica antes de enviá-la para a Escena Principal.");
       }
       if (target.kind === "director_render") {
         const result = await commitDirectorRenderFromCanvasSource(project, target, {
@@ -566,7 +566,7 @@ export function CommitDialog({
       if (target.kind === "scene_director_world") {
         const latestNodeData = getNodeData?.() ?? nodeData;
         if (!latestNodeData) {
-          throw new Error("导演世界提交需要画布节点状态");
+          throw new Error("Enviar Mundo do Diretor Requer Uma Estado de Caixa");
         }
         const result = await commitSceneDirectorWorldFromCanvasNode(project, target, latestNodeData);
         onSuccess(renderCommitSuccessMessage(target, result), result, target);
@@ -599,7 +599,7 @@ export function CommitDialog({
             directorWorldManifestData,
             { pruneStale: false },
           );
-          message += "；已同步导演世界状态";
+          message += "O diretor mundo está agora sincronizado";
         }
       }
       onSuccess(message, result, target, nodeDataPatch);
@@ -630,15 +630,15 @@ export function CommitDialog({
       >
         <header className="flex items-start gap-3 px-5 pb-2 pt-4">
           <div className="min-w-0 flex-1">
-            <h2 className="text-[15px] font-semibold leading-tight text-text-dark">提交到主线资产</h2>
-            <p className="mt-0.5 truncate text-xs text-text-muted">项目：{project}</p>
+            <h2 className="text-[15px] font-semibold leading-tight text-text-dark">Enviar para Ativos da Linha Principal</h2>
+            <p className="mt-0.5 truncate text-xs text-text-muted">Projeto:{project}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             disabled={submitting}
             className="text-text-muted transition hover:text-text-dark disabled:opacity-30"
-            aria-label="关闭"
+            aria-label="Fechar"
           >
             <X className="h-4 w-4" />
           </button>
@@ -682,18 +682,18 @@ export function CommitDialog({
           {noTargetYet && (
             <div className="rounded-lg border border-amber-500/25 bg-amber-500/[0.07] px-3 py-2.5 text-xs leading-relaxed text-amber-200/90">
               {noModelSourceForSlotCommit
-                ? "无来源没有可提交的 3D 世界素材；请切换到具体世界来源后再提交到主线槽位。"
-                : "当前 3D 世界没有可提交到该槽位的素材。"}
+                ? "Nenhum Fonte Disponível para Mundo 3D; Por favor, altere para uma fonte específica antes de enviá-la para a Escena Principal."
+                : "Atualmente, não há elementos disponíveis para enviar para este slot no mundo 3D."}
             </div>
           )}
 
           {/* 目标类型下拉：图像可选全部可见槽；3D 模型只可选场景 3GS 槽。 */}
           {showTargetKindSelect && (
-            <Section title="目标类型">
+            <Section title="Tipo de Alvo">
               <UiSelect
                 value={kind}
                 onChange={(e) => setKind(e.target.value as PushTargetKind)}
-                aria-label="目标类型"
+                aria-label="Tipo de Alvo"
                 className={COMMIT_FIELD_BORDER_CLASS}
                 menuClassName={COMMIT_SELECT_MENU_CLASS}
               >
@@ -708,7 +708,7 @@ export function CommitDialog({
           )}
 
           {!noTargetYet && isBeatStyle && (
-            <Section title="目标位置">
+            <Section title="Localização de destino">
               {mediaType === "image" && (
                 <div className="mb-2 flex flex-wrap gap-1.5">
                   {BEAT_SLOT_KINDS.map((slotKind) => {
@@ -735,7 +735,7 @@ export function CommitDialog({
                   <UiSelect
                     value={episode ?? ""}
                     onChange={(e) => setEpisode(Number(e.target.value))}
-                    aria-label="集数"
+                    aria-label="Número de episódios"
                     className={COMMIT_FIELD_BORDER_CLASS}
                     menuClassName={COMMIT_SELECT_MENU_CLASS}
                   >
@@ -758,12 +758,12 @@ export function CommitDialog({
                   >
                     {beatsLoading && (
                       <option value="" disabled>
-                        加载 beat…
+                        Carregando batimento...
                       </option>
                     )}
                     {!beatsLoading && beatOptions.length === 0 && (
                       <option value="" disabled>
-                        无 beat
+                        Sem batimento
                       </option>
                     )}
                     {beatOptions.map((n) => (
@@ -778,7 +778,7 @@ export function CommitDialog({
           )}
 
           {isIdentityStyle && (
-            <Section title="目标位置">
+            <Section title="Localização de destino">
               <div className="space-y-2">
                 <UiSelect
                   value={character ?? ""}
@@ -786,7 +786,7 @@ export function CommitDialog({
                     setCharacter(e.target.value);
                     setIdentityId(null);
                   }}
-                  aria-label="角色"
+                  aria-label="Função"
                   className={COMMIT_FIELD_BORDER_CLASS}
                   menuClassName={COMMIT_SELECT_MENU_CLASS}
                 >
@@ -807,11 +807,11 @@ export function CommitDialog({
                   >
                     {identitiesLoading ? (
                       <option value="" disabled>
-                        加载 identity_id…
+                        Carregando identity_id…
                       </option>
                     ) : displayedIdentityOptions.length === 0 ? (
                       <option value="" disabled>
-                        当前角色没有 identity_id
+                        A função atual não tem identity_id
                       </option>
                     ) : (
                       displayedIdentityOptions.map((id) => {
@@ -830,13 +830,13 @@ export function CommitDialog({
           )}
 
           {isSceneStyle && (
-            <Section title="目标位置">
+            <Section title="Localização de destino">
               {scenes.length > 0 ? (
                 <UiSelect
                   value={sceneId}
                   onChange={(e) => setSceneId(e.target.value)}
                   disabled={scenesLoading}
-                  aria-label="场景"
+                  aria-label="Cenário"
                   className={COMMIT_FIELD_BORDER_CLASS}
                   menuClassName={COMMIT_SELECT_MENU_CLASS}
                 >
@@ -854,39 +854,39 @@ export function CommitDialog({
                 <UiInput
                   value={sceneId}
                   onChange={(e) => setSceneId(e.target.value)}
-                  placeholder="scene_id,例如:兰州拉面馆"
+                  placeholder="scene_id, por exemplo, Lanzhou Ramen Restaurant"
                   className={COMMIT_FIELD_BORDER_CLASS}
                 />
               )}
-              <p className="mt-2 text-[11px] text-text-muted">将写入该场景资产槽位。</p>
+              <p className="mt-2 text-[11px] text-text-muted">O slot de recurso de cena será gravado.</p>
             </Section>
           )}
 
           {isPropStyle && (
-            <Section title="目标位置">
+            <Section title="Localização de destino">
               <UiInput
                 value={propId}
                 onChange={(e) => setPropId(e.target.value)}
-                placeholder="prop_id,例如:办公纸箱"
+                placeholder="prop_id, por exemplo, caixa de escritório"
                 className={COMMIT_FIELD_BORDER_CLASS}
               />
-              <p className="mt-2 text-[11px] text-text-muted">将写入该道具参考资产槽位。</p>
+              <p className="mt-2 text-[11px] text-text-muted">será gravado no slot do ativo de referência do item.</p>
             </Section>
           )}
 
           {isGlobalSlot && (
-            <Section title="影响预览">
+            <Section title="Pré-visualização do impacto">
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/[0.08] p-3 text-xs">
                 {impactLoading ? (
                   <div className="flex items-center gap-2 text-text-muted">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    正在计算影响范围…
+                    Calculando o impacto...
                   </div>
                 ) : (
                   <>
                     <div className="flex items-center gap-1.5 font-semibold text-amber-300">
                       <AlertTriangle className="h-3.5 w-3.5" />
-                      将影响 {impactBeats.length} 个镜头
+                      Irá afetar {impactBeats.length} tiros
                     </div>
                     {impactBeats.length > 0 && (
                       <div className="ui-scrollbar mt-2 max-h-28 space-y-1 overflow-y-auto pr-1">
@@ -898,7 +898,7 @@ export function CommitDialog({
                         ))}
                         {impactBeats.length > 12 && (
                           <div className="text-text-muted">
-                            还有 {impactBeats.length - 12} 个未显示
+                            E {impactBeats.length - 12} não mostrado
                           </div>
                         )}
                       </div>
@@ -924,7 +924,7 @@ export function CommitDialog({
                         </svg>
                       </span>
                       <span className="leading-relaxed">
-                        提交后把这些镜头标记为需重生，后续主流程可按标记重生
+                        Após o envio, marque essas fotos como precisando renascer, e o processo principal subsequente pode renascer marcando
                       </span>
                     </label>
                   </>
@@ -935,7 +935,7 @@ export function CommitDialog({
 
           <div className="flex items-start gap-2 px-1 text-[11px] leading-relaxed text-amber-100/70">
             <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-200/55" />
-            <span>将覆盖「{targetLabel}」已有资产；原文件会保留在历史记录中。</span>
+            <span>Substituirá "{targetLabel}"Ativos existentes; os documentos originais são mantidos no histórico.</span>
           </div>
 
           {error && (
@@ -947,7 +947,7 @@ export function CommitDialog({
 
         <footer className="flex items-center justify-end gap-2 px-5 py-3.5">
           <UiButton variant="ghost" size="sm" onClick={onClose} disabled={submitting}>
-            取消
+            Cancelar
           </UiButton>
           <UiButton
             variant="primary"
@@ -959,10 +959,10 @@ export function CommitDialog({
             {submitting ? (
               <>
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                提交中
+                Enviando
               </>
             ) : (
-              "提交"
+              "Enviar"
             )}
           </UiButton>
         </footer>
@@ -1003,10 +1003,10 @@ export function sceneOptionLabel(scene: SceneAsset): string {
 }
 
 function renderMediaLabel(mediaType: DropMediaType): string {
-  if (mediaType === "video") return "视频";
-  if (mediaType === "audio") return "音频";
-  if (mediaType === "model") return "3D 模型";
-  return "图片";
+  if (mediaType === "video") return "Vídeo";
+  if (mediaType === "audio") return "Áudio";
+  if (mediaType === "model") return "Modelo 3D";
+  return "Imagem";
 }
 
 function sourceDisplayName(sourceUrl: string): string {
@@ -1030,14 +1030,14 @@ export function directorWorldSourceDisplayName(
   const label = stringFromUnknown(source?.label);
   if (label) return label;
   const sourceKind = stringFromUnknown(source?.source_kind);
-  if (sourceKind === "master") return "正面 3D 世界";
-  if (sourceKind === "reverse") return "背面 3D 世界";
-  if (sourceKind === "pano") return source?.source_type === "pano360" ? "360 图" : "360 3D 世界";
-  if (sourceKind === "custom") return "自定义 3D 世界";
-  if (sourceKind === "uploaded") return "上传 3D 世界";
+  if (sourceKind === "master") return "Mundo 3D positivo";
+  if (sourceKind === "reverse") return "Mundo 3D na parte de trás";
+  if (sourceKind === "pano") return source?.source_type === "pano360" ? "Diagramas 360" : "Mundo 360 3D";
+  if (sourceKind === "custom") return "Mundos 3D personalizados";
+  if (sourceKind === "uploaded") return "Carregar mundo 3D";
   const sourceType = stringFromUnknown(source?.source_type);
-  if (sourceType === "pano360") return "360 图";
-  return fallback && !looksLikeAssetFilename(fallback) ? fallback : "3D 世界";
+  if (sourceType === "pano360") return "Diagramas 360";
+  return fallback && !looksLikeAssetFilename(fallback) ? fallback : "Mundo 3D";
 }
 
 function activeDirectorWorldSource(
@@ -1160,29 +1160,29 @@ function renderTargetLabel(t: PushTarget): string {
 }
 
 function shortKindLabel(kind: PushTargetKind): string {
-  if (kind === "frame") return "首帧";
-  if (kind === "sketch") return "草图";
-  if (kind === "director_render") return "导演合成资产";
-  if (kind === "selected_background") return "当前背景";
-  if (kind === "video") return "视频";
-  if (kind === "beat_audio") return "音频";
-  if (kind === "identity") return "角色身份图";
-  if (kind === "identity_costume") return "身份服装图";
-  if (kind === "identity_portrait") return "年龄身份肖像";
-  if (kind === "portrait") return "角色肖像";
-  if (kind === "scene_master") return "场景主图";
-  if (kind === "scene_reverse_master") return "反面场景图";
+  if (kind === "frame") return "Primeiro quadro";
+  if (kind === "sketch") return "Esboço";
+  if (kind === "director_render") return "Diretor de Ativos Sintéticos";
+  if (kind === "selected_background") return "Histórico Atual";
+  if (kind === "video") return "Vídeo";
+  if (kind === "beat_audio") return "Áudio";
+  if (kind === "identity") return "Diagrama de identidade de função";
+  if (kind === "identity_costume") return "Mapa de roupas de identidade";
+  if (kind === "identity_portrait") return "Retrato de identidade de idade";
+  if (kind === "portrait") return "Retrato de Personagem";
+  if (kind === "scene_master") return "Mestre da cena";
+  if (kind === "scene_reverse_master") return "Diagrama de cena reverso";
   if (kind === "scene_spatial_layout") return "Scene Spatial Layout";
   if (kind === "scene_360") return "Scene 360";
-  if (kind === "scene_director_world") return "导演世界";
+  if (kind === "scene_director_world") return "Mundo do diretor";
   if (kind === "scene_director_pano_360") return "Director Pano 360";
-  if (kind === "scene_3gs_active_ply") return "3D 世界（当前入口）";
-  if (kind === "scene_3gs_master_ply") return "3D 世界（正面）";
-  if (kind === "scene_3gs_reverse_ply") return "3D 世界（背面）";
-  if (kind === "scene_3gs_pano_ply") return "3D 世界（360）";
-  if (kind === "scene_3gs_custom_scene") return "3D 世界（自定义场景）";
-  if (kind === "scene_3gs_collision_glb") return "3D 世界碰撞体";
-  return "道具参考";
+  if (kind === "scene_3gs_active_ply") return "3D Mundo (Entrada Actual)";
+  if (kind === "scene_3gs_master_ply") return "3D Mundo (Frente)";
+  if (kind === "scene_3gs_reverse_ply") return "3D Mundo (Trasero)";
+  if (kind === "scene_3gs_pano_ply") return "3D Mundo (360)";
+  if (kind === "scene_3gs_custom_scene") return "3D Mundo (Escena Personalizada)";
+  if (kind === "scene_3gs_collision_glb") return "3D Mundo Interseção";
+  return "Referência de Objetos";
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

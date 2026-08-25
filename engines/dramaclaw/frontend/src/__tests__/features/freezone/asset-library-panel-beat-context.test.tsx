@@ -146,7 +146,7 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "主线资产" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
     await screen.findByText(/项目素材加载失败：network down/);
 
     act(() => {
@@ -225,11 +225,11 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "主线资产" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
     fireEvent.click(screen.getByRole("button", { name: /场景/ }));
     expect(await screen.findByText("厨房")).toBeInTheDocument();
-    expect(screen.queryByText("导演合成图")).toBeNull();
-    expect(screen.queryByText("当前背景 · Beat 1")).toBeNull();
+    expect(screen.queryByText("Diagrama de Composição do Diretor")).toBeNull();
+    expect(screen.queryByText("当前Fundamentos · Beat 1")).toBeNull();
   });
 
   it("keeps concrete scene slots and hides auxiliary scene pointers", async () => {
@@ -381,27 +381,27 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "主线资产" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
     fireEvent.click(screen.getByRole("button", { name: /场景/ }));
 
     expect(await screen.findByText("厨房 / master")).toBeInTheDocument();
     expect(screen.getByText("厨房 / reverse master")).toBeInTheDocument();
-    expect(screen.getByText("厨房 / 导演世界")).toBeInTheDocument();
+    expect(screen.getByText("厨房 / Mundo do diretor")).toBeInTheDocument();
     expect(screen.getByText("卧室 / master")).toBeInTheDocument();
     expect(screen.queryByText("厨房 / 旧 360")).toBeNull();
     expect(screen.queryByText("厨房 / director pano 360")).toBeNull();
-    expect(screen.queryByText("厨房 / 3D 世界（正面）")).toBeNull();
-    expect(screen.queryByText("厨房 / 3D 世界（背面）")).toBeNull();
-    expect(screen.queryByText("厨房 / 3D 世界（360）")).toBeNull();
-    expect(screen.queryByText("厨房 / 3D 世界（当前）")).toBeNull();
+    expect(screen.queryByText("厨房 / Mundo 3D（Frente）")).toBeNull();
+    expect(screen.queryByText("厨房 / Mundo 3D（Verso）")).toBeNull();
+    expect(screen.queryByText("厨房 / Mundo 3D（360）")).toBeNull();
+    expect(screen.queryByText("厨房 / Mundo 3D（当前）")).toBeNull();
     expect(screen.queryByText("厨房 / 3D 碰撞体")).toBeNull();
-    expect(screen.getAllByText("正面图")).toHaveLength(2);
-    expect(screen.getAllByText("背面图")).toHaveLength(1);
-    expect(screen.getAllByText("导演世界")).toHaveLength(1);
+    expect(screen.getAllByText("Vista frontal")).toHaveLength(2);
+    expect(screen.getAllByText("Vista traseira")).toHaveLength(1);
+    expect(screen.getAllByText("Mundo do diretor")).toHaveLength(1);
     expect(screen.queryByText("360图")).toBeNull();
-    expect(screen.queryByText("正面世界")).toBeNull();
-    expect(screen.queryByText("背面世界")).toBeNull();
-    expect(screen.queryByText("360世界")).toBeNull();
+    expect(screen.queryByText("Mundo positivo")).toBeNull();
+    expect(screen.queryByText("O mundo nas costas")).toBeNull();
+    expect(screen.queryByText("360 World")).toBeNull();
     expect(screen.getByRole("button", { name: /场景.*4/ })).toBeInTheDocument();
   });
 
@@ -424,10 +424,10 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    expect(screen.queryByRole("tab", { name: "主线资产" })).toBeNull();
-    expect(screen.queryByPlaceholderText("搜索素材...")).toBeNull();
+    expect(screen.queryByRole("tab", { name: "Ativos da linha principal" })).toBeNull();
+    expect(screen.queryByPlaceholderText("Pesquisar elementos...")).toBeNull();
     // 「项目画布」不受这个开关影响,必须还在。
-    expect(screen.getByRole("tab", { name: "项目画布" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Tela do projeto" })).toBeInTheDocument();
   });
 
   it("falls back to the canvases tab when mainline is switched off while open", async () => {
@@ -448,8 +448,8 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "主线资产" }));
-    expect(screen.getByPlaceholderText("搜索素材...")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
+    expect(screen.getByPlaceholderText("Pesquisar elementos...")).toBeInTheDocument();
 
     mainlineAvailable = false;
     act(() => {
@@ -464,9 +464,9 @@ describe("AssetLibraryPanel beat context", () => {
     });
 
     await vi.waitFor(() => {
-      expect(screen.queryByPlaceholderText("搜索素材...")).toBeNull();
+      expect(screen.queryByPlaceholderText("Pesquisar elementos...")).toBeNull();
     });
-    expect(screen.queryByRole("tab", { name: "主线资产" })).toBeNull();
+    expect(screen.queryByRole("tab", { name: "Ativos da linha principal" })).toBeNull();
   });
 
   it("browses the project asset library under its own tab", async () => {
@@ -512,7 +512,7 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "资产库" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Biblioteca de Ativos" }));
 
     // 根目录只有文件夹,条目要点进去才看得到。
     expect(
@@ -521,19 +521,19 @@ describe("AssetLibraryPanel beat context", () => {
     expect(
       screen.getByRole("button", { name: "文件夹 待分类资产" }),
     ).toBeInTheDocument();
-    expect(screen.queryByText("参考图A")).toBeNull();
+    expect(screen.queryByText("Diagrama de referênciaA")).toBeNull();
 
     // 主线同步来的条目(不论人物/场景/道具)统统收在一个【主线】文件夹里。
     fireEvent.click(screen.getByRole("button", { name: "文件夹 主线" }));
     expect(await screen.findByText("厨房静帧")).toBeInTheDocument();
-    expect(screen.queryByText("参考图A")).toBeNull();
+    expect(screen.queryByText("Diagrama de referênciaA")).toBeNull();
 
     // 面包屑退回根目录,再进【待分类资产】看本地上传的图片和视频。
-    fireEvent.click(screen.getByRole("button", { name: "返回资产库根目录" }));
+    fireEvent.click(screen.getByRole("button", { name: "Voltar à raiz da biblioteca de ativos" }));
     fireEvent.click(
       await screen.findByRole("button", { name: "文件夹 待分类资产" }),
     );
-    expect(await screen.findByText("参考图A")).toBeInTheDocument();
+    expect(await screen.findByText("Diagrama de referênciaA")).toBeInTheDocument();
     expect(screen.getByText("片段B")).toBeInTheDocument();
     expect(screen.queryByText("厨房静帧")).toBeNull();
   });
@@ -559,8 +559,8 @@ describe("AssetLibraryPanel beat context", () => {
     );
 
     // 资产库装的是本地上传的素材,不属于主线,开关关掉也得留着。
-    expect(screen.queryByRole("tab", { name: "主线资产" })).toBeNull();
-    fireEvent.click(screen.getByRole("tab", { name: "资产库" }));
+    expect(screen.queryByRole("tab", { name: "Ativos da linha principal" })).toBeNull();
+    fireEvent.click(screen.getByRole("tab", { name: "Biblioteca de Ativos" }));
     expect(await screen.findByText(/资产库还是空的/)).toBeInTheDocument();
   });
 
@@ -586,13 +586,13 @@ describe("AssetLibraryPanel beat context", () => {
     );
 
     // 入口常驻,停在「项目画布」tab 上也能点开。
-    expect(screen.getByRole("tab", { name: "项目画布" })).toHaveAttribute(
+    expect(screen.getByRole("tab", { name: "Tela do projeto" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    fireEvent.click(screen.getByRole("button", { name: "资产管理" }));
+    fireEvent.click(screen.getByRole("button", { name: "Gestão de Ativos" }));
 
-    expect(await screen.findByRole("button", { name: "新建" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "批量操作" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Novo" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ações em massa" })).toBeInTheDocument();
   });
 });

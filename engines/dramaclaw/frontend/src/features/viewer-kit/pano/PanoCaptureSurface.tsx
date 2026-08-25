@@ -40,10 +40,10 @@ const { ROTATE_UP, ROTATE_DOWN, ROTATE_LEFT, ROTATE_RIGHT, ZOOM_IN, ZOOM_OUT } =
 
 const DEG_TO_RAD = Math.PI / 180;
 const FOV_PRESETS = [
-  { label: "鱼眼 160°", value: 160 },
-  { label: "广角 120°", value: 120 },
-  { label: "标准 70°", value: 70 },
-  { label: "长焦 8°", value: 8 },
+  { label: "Anúncio fisheye 160°", value: 160 },
+  { label: "Anúncio lente estreita 120°", value: 120 },
+  { label: "Anúncio padrão 70°", value: 70 },
+  { label: "Anúncio telefoto 8°", value: 8 },
 ] as const;
 const DIRECTION_OFFSETS = {
   Front: 0,
@@ -207,7 +207,7 @@ export function resizePanoCaptureFrame(
 export function PanoCaptureSurface({
   manifest,
   className,
-  captureLabel = "截图",
+  captureLabel = "Toma uma foto",
   viewerPurpose,
   onCapture,
   onSaveCorrection,
@@ -659,7 +659,7 @@ export function PanoCaptureSurface({
     const canvas = hostRef.current?.querySelector("canvas");
     const viewer = viewerRef.current;
     if (!canvas || !viewer) {
-      setViewerError("360 viewer 尚未准备好");
+      setViewerError("O assistente de visualização 360° ainda não está pronto");
       return;
     }
     setIsCapturing(true);
@@ -726,8 +726,8 @@ export function PanoCaptureSurface({
     viewerPurposeLabel(viewerPurpose ?? (manifest.mode === "beat" ? "beat" : "asset")),
     "canonical pano",
     manifest.allowed_destinations.includes("beat_selected_background")
-      ? "保存目标 selected_background"
-      : "场景入口只下载，不写 latest",
+      ? "Salve o local-target selecionado"
+      : "A entrada da cena só baixa, não grava o mais recente",
   ].filter((label): label is string => Boolean(label));
 
   return (
@@ -767,14 +767,14 @@ export function PanoCaptureSurface({
           </div>
           <Button variant="outline" size="sm" onClick={resetView}>
             <RotateCcw className="size-3.5" />
-            重置
+            Redefinir
           </Button>
           <Button size="sm" onClick={() => void capture()} disabled={isCapturing}>
             {isCapturing ? <Loader2 className="size-3.5 animate-spin" /> : <Camera className="size-3.5" />}
             {captureLabel}
           </Button>
           {onClose && (
-            <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="关闭">
+            <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Fechar">
               <X className="size-4" />
             </Button>
           )}
@@ -835,17 +835,17 @@ export function PanoCaptureSurface({
           ))}
         </div>
         <Button variant="outline" size="sm" onClick={lockCurrentView}>
-          当前视角矫正
+          Correção de Perspectiva Atual
         </Button>
         <Button
           variant={planetBackup ? "secondary" : "outline"}
           size="sm"
           onClick={planetBackup ? exitPlanetView : enterPlanetView}
         >
-          {planetBackup ? "退出小行星" : "小行星视角"}
+          {planetBackup ? "Sair do Asteroide" : "Perspectiva do Asteroide"}
         </Button>
         <Button variant="outline" size="sm" onClick={() => void copyCorrectionJson()}>
-          复制参数 JSON
+          Copiar parâmetro JSON
         </Button>
         {onSaveCorrection && (
           <Button
@@ -854,14 +854,14 @@ export function PanoCaptureSurface({
             onClick={() => void saveCorrection()}
             disabled={isSavingCorrection}
           >
-            {isSavingCorrection ? "保存中" : "保存校正"}
+            {isSavingCorrection ? "Poupança" : "Salvar correção"}
           </Button>
         )}
         <Button variant="outline" size="sm" onClick={() => setShowGuides((value) => !value)}>
-          {showGuides ? "隐藏辅助线" : "显示辅助线"}
+          {showGuides ? "Ocultar guias" : "Mostrar guias"}
         </Button>
         <Button variant="outline" size="sm" onClick={resetCropFrame}>
-          重置截图框
+          Redefinir caixa de captura de tela
         </Button>
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-border/60 px-4 py-2 text-xs">
@@ -889,7 +889,7 @@ export function PanoCaptureSurface({
           />
         </label>
         <Button variant="outline" size="sm" onClick={setFrontYawFromView}>
-          当前设为正面
+          Atualmente definido para a frente
         </Button>
         <label className="flex items-center gap-2 text-muted-foreground">
           roll
@@ -961,7 +961,7 @@ export function PanoCaptureSurface({
           />
         </label>
         <Button variant="outline" size="sm" onClick={resetSphereCorrection}>
-          重置校正
+          Redefinir Calibração
         </Button>
       </div>
       {viewerError && (
@@ -1013,10 +1013,10 @@ export function PanoCaptureSurface({
         {saveResult && (
           <div className="pointer-events-auto absolute bottom-3 right-3 z-10 max-w-[min(460px,calc(100%-24px))] rounded-lg border border-emerald-500/40 bg-background/90 p-3 text-xs shadow-lg backdrop-blur">
             <div className="font-medium text-emerald-600">
-              已保存 {saveResult.anchor_id || "截图"}
+              Guardado {saveResult.anchor_id || "Toma uma foto"}
             </div>
             <div className="mt-1 break-all text-muted-foreground">
-              {saveResult.rel_path || saveResult.path || "未返回路径"}
+              {saveResult.rel_path || saveResult.path || "Caminho não retornado"}
             </div>
             <div className="mt-1 text-muted-foreground">
               {saveResult.width} x {saveResult.height}
@@ -1026,9 +1026,9 @@ export function PanoCaptureSurface({
         {captureHistory.length > 0 && (
           <div className="pointer-events-auto absolute bottom-3 left-3 z-10 max-w-[min(560px,calc(100%-24px))] rounded-lg border border-border/70 bg-background/90 p-2 shadow-lg backdrop-blur">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <div className="text-xs font-medium text-foreground">截图列表</div>
+              <div className="text-xs font-medium text-foreground">Lista de capturas de tela</div>
               <Button variant="ghost" size="sm" onClick={clearCaptureHistory}>
-                清空截图列表
+                Lista de Capturas de Tela Vazias
               </Button>
             </div>
             <div className="flex gap-2 overflow-x-auto">
@@ -1040,7 +1040,7 @@ export function PanoCaptureSurface({
                     className="h-16 w-full object-cover"
                   />
                   <div className="space-y-0.5 p-2 text-[11px] leading-tight">
-                    <div className="font-medium text-foreground">截图 {item.id}</div>
+                    <div className="font-medium text-foreground">Toma uma foto {item.id}</div>
                     <div className="text-muted-foreground">
                       {item.width} x {item.height} · {item.aspect}
                     </div>
@@ -1053,7 +1053,7 @@ export function PanoCaptureSurface({
                       download={`pano-capture-${item.id}.png`}
                       className="inline-flex text-primary hover:underline"
                     >
-                      下载截图 {item.id}
+                      Baixar captura de tela {item.id}
                     </a>
                   </div>
                 </div>

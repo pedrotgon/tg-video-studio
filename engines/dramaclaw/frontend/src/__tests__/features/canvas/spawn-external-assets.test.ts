@@ -286,6 +286,6 @@ describe('spawnExternalAssetNodes', () => {
 
 describe('EXTERNAL_ASSET_GROUP_LABEL', () => {
   it('与资产库的编组标签区分开', () => {
-    expect(EXTERNAL_ASSET_GROUP_LABEL).not.toBe('资产参考组');
+    expect(EXTERNAL_ASSET_GROUP_LABEL).not.toBe('Grupo de Referência de Ativos');
   });
 });

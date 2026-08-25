@@ -1406,7 +1406,7 @@ describe("ThreeDDirectorDialog", () => {
         },
         {
           kind: "pano",
-          label: "360 图",
+          label: "Diagramas 360",
           source_type: "pano360",
           pano_url: "/static/demo/hall_360.png",
           slot_kind: "scene_director_pano_360",

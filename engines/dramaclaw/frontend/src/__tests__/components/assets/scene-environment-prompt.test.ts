@@ -43,13 +43,13 @@ describe("parseEnvironmentPrompt", () => {
 
   it("does not treat a keyword mid-sentence as a heading", () => {
     const s = parseEnvironmentPrompt("正面：这里提到背面也只是描述");
-    expect(s.front).toBe("这里提到背面也只是描述");
+    expect(s.front).toBe("这里提到Verso也只是描述");
     expect(s.back).toBe("");
   });
 
   it("keeps legacy / unlabeled prompts whole in the front field", () => {
     const s = parseEnvironmentPrompt("一段没有任何标题的自由文本");
-    expect(s.front).toBe("一段没有任何标题的自由文本");
+    expect(s.front).toBe("一段没有任何标题的LiberdadeTexto");
     expect(s.left).toBe("");
   });
 
@@ -76,7 +76,7 @@ describe("serializeEnvironmentPrompt", () => {
       material: "",
       forbidden: "",
     });
-    expect(out).toBe("正面：f\n背面：b");
+    expect(out).toBe("Frente：f\nVerso：b");
   });
 
   it("trims section values", () => {
@@ -89,6 +89,6 @@ describe("serializeEnvironmentPrompt", () => {
       material: "",
       forbidden: "",
     });
-    expect(out).toBe("正面：f");
+    expect(out).toBe("Frente：f");
   });
 });

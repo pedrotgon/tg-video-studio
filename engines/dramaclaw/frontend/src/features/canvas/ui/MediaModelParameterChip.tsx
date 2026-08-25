@@ -40,12 +40,12 @@ export function MediaModelParameterChip({ parameters, values = {}, mode, onChang
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        title="模型参数"
+        title="Parâmetros do Modelo"
         className={NODE_TEXT_CONTROL_TRIGGER_CLASS}
         onClick={(event) => { event.stopPropagation(); setOpen((value) => !value); }}
       >
         <SlidersHorizontal className="h-3.5 w-3.5" />
-        <span>模型参数</span>
+        <span>Parâmetros do Modelo</span>
       </button>
       {open && (
         <div
@@ -73,7 +73,7 @@ export function MediaModelParameterChip({ parameters, values = {}, mode, onChang
                       ? Array.from(e.target.selectedOptions, (option) => optionValue(item, option.value))
                       : optionValue(item, e.target.value))}
                   >
-                    {!item.required && item.control !== "multiselect" && <option value="">默认</option>}
+                    {!item.required && item.control !== "multiselect" && <option value="">Padrão</option>}
                     {(item.options ?? []).map((option) => {
                       const token = optionToken(option);
                       return <option key={token} value={token}>{String(option)}</option>;

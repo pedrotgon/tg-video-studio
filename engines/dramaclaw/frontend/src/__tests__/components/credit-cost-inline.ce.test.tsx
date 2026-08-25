@@ -42,7 +42,7 @@ describe("CreditCostInline CE gating", () => {
   it("shows a generic promotion label when promotion metadata is unavailable", () => {
     render(<CreditCostInline display="8→6" />);
 
-    expect(screen.getByText("促销中")).toBeInTheDocument();
+    expect(screen.getByText("Em promoção")).toBeInTheDocument();
   });
 
   it("renders nothing in CE runtime", () => {

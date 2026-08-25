@@ -384,7 +384,7 @@ export function NodeGenerationHistory({
       <div className="flex items-center justify-between px-0.5">
         <span className="inline-flex items-center gap-1 text-[11px] font-medium text-text-muted">
           <History className="h-3 w-3" />
-          历史记录{sorted.length > 0 ? ` · ${sorted.length}` : ''}
+          História{sorted.length > 0 ? ` · ${sorted.length}` : ''}
         </span>
         {onRefresh && (
           <button
@@ -394,7 +394,7 @@ export function NodeGenerationHistory({
               event.stopPropagation();
               onRefresh();
             }}
-            title="刷新历史"
+            title="Atualizar histórico"
           >
             {isLoading ? (
               <Loader2 className="h-3 w-3 animate-spin" />
@@ -440,7 +440,7 @@ export function NodeGenerationHistory({
               }}
               title={`${formatRelativeTime(record.recorded_at)}${
                 completed ? '' : ` · ${record.status}`
-              }${active ? ' · 当前' : ''}`}
+              }${active ? '· Atual' : ''}`}
               className={`group relative h-14 w-14 shrink-0 overflow-hidden rounded-[8px] border transition ${
                 active
                   ? 'border-[rgb(var(--accent-rgb))]'

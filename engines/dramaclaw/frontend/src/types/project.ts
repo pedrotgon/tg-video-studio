@@ -41,6 +41,8 @@ export interface CommercialBrCreative {
   promise: string;
   proof: string;
   cta: string;
+  audience: string;
+  tone: string;
   script: string;
   scenes: Array<{ order: number; visual: string; voiceover: string; on_screen: string }>;
   duration_seconds: number;
@@ -88,6 +90,8 @@ export interface ProjectConfig {
   output?: CommercialBrOutput;
   brand?: CommercialBrBrand;
   creatives?: CommercialBrCreative[];
+  commercial_plan_version?: number;
+  commercial_plan_fingerprint?: string;
 }
 
 export type Project = string;

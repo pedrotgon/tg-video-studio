@@ -321,7 +321,7 @@ export function AssetLibraryModal({
 
   const handleCreateFolder = useCallback(
     async (name: string): Promise<AssetFolderKey> => {
-      if (!project) throw new Error('项目未就绪');
+      if (!project) throw new Error('O projeto não está pronto');
       const folder = await createFreezoneAssetLibraryFolder(project, name);
       await refreshFolders();
       return folder.id;
@@ -406,9 +406,9 @@ export function AssetLibraryModal({
     async (entry: LibraryItem) => {
       if (!project || !entry.id) return;
       const confirmed = await confirmDialog({
-        title: '删除素材',
+        title: 'Excluir elemento',
         description: `确定要删除「${entry.name || entry.id}」？删了找不回来。`,
-        confirmText: '删除',
+        confirmText: 'Remover',
         confirmVariant: 'destructive',
       });
       if (!confirmed) return;
@@ -429,9 +429,9 @@ export function AssetLibraryModal({
   const handleBulkDelete = useCallback(async () => {
     if (!project || bulkIds.length === 0 || isBulkDeleting) return;
     const confirmed = await confirmDialog({
-      title: '批量删除',
+      title: 'Exclusão em massa',
       description: `确定要删除选中的 ${bulkIds.length} 项素材？删了找不回来。`,
-      confirmText: '删除',
+      confirmText: 'Remover',
       confirmVariant: 'destructive',
     });
     if (!confirmed) return;
@@ -523,12 +523,12 @@ export function AssetLibraryModal({
         (entry) => entry.folder === folder.key,
       ).length;
       const confirmed = await confirmDialog({
-        title: '删除文件夹',
+        title: 'Excluir pasta',
         description:
           doomed > 0
             ? `确定要删除文件夹「${folder.label}」？里面的 ${doomed} 项素材会一起删掉，删了找不回来。`
             : `确定要删除文件夹「${folder.label}」？`,
-        confirmText: '删除',
+        confirmText: 'Remover',
         confirmVariant: 'destructive',
       });
       if (!confirmed) return;
@@ -680,7 +680,7 @@ export function AssetLibraryModal({
     selectedKeys.filter((k) => k.startsWith(`${media}:`)).length;
   const hasSelection = selectedCount > 0;
   const tabs: Array<{ key: AssetLibraryTabKey; label: string }> = [
-    { key: ALL_CATEGORY_KEY, label: ui('Todos', '全部') },
+    { key: ALL_CATEGORY_KEY, label: ui('Todos', 'Todos') },
     ...categories.map((category) => ({
       key: category.key,
       label: categoryLabel(category.key, category.label),
@@ -708,7 +708,7 @@ export function AssetLibraryModal({
         {/* Title bar：批量操作 / 新建 统一收在右上角 */}
         <div className="flex shrink-0 items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-text-dark">{ui('Biblioteca de ativos', '资产库')}</h2>
+            <h2 className="text-base font-semibold text-text-dark">{ui('Biblioteca de ativos', 'Biblioteca de Ativos')}</h2>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -716,14 +716,14 @@ export function AssetLibraryModal({
               onClick={() => void handleSyncFromMainline()}
               disabled={!project || isSyncing}
               className={headerButtonClass}
-              title={ui('Sincroniza automaticamente ao abrir; atualize para buscar novos ativos principais.', '打开时已自动同步；如主线新增了人物 / 场景 / 道具，可点此重新同步')}
+              title={ui('Sincroniza automaticamente ao abrir; atualize para buscar novos ativos principais.', 'Sincronizado automaticamente quando aberto; se um personagem/cena/item for adicionado à linha principal, você pode ressincronizá-lo aqui')}
             >
               {isSyncing ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
                 <RefreshCw className="h-3.5 w-3.5" />
               )}
-              {ui('Sincronizar novamente', '重新同步')}
+              {ui('Sincronizar novamente', 'Ressincronizar')}
             </button>
             <button
               type="button"
@@ -735,9 +735,9 @@ export function AssetLibraryModal({
               className={`${headerButtonClass} ${
                 bulkMode ? 'bg-white/[0.18] text-text-dark' : ''
               }`}
-              title={ui('Entrar no modo de exclusão em lote', '进入批量删除模式')}
+              title={ui('Entrar no modo de exclusão em lote', 'Entrar no modo de exclusão em massa')}
             >
-              {bulkMode ? ui('Sair do lote', '退出批量') : ui('Operações em lote', '批量操作')}
+              {bulkMode ? ui('Sair do lote', 'Sair do lote') : ui('Operações em lote', 'Ações em massa')}
             </button>
             <div className="relative">
               <button
@@ -747,7 +747,7 @@ export function AssetLibraryModal({
                 className={headerButtonClass}
               >
                 <Plus className="h-3.5 w-3.5" />
-                {ui('Novo', '新建')}
+                {ui('Novo', 'Novo')}
               </button>
               {createMenuOpen && (
                 <>
@@ -765,7 +765,7 @@ export function AssetLibraryModal({
                       }}
                       className="block w-full px-3 py-1.5 text-left text-xs text-text-muted/85 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
                     >
-                      {ui('Nova pasta', '新建文件夹')}
+                      {ui('Nova pasta', 'Nova pasta')}
                     </button>
                     <button
                       type="button"
@@ -775,7 +775,7 @@ export function AssetLibraryModal({
                       }}
                       className="block w-full px-3 py-1.5 text-left text-xs text-text-muted/85 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
                     >
-                      {ui('Enviar ativo', '上传资产')}
+                      {ui('Enviar ativo', 'Carregar Ativos')}
                     </button>
                   </div>
                 </>
@@ -785,7 +785,7 @@ export function AssetLibraryModal({
               type="button"
               onClick={onClose}
               className="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-muted/90 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
-              title="关闭"
+              title="Fechar"
             >
               <X className="h-4 w-4" />
             </button>
@@ -827,11 +827,11 @@ export function AssetLibraryModal({
             <button
               type="button"
               onClick={() => setOpenFolderKey(null)}
-              aria-label="返回全部"
+              aria-label="Voltar para todos"
               className="inline-flex items-center gap-0.5 rounded-md px-1.5 py-1 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
-              {ui('Todos', '全部')}
+              {ui('Todos', 'Todos')}
             </button>
             <span className="text-text-muted/50">/</span>
             <span className="px-1 text-text-dark">{openFolder.label}</span>
@@ -845,12 +845,12 @@ export function AssetLibraryModal({
         <div className="ui-scrollbar relative flex-1 overflow-y-auto px-5 pb-2">
           {isDragging && dropTarget && (
             <div className="pointer-events-none absolute inset-x-5 inset-y-0 z-10 flex items-center justify-center rounded-[8px] border border-dashed border-accent/60 bg-accent/10 text-sm text-text-dark">
-              松开以上传到「{dropTarget.label}」
+              Afrouxe o upload para "{dropTarget.label}」
             </div>
           )}
           {libraryError && (
             <div className="mb-3 rounded-md bg-red-500/10 px-3 py-2 text-[12px] text-red-400">
-              加载失败：{libraryError}
+              Falha no carregamento:{libraryError}
             </div>
           )}
           <div
@@ -921,11 +921,11 @@ export function AssetLibraryModal({
                   {p.status === 'uploading' ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin text-white" />
-                      <div className="text-[11px] text-white/90">上传中…</div>
+                      <div className="text-[11px] text-white/90">Carregando...</div>
                     </>
                   ) : (
                     <>
-                      <div className="text-[11px] text-red-300">上传失败</div>
+                      <div className="text-[11px] text-red-300">Falha ao carregar</div>
                       {p.error && (
                         <div className="px-2 text-[10px] text-red-200/80 line-clamp-2 text-center">
                           {p.error}
@@ -939,7 +939,7 @@ export function AssetLibraryModal({
                     type="button"
                     onClick={() => removePending(p.id)}
                     className="absolute right-2 bottom-2 inline-flex h-7 w-7 items-center justify-center rounded-md bg-black/55 text-white transition-colors hover:bg-black/75"
-                    title="移除"
+                    title="Remover"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -993,14 +993,14 @@ export function AssetLibraryModal({
                       bulkMode
                         ? bulkEligible
                           ? selected
-                            ? '取消选择'
-                            : '选中待删除'
-                          : ui('Ativos principais sincronizados não podem ser excluídos', '主线同步来的素材不能删除')
+                            ? 'Desmarcar'
+                            : 'Verificado para exclusão'
+                          : ui('Ativos principais sincronizados não podem ser excluídos', 'Os elementos da sincronização da linha principal não podem ser excluídos')
                         : disabledSelect
                           ? `最多可选 ${maxSelectable} 个`
                           : selected
-                            ? '取消选择'
-                            : '选择'
+                            ? 'Desmarcar'
+                            : 'Selecionar'
                     }
                     className={`absolute left-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full border transition-colors ${
                       selected
@@ -1021,7 +1021,7 @@ export function AssetLibraryModal({
                   )}
 
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 text-xs text-white">
-                    <div className="truncate">{entry.name || '(未命名)'}</div>
+                    <div className="truncate">{entry.name || '(sem nome)'}</div>
                   </div>
                   {/* 只有本地上传的条目可删；主线同步来的条目删了也会在下次打开自动同步时
                       重新出现，所以不提供删除入口，避免「删不掉」的误导。批量态下走
@@ -1035,7 +1035,7 @@ export function AssetLibraryModal({
                       }}
                       disabled={!entry.id || isDeleting}
                       className="absolute right-2 bottom-2 inline-flex h-7 w-7 items-center justify-center rounded-md bg-black/60 text-white opacity-0 transition-[opacity,background-color] hover:bg-black/80 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
-                      title={entry.id ? '删除' : '该条目缺少 id，无法删除'}
+                      title={entry.id ? 'Remover' : 'A entrada não tem um ID e não pode ser excluída'}
                     >
                       {isDeleting ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -1055,7 +1055,7 @@ export function AssetLibraryModal({
             visiblePending.length === 0 &&
             !libraryError && (
               <div className="mt-3 text-center text-[11px] text-text-muted/70">
-                {ui('Ainda não há ativos. Use “Novo → Enviar ativo” ou sincronize os ativos principais.', '这里暂无素材，可点右上角「新建 → 上传资产」添加；主线资产已自动同步，也可点「重新同步」。')}
+                {ui('Ainda não há ativos. Use “Novo → Enviar ativo” ou sincronize os ativos principais.', 'Não há ativos aqui, você pode clicar em "Novo ativo de upload" no canto → superior direito para adicioná-los. Os ativos da linha principal foram sincronizados automaticamente ou você pode clicar em "Ressincronizar".')}
               </div>
             )}
         </div>
@@ -1065,8 +1065,8 @@ export function AssetLibraryModal({
           {bulkMode ? (
             <>
               <span className="mr-auto text-xs text-text-muted/85">
-                已选 <span className="text-text-dark">{bulkIds.length}</span> 项
-                （只能删除本地上传的素材）
+                Selecionado <span className="text-text-dark">{bulkIds.length}</span> Item
+                (Somente elementos carregados localmente podem ser excluídos)
               </span>
               <Button
                 size="sm"
@@ -1077,7 +1077,7 @@ export function AssetLibraryModal({
                   setBulkIds([]);
                 }}
               >
-                {ui('Sair do lote', '退出批量')}
+                {ui('Sair do lote', 'Sair do lote')}
               </Button>
               <Button
                 size="sm"
@@ -1088,7 +1088,7 @@ export function AssetLibraryModal({
                 {isBulkDeleting && (
                   <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                 )}
-                删除所选
+                Excluir selecionados
               </Button>
             </>
           ) : (
@@ -1109,7 +1109,7 @@ export function AssetLibraryModal({
                   disabled={!hasSelection}
                   onClick={handleConfirm}
                 >
-                  确定
+                  OK
                 </Button>
               )}
             </>
@@ -1142,7 +1142,7 @@ export function AssetLibraryModal({
 
       <AssetLibraryNewFolderDialog
         open={Boolean(renameFolder)}
-        title="重命名"
+        title="Renomear"
         initialName={renameFolder?.label ?? ''}
         onClose={() => setRenameFolderKey(null)}
         onSubmit={async (name) => {
@@ -1239,8 +1239,8 @@ function FolderCard({
             event.stopPropagation();
             onSend();
           }}
-          aria-label="发送到画布"
-          title="发送到画布"
+          aria-label="Enviar para o Canvas"
+          title="Enviar para o Canvas"
           className="absolute bottom-2 right-2 hidden h-7 w-7 items-center justify-center rounded-[6px] bg-black/70 text-white transition-colors hover:bg-black/90 group-hover:inline-flex"
         >
           <Send className="h-3.5 w-3.5" />
@@ -1275,21 +1275,21 @@ function FolderCard({
                     onClick={onEditCover}
                     className="block w-full px-3 py-1.5 text-left text-xs text-text-dark transition-colors hover:bg-white/[0.08]"
                   >
-                    修改封面
+                    Modificar capa
                   </button>
                   <button
                     type="button"
                     onClick={onRename}
                     className="block w-full px-3 py-1.5 text-left text-xs text-text-dark transition-colors hover:bg-white/[0.08]"
                   >
-                    重命名
+                    Renomear
                   </button>
                   <button
                     type="button"
                     onClick={onDelete}
                     className="block w-full px-3 py-1.5 text-left text-xs text-red-400 transition-colors hover:bg-white/[0.08]"
                   >
-                    删除
+                    Remover
                   </button>
                 </div>
               </>
@@ -1334,7 +1334,7 @@ function AssetLibraryPagination({
     <div className="mr-auto flex items-center gap-1.5">
       <button
         type="button"
-        aria-label={ptBR ? 'Página anterior' : '上一页'}
+        aria-label={ptBR ? 'Página anterior' : 'Anterior'}
         disabled={page <= 1}
         onClick={() => onPageChange(page - 1)}
         className={stepClass}
@@ -1369,7 +1369,7 @@ function AssetLibraryPagination({
       )}
       <button
         type="button"
-        aria-label={ptBR ? 'Próxima página' : '下一页'}
+        aria-label={ptBR ? 'Próxima página' : 'Próximo'}
         disabled={page >= pageCount}
         onClick={() => onPageChange(page + 1)}
         className={stepClass}
@@ -1380,7 +1380,7 @@ function AssetLibraryPagination({
       <div className="relative ml-1">
         <button
           type="button"
-        aria-label={ptBR ? 'Itens por página' : '每页条数'}
+        aria-label={ptBR ? 'Itens por página' : 'Número de barras por página'}
           onClick={() => setSizeMenuOpen((prev) => !prev)}
           className="inline-flex h-7 items-center gap-1.5 rounded-[6px] border border-white/[0.10] bg-white/[0.04] px-2.5 text-xs text-text-muted/85 transition-colors hover:border-white/[0.20] hover:text-text-dark"
         >

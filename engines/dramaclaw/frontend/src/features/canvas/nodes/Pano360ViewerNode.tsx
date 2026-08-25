@@ -118,23 +118,23 @@ type CaptureFrameSpec = { yawOffset: number; pitch: number; label: string };
 
 // 2×2：四个水平方向，平视，排成两列两行。
 const GRID_2X2_FRAMES: CaptureFrameSpec[] = [
-  { yawOffset: DIRECTION_OFFSETS.front, pitch: 0, label: '前方' },
-  { yawOffset: DIRECTION_OFFSETS.right, pitch: 0, label: '右侧' },
-  { yawOffset: DIRECTION_OFFSETS.back, pitch: 0, label: '后方' },
-  { yawOffset: DIRECTION_OFFSETS.left, pitch: 0, label: '左侧' },
+  { yawOffset: DIRECTION_OFFSETS.front, pitch: 0, label: 'Frente' },
+  { yawOffset: DIRECTION_OFFSETS.right, pitch: 0, label: 'Lado Direito' },
+  { yawOffset: DIRECTION_OFFSETS.back, pitch: 0, label: 'Traseira' },
+  { yawOffset: DIRECTION_OFFSETS.left, pitch: 0, label: 'Lado Esquerdo' },
 ];
 
 // 4×3：四个方向 × 三个俯仰（上 / 平 / 下），共 12 张，每行一个俯仰。
 const GRID_4X3_DIRS: { offset: number; name: string }[] = [
-  { offset: DIRECTION_OFFSETS.front, name: '前方' },
-  { offset: DIRECTION_OFFSETS.right, name: '右侧' },
-  { offset: DIRECTION_OFFSETS.back, name: '后方' },
-  { offset: DIRECTION_OFFSETS.left, name: '左侧' },
+  { offset: DIRECTION_OFFSETS.front, name: 'Frente' },
+  { offset: DIRECTION_OFFSETS.right, name: 'Lado Direito' },
+  { offset: DIRECTION_OFFSETS.back, name: 'Traseira' },
+  { offset: DIRECTION_OFFSETS.left, name: 'Lado Esquerdo' },
 ];
 const GRID_4X3_PITCHES: { value: number; name: string }[] = [
-  { value: 40, name: '上' },
-  { value: 0, name: '平' },
-  { value: -40, name: '下' },
+  { value: 40, name: 'Para cima' },
+  { value: 0, name: 'Plano' },
+  { value: -40, name: 'Para baixo' },
 ];
 const GRID_4X3_FRAMES: CaptureFrameSpec[] = GRID_4X3_PITCHES.flatMap((pitch) =>
   GRID_4X3_DIRS.map((dir) => ({
@@ -513,20 +513,20 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
       // 的延迟回调更新 React state。
       v.addEventListener('ready', () => {
         if (cancelled) return;
-        setStatus('就绪');
+        setStatus('Pronto');
         applyCorrectionOn(v);
         applyFovOn(v, clampFov(dataRef.current.fovDeg || 70));
       });
       v.addEventListener('panorama-loaded', () => {
         if (cancelled) return;
-        setStatus('已加载');
+        setStatus('Carregado');
       });
       v.addEventListener('panorama-error', (event: unknown) => {
         if (cancelled) return;
         const err = event as { error?: Error | string; panorama?: string } | null;
         const errorObj = err?.error;
         const message =
-          errorObj instanceof Error ? errorObj.message : typeof errorObj === 'string' ? errorObj : '加载失败';
+          errorObj instanceof Error ? errorObj.message : typeof errorObj === 'string' ? errorObj : 'Falha no carregamento';
         setStatus(message);
         setViewerError(message);
       });
@@ -551,7 +551,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
         v.setOption('mousewheel', on);
       });
 
-      setStatus('加载中...');
+      setStatus('Carregando...');
       // showLoader: false 这里其实只对「之后」的切图生效（PSV 源码 line 6148
       // 是 `||`，首次加载会被 `!state.ready` 强制 show loader）。真正不让 PSV
       // 的 loader 卡住的，是 viewerHost 上的 `[&_.psv-loader-container]:!hidden`
@@ -559,7 +559,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
       v.setPanorama(displayUrl, { showLoader: false, transition: false })
         .then(() => {
           if (cancelled) return;
-          setStatus('已加载');
+          setStatus('Carregado');
           applyCorrectionOn(v);
           applyFovOn(v, clampFov(dataRef.current.fovDeg || 70));
         })
@@ -805,10 +805,10 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
     const text = JSON.stringify(entry, null, 2);
     try {
       await navigator.clipboard.writeText(text);
-      setStatus('校正 JSON 已复制到剪贴板');
+      setStatus('JSON de correção copiado para a área de transferência');
     } catch (error) {
       console.warn('[pano360] clipboard write failed', error);
-      setStatus('已生成校正 JSON（剪贴板不可用，见控制台）');
+      setStatus('Correção JSON gerada (área de transferência não disponível, consulte o console)');
       console.info('[pano360] correction JSON:\n' + text);
     }
   }, [buildCorrectionEntry, id, updateNodeData]);
@@ -835,8 +835,8 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
         cropped.dataUrl,
         `pano-${id}-${Date.now()}.png`,
       );
-      const nodeId = addPanoCaptureGroup(id, [{ ...cropped, uploadedUrl, label: '当前视角' }]);
-      setStatus(nodeId ? '已生成当前视角截图' : '截图失败');
+      const nodeId = addPanoCaptureGroup(id, [{ ...cropped, uploadedUrl, label: 'Perspectiva Atual' }]);
+      setStatus(nodeId ? 'Captura de tela da perspectiva atual gerada' : 'Falha na captura de tela');
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       setStatus(`截图失败: ${message}`);
@@ -861,7 +861,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
     const episode = typeof presetMeta?.episode === 'number' ? presetMeta.episode : null;
     const beat = typeof presetMeta?.beat === 'number' ? presetMeta.beat : null;
     if (episode === null || beat === null) {
-      setStatus('当前不在镜头上下文中,无法设为背景源');
+      setStatus('Atualmente não está no contexto da câmera, não pode ser definido como fonte de fundo');
       return;
     }
     setIsCapturing(true);
@@ -883,11 +883,11 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
         `background_pano360_${Date.now()}.png`,
         {
           sourceNodeId: id,
-          label: '当前背景',
-          successMessage: '已设置当前背景',
+          label: 'Histórico Atual',
+          successMessage: 'Conjunto de antecedentes atual',
         },
       );
-      setStatus('已生成当前背景候选并提交');
+      setStatus('Candidato atual em segundo plano gerado e enviado');
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       setStatus(`设置失败: ${message}`);
@@ -949,7 +949,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
           }),
         );
         const groupId = addPanoCaptureGroup(id, captures, { cols, groupName });
-        setStatus(groupId ? `已生成 ${captures.length} 张截图` : '截图失败');
+        setStatus(groupId ? `已生成 ${captures.length} 张截图` : 'Falha na captura de tela');
       } catch (error) {
         viewer.rotate(savedPos);
         applyFov(savedFov);
@@ -963,11 +963,11 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
   );
 
   const snap2x2 = useCallback(
-    () => captureToGroup(2, GRID_2X2_FRAMES, 90, '全景截图组 (4 张)'),
+    () => captureToGroup(2, GRID_2X2_FRAMES, 90, 'Grupo de captura de tela panorâmica (4 fotos)'),
     [captureToGroup],
   );
   const snap4x3 = useCallback(
-    () => captureToGroup(4, GRID_4X3_FRAMES, 75, '全景截图组 (12 张)'),
+    () => captureToGroup(4, GRID_4X3_FRAMES, 75, 'Grupo de captura de tela panorâmica (12 fotos)'),
     [captureToGroup],
   );
 
@@ -1021,13 +1021,13 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
         className="pointer-events-auto"
       >
         <div className="flex items-center gap-1 rounded-full border border-white/[0.12] bg-[#282828]/95 px-1.5 py-1 shadow-[0_10px_24px_rgba(0,0,0,0.32)] backdrop-blur-md">
-          <PanoToolbarButton onClick={snapCurrent} disabled={isCapturing} title="当前视角截图">
+          <PanoToolbarButton onClick={snapCurrent} disabled={isCapturing} title="Captura de tela da perspectiva atual">
             {isCapturing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
           </PanoToolbarButton>
-          <PanoToolbarButton onClick={snap2x2} disabled={isCapturing} title="4 大视角截图">
+          <PanoToolbarButton onClick={snap2x2} disabled={isCapturing} title="Captura de tela de 4 ângulos de visão">
             <Grid2x2 className="h-4 w-4" />
           </PanoToolbarButton>
-          <PanoToolbarButton onClick={snap4x3} disabled={isCapturing} title="12 大视角截图">
+          <PanoToolbarButton onClick={snap4x3} disabled={isCapturing} title="Captura de tela de 12 ângulos de visão">
             <Grid3x3 className="h-4 w-4" />
           </PanoToolbarButton>
           <span className="mx-1 h-5 w-px bg-white/15" aria-hidden />
@@ -1036,12 +1036,12 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
           <PanoToolbarButton
             onClick={snapAsBackgroundAnchor}
             disabled={isCapturing}
-            title="用作背景源(写入本 beat selected_background)"
+            title="Use como fonte de fundo (escreva esta batida selected_background)"
           >
             <ImageDown className="h-4 w-4" />
           </PanoToolbarButton>
           <span className="mx-1 h-5 w-px bg-white/15" aria-hidden />
-          <PanoToolbarButton onClick={resetView} title="复位视角">
+          <PanoToolbarButton onClick={resetView} title="Redefinir ângulo de visão">
             <RotateCcw className="h-4 w-4" />
           </PanoToolbarButton>
         </div>
@@ -1051,7 +1051,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
         className={NODE_HEADER_FLOATING_POSITION_CLASS}
         icon={<Globe className="h-4 w-4" />}
         titleText={resolvedTitle}
-        metaText={status || (data.imageUrl ? '360 自由画布查看器' : '等待上游连接全景图')}
+        metaText={status || (data.imageUrl ? '360 Free Canvas Viewer' : 'Aguardando panorama de conexão upstream')}
         editable
         onTitleChange={(nextTitle) => updateNodeData(id, { displayName: nextTitle })}
       />
@@ -1080,7 +1080,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 text-text-muted/85">
               <Globe className="h-7 w-7 opacity-60" />
               <span className="px-3 text-center text-[12px] leading-6">
-                连接上游图片节点开始浏览全景
+                Conecte os nós de imagem upstream para começar a navegar pelo panorama
               </span>
             </div>
           ) : null}
@@ -1104,25 +1104,25 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
               onPointerDown={(event) => event.stopPropagation()}
               onWheel={(event) => event.stopPropagation()}
             >
-              <PanoViewportButton onClick={() => zoomViewportBy(10)} title="缩小">
+              <PanoViewportButton onClick={() => zoomViewportBy(10)} title="Reduzir">
                 <ZoomOut className="h-4 w-4" strokeWidth={1.8} />
               </PanoViewportButton>
-              <PanoViewportButton onClick={() => zoomViewportBy(-10)} title="放大">
+              <PanoViewportButton onClick={() => zoomViewportBy(-10)} title="Ampliar">
                 <ZoomIn className="h-4 w-4" strokeWidth={1.8} />
               </PanoViewportButton>
-              <PanoViewportButton onClick={() => rotateViewportBy(-12, 0)} title="向左">
+              <PanoViewportButton onClick={() => rotateViewportBy(-12, 0)} title="Esquerda">
                 <ArrowLeft className="h-4 w-4" strokeWidth={1.8} />
               </PanoViewportButton>
-              <PanoViewportButton onClick={() => rotateViewportBy(12, 0)} title="向右">
+              <PanoViewportButton onClick={() => rotateViewportBy(12, 0)} title="Direita">
                 <ArrowRight className="h-4 w-4" strokeWidth={1.8} />
               </PanoViewportButton>
-              <PanoViewportButton onClick={() => rotateViewportBy(0, 8)} title="向上">
+              <PanoViewportButton onClick={() => rotateViewportBy(0, 8)} title="Para cima">
                 <ArrowUp className="h-4 w-4" strokeWidth={1.8} />
               </PanoViewportButton>
-              <PanoViewportButton onClick={() => rotateViewportBy(0, -8)} title="向下">
+              <PanoViewportButton onClick={() => rotateViewportBy(0, -8)} title="Para baixo">
                 <ArrowDown className="h-4 w-4" strokeWidth={1.8} />
               </PanoViewportButton>
-              <PanoViewportButton onClick={toggleFullscreen} title="进入全屏">
+              <PanoViewportButton onClick={toggleFullscreen} title="Entrar em tela cheia">
                 <Maximize2 className="h-4 w-4" strokeWidth={1.8} />
               </PanoViewportButton>
             </div>
@@ -1136,7 +1136,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
               setIsPanelOpen((open) => !open);
             }}
             onPointerDown={(event) => event.stopPropagation()}
-            title={isPanelOpen ? '收起控制面板' : '展开控制面板'}
+            title={isPanelOpen ? 'Recolher painel' : 'Expandir painel'}
             className="nodrag absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/[0.1] bg-black/35 text-white/72 backdrop-blur-sm transition-colors hover:bg-black/50 hover:text-white"
           >
             {isPanelOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -1152,7 +1152,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
             {/* FOV */}
             <section className="flex flex-col gap-2">
               <header className="flex items-center justify-between gap-3 text-[11px] font-medium text-text-dark/72">
-                <span>视场角 FOV</span>
+                <span>Campo de visão FOV</span>
                 <span className="tabular-nums text-text-dark/64">{liveFov.toFixed(0)}° · {focal ?? '—'}mm</span>
               </header>
               <SliderRow
@@ -1175,7 +1175,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
             {/* 校正 */}
             <section className="flex flex-col gap-2">
               <header className="flex items-center justify-between gap-3 text-[11px] font-medium text-text-dark/72">
-                <span>球面校正</span>
+                <span>Correção Esférica</span>
                 <button
                   type="button"
                   className="nodrag rounded-full px-2 py-1 text-[11px] text-text-dark/62 transition-colors hover:bg-white/[0.06] hover:text-text-dark"
@@ -1185,7 +1185,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
                   }}
                   onPointerDown={(event) => event.stopPropagation()}
                 >
-                  重置
+                  Redefinir
                 </button>
               </header>
               <SliderRow
@@ -1210,8 +1210,8 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
                 onChange={(next) => updateCorrectionAxis('yaw', next)}
               />
               <div className="flex flex-wrap gap-1.5">
-                <ChipButton onClick={lockCurrentView} title="把当前视角烘焙进校正参数">
-                  <Lock className="h-3 w-3" /> 锁定当前视角
+                <ChipButton onClick={lockCurrentView} title="Asse a perspectiva atual nos parâmetros de correção">
+                  <Lock className="h-3 w-3" /> Bloquear ângulo de visão atual
                 </ChipButton>
               </div>
             </section>
@@ -1219,7 +1219,7 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
             {/* 方向 */}
             <section className="flex flex-col gap-2">
               <header className="flex items-center justify-between gap-3 text-[11px] font-medium text-text-dark/72">
-                <span>正前方</span>
+                <span>Em frente</span>
                 <span className="tabular-nums text-text-dark/64">{data.frontYawDeg.toFixed(1)}°</span>
               </header>
               <SliderRow
@@ -1230,8 +1230,8 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
                 onChange={(next) => updateNodeData(id, { frontYawDeg: wrapDeg(next) })}
               />
               <div className="flex flex-wrap gap-1.5">
-                <ChipButton onClick={setFrontYawFromView} title="把当前视角的 yaw 设为正前">
-                  设为当前视角
+                <ChipButton onClick={setFrontYawFromView} title="Defina a guinada do ângulo de visão atual para a frente">
+                  Definir como ângulo de visão atual
                 </ChipButton>
                 {(['front', 'right', 'back', 'left', 'seam'] as const).map((dir) => (
                   <ChipButton key={dir} onClick={() => rotateToDirection(dir)}>
@@ -1243,19 +1243,19 @@ export const Pano360ViewerNode = memo(({ id, data, selected, width, height }: Pa
 
             {/* 小行星 / 截图 / 导出 */}
             <section className="flex flex-col gap-2">
-              <header className="text-[11px] font-medium text-text-dark/72">效果与导出</header>
+              <header className="text-[11px] font-medium text-text-dark/72">Efeitos e exportação</header>
               <div className="flex flex-wrap gap-1.5">
                 {planetBackup ? (
                   <ChipButton onClick={exitPlanet} tone="accent">
-                    退出小行星
+                    Sair do Asteroide
                   </ChipButton>
                 ) : (
-                  <ChipButton onClick={enterPlanet}>小行星模式</ChipButton>
+                  <ChipButton onClick={enterPlanet}>Modo Asteroide</ChipButton>
                 )}
               </div>
               <div className="flex flex-wrap gap-1.5">
-                <ChipButton onClick={copyCorrectionJson} title="把当前 frontYaw / 校正参数 / FOV 复制为 JSON">
-                  <Save className="h-3 w-3" /> 复制校正 JSON
+                <ChipButton onClick={copyCorrectionJson} title="Copiar frontYaw atual/Parâmetros de Correção/FOV como JSON">
+                  <Save className="h-3 w-3" /> Correção de cópia JSON
                 </ChipButton>
               </div>
             </section>

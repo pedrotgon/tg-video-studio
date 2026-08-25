@@ -6,23 +6,23 @@ import { describe, expect, it, vi } from "vitest";
 import { NodeSelectionMenu } from "@/features/canvas/NodeSelectionMenu";
 
 const translations: Record<string, string> = {
-  "node.menu.sectionAddNode": "添加节点",
+  "node.menu.sectionAddNode": "Adicionar nó",
   "node.menu.sectionAddResource": "添加资源",
   "node.menu.sectionSkillNode": "技能节点",
-  "node.menu.uploadImage": "上传资源",
-  "node.menu.image": "图片",
+  "node.menu.uploadImage": "Carregar recursos",
+  "node.menu.image": "Imagem",
   "node.menu.aiImageGeneration": "AI 图片",
   "node.menu.storyboard": "分格抽取结果",
   "node.menu.storyboardGen": "多版本宫格",
-  "node.menu.beatContext": "镜头上下文",
-  "node.menu.textAnnotation": "文本",
-  "node.menu.video": "视频",
-  "node.menu.audio": "音频",
+  "node.menu.beatContext": "Contexto da lente",
+  "node.menu.textAnnotation": "Texto",
+  "node.menu.video": "Vídeo",
+  "node.menu.audio": "Áudio",
   "node.menu.videoStory": "视频故事",
   "node.menu.videoCompose": "视频合成",
-  "node.menu.script": "脚本",
-  "node.menu.pano360Viewer": "360° 全景",
-  "node.menu.threeDWorld": "3D 世界",
+  "node.menu.script": "Roteiro",
+  "node.menu.pano360Viewer": "Panorama 360°",
+  "node.menu.threeDWorld": "Mundo 3D",
 };
 
 vi.mock("react-i18next", () => ({
@@ -41,6 +41,6 @@ describe("NodeSelectionMenu", () => {
       />,
     );
 
-    expect(screen.getByText("镜头上下文")).toBeInTheDocument();
+    expect(screen.getByText("Contexto da lente")).toBeInTheDocument();
   });
 });

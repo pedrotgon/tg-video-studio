@@ -28,7 +28,7 @@ export function collectStyleCategories(
     if (!seen.includes(category)) seen.push(category);
   }
   const list = seen.map((category) => ({ key: category, label: category }));
-  if (hasOther) list.push({ key: OTHER_CATEGORY, label: '其他' });
+  if (hasOther) list.push({ key: OTHER_CATEGORY, label: 'Outro' });
   return list;
 }
 
@@ -97,7 +97,7 @@ export function StyleGalleryModal({
         className={STYLE_GALLERY_MODAL_CLASS}
         role="dialog"
         aria-modal="true"
-        aria-label={detail ? `风格 ${detail.label}` : '风格图墙'}
+        aria-label={detail ? `风格 ${detail.label}` : 'Parede do Diagrama de Estilo'}
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="flex h-12 shrink-0 items-center justify-between border-b border-white/[0.08] px-4">
@@ -106,14 +106,14 @@ export function StyleGalleryModal({
               <button
                 type="button"
                 onClick={() => setDetailId(null)}
-                aria-label="返回"
+                aria-label="Voltar"
                 className="flex size-7 items-center justify-center rounded-md text-text-muted/90 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
               >
                 <ArrowLeft className="size-4" />
               </button>
             )}
             <span className="text-sm font-medium text-text-dark">
-              {detail ? detail.label : '风格'}
+              {detail ? detail.label : 'Estilo'}
             </span>
           </div>
           <div className="flex items-center gap-1">
@@ -123,13 +123,13 @@ export function StyleGalleryModal({
                 onClick={() => onSelect(null)}
                 className="h-7 rounded-md px-2 text-[11px] font-medium text-text-dark/78 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
               >
-                清除风格
+                Limpeza de estilo
               </button>
             )}
             <button
               type="button"
               onClick={onClose}
-              aria-label="关闭"
+              aria-label="Fechar"
               className="flex size-7 items-center justify-center rounded-md text-text-muted/90 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
             >
               <X className="size-4" />
@@ -162,7 +162,7 @@ export function StyleGalleryModal({
                 onClick={() => onSelect(detail.id)}
                 className="h-9 shrink-0 rounded-md bg-white/[0.92] text-sm font-medium text-black transition-colors hover:bg-white"
               >
-                使用
+                Uso
               </button>
             </div>
           </div>
@@ -170,7 +170,7 @@ export function StyleGalleryModal({
           <div className="flex flex-1 flex-col overflow-hidden">
             {categories.length > 1 && (
               <div className="ui-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4 pt-3">
-                {[{ key: ALL_CATEGORIES, label: '全部' }, ...categories].map((entry) => {
+                {[{ key: ALL_CATEGORIES, label: 'Todos' }, ...categories].map((entry) => {
                   const isActive = entry.key === category;
                   return (
                     <button
@@ -193,7 +193,7 @@ export function StyleGalleryModal({
                 「加载中」被挤到上半屏，下半屏是一片空白网格。 */}
             {templates.length === 0 ? (
               <div className="flex flex-1 items-center justify-center text-xs text-text-muted">
-                {isLoading ? '加载中…' : '暂无风格模板'}
+                {isLoading ? 'Carregando...' : 'Ainda não há modelos de estilo'}
               </div>
             ) : (
               <div className="ui-scrollbar flex-1 overflow-y-auto p-4">
@@ -241,7 +241,7 @@ export function StyleGalleryModal({
                           aria-label={`使用${item.label}`}
                           className="absolute bottom-1.5 right-2 h-6 rounded-md bg-white/[0.12] px-2 text-[11px] font-medium text-text-dark transition-colors hover:bg-white/[0.24] focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--accent-rgb))]"
                         >
-                          使用
+                          Uso
                         </button>
                       </div>
                     );

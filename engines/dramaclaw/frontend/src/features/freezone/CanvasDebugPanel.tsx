@@ -107,7 +107,7 @@ export function CanvasDebugPanel({
       setHistory(data);
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) {
-        setHistoryError("接口未上线（后端 history endpoint 还没部署）");
+        setHistoryError("Interface não ativada (endpoint de histórico backend ainda não deploy)");
       } else {
         setHistoryError(formatErr(err));
       }
@@ -122,7 +122,7 @@ export function CanvasDebugPanel({
     if (!historyId) {
       console.error("[freezone:debug] history entry has no recognizable id", entry);
       window.alert(
-        "无法识别此历史项的 id（list 响应里没找到 id / history_id / filename / name 任一字段）。请看 console。",
+        "Não foi possível identificar o id da história (list de resposta não encontrou id / history_id / filename / name em qualquer campo). Por favor, ver o console.",
       );
       return;
     }
@@ -154,7 +154,7 @@ export function CanvasDebugPanel({
     } catch (err) {
       const message =
         err instanceof ApiError && err.status === 404
-          ? "接口未上线（后端 canvases/{id}/restore endpoint 还没部署）"
+          ? "Interface não ativada (endpoint canvases/{id}/restore backend ainda não deploy)"
           : formatErr(err);
       window.alert(`恢复失败：${message}`);
     } finally {
@@ -179,10 +179,10 @@ export function CanvasDebugPanel({
           type="button"
           onClick={() => onOpenChange(!open)}
           className="inline-flex h-6 items-center gap-1 rounded-full bg-white/[0.035] px-2 text-[10px] font-normal text-foreground/68 transition-colors backdrop-blur-sm hover:bg-white/[0.065] hover:text-foreground/86"
-          title="画布调试面板（仅开发用）"
+          title="Painel de depuração da caixa (só para desenvolvimento)"
         >
           <Wrench className="h-2.5 w-2.5 text-foreground/64" />
-          调试
+          Depuração
           {open ? (
             <ChevronUp className="h-2.5 w-2.5 text-foreground/54" />
           ) : (
@@ -228,7 +228,7 @@ export function CanvasDebugPanel({
               )}
               {!remote && !remoteLoading && !remoteError && (
                 <div className="text-foreground/58 text-[11px]">
-                  尚未拉取，点 GET 查询。
+                  Ainda não foi pull, clique em GET consulta.
                 </div>
               )}
               {remoteError && (
@@ -246,7 +246,7 @@ export function CanvasDebugPanel({
                   disabled={historyLoading}
                   className="rounded border border-white/[0.16] px-1.5 py-0.5 text-[10px] text-foreground/86 hover:bg-white/[0.06] disabled:opacity-50"
                 >
-                  {historyLoading ? "..." : "拉取"}
+                  {historyLoading ? "..." : "Pull"}
                 </button>
               </header>
               {historyError && (
@@ -255,7 +255,7 @@ export function CanvasDebugPanel({
                 </div>
               )}
               {history && history.length === 0 && (
-                <div className="text-foreground/58 text-[11px]">空（尚无历史快照）</div>
+                <div className="text-foreground/58 text-[11px]">Vazio (não há histórico de atualizações)</div>
               )}
               {history && history.length > 0 && (
                 <ul className="space-y-1">
@@ -295,10 +295,10 @@ export function CanvasDebugPanel({
                             busyHistoryId === entryHistoryId || !entryHistoryId
                           }
                           className="shrink-0 inline-flex items-center gap-1 rounded border border-amber-300/40 bg-amber-300/10 px-1.5 py-0.5 text-[10px] text-amber-100 hover:bg-amber-300/20 disabled:opacity-50"
-                          title={entryHistoryId ? "恢复此版本" : "缺少 history_id，无法恢复"}
+                          title={entryHistoryId ? "Restaurar esta versão" : "Faltando history_id, não é possível restaurar"}
                         >
                           <RotateCcw className="h-3 w-3" />
-                          {busyHistoryId === entryHistoryId ? "恢复中" : "恢复"}
+                          {busyHistoryId === entryHistoryId ? "Restorando" : "Restaurar"}
                         </button>
                       </li>
                     );
@@ -307,7 +307,7 @@ export function CanvasDebugPanel({
               )}
             </section>
             <footer className="border-t border-white/[0.10] px-3 py-1.5 text-[10px] text-foreground/54">
-              仅调试用 · 后端 history endpoint 未部署时这里会显示"接口未上线"
+              Somente para depuração · Endpoint de histórico backend ainda não deploy quando exibir 'Interface não ativada'
             </footer>
           </div>
         )}

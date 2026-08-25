@@ -21,8 +21,8 @@ export function ThirdScreenVideo({
       copyProgress={copyProgress}
       isActive={isActive}
       kicker="CUT TO THE NEXT"
-      subtitle="导入小说、剧本或分集文本后，系统自动识别，为后续资产提取、剧集规划和镜头拆解建立基础。"
-      title="让故事成为起点"
+      subtitle="Importar o roteiro, o resumo ou os episódios de uma série é suficiente. O sistema reconhece automaticamente e estabelece a base para extracção de conteúdo, planejamento de séries e divisão de câmeras."
+      title="Deixe que o drama seja o ponto de partida"
       videoExitProgress={videoExitProgress}
       videoOpacity={videoOpacity}
       videoUrl={cinematicVideos.jqr}

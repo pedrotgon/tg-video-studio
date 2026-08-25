@@ -40,7 +40,7 @@ describe("director bundle canvas assets", () => {
       store as Parameters<typeof spawnAssetNode>[0],
       {
         kind: "image",
-        label: "导演合成图",
+        label: "Diagrama de Composição do Diretor",
         url: bundle.urls.combined,
         aspectRatio: "16:9",
         source: {
@@ -193,8 +193,8 @@ describe("director bundle canvas assets", () => {
       "utf8",
     );
 
-    expect(panel).toContain("主线资产");
-    expect(badges).toContain("主线资产");
+    expect(panel).toContain("Ativos da linha principal");
+    expect(badges).toContain("Ativos da linha principal");
     expect(`${panel}\n${badges}`).not.toContain("主线素材");
     expect(panel).not.toContain(">素材库<");
     expect(selectedBackgroundSlot).not.toContain("当前背景 · EP");

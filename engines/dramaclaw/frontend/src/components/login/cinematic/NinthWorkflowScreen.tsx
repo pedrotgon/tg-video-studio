@@ -8,26 +8,26 @@ const workflow = [
   {
     id: "01",
     label: "INPUT",
-    title: "一句设定",
-    body: "失联城市重新发光，幸存者同时听见同一个倒计时。",
+    title: "Um setup",
+    body: "A cidade abandonada volta à vida, os sobreviventes ouvir o mesmo contador de tempo",
   },
   {
     id: "02",
     label: "STRUCTURE",
-    title: "拆成结构",
-    body: "角色、冲突、场景和叙事限制被拆开，进入可继续推进的节点。",
+    title: "Decomprimir a estrutura",
+    body: "Os personagens, os conflitos, as cenas e a narrativa são desmembrados para poder continuar em um ponto de início seguro",
   },
   {
     id: "03",
     label: "CAMERA",
-    title: "形成镜头",
-    body: "镜头顺序、场景气质和节奏被锁定，片段开始具备观看方向。",
+    title: "Formar a tomada",
+    body: "A tomada, a ordem de cena e o ritmo são fixados, a cena começa a ter direção de visualização",
   },
   {
     id: "04",
     label: "OUTPUT",
-    title: "片段生成",
-    body: "一段可以继续扩写、重剪或进入作品墙的故事片段完成。",
+    title: "Geração de quadro",
+    body: "Uma cena completa pode ser expandida, recutida ou entrado em uma história do trabalho",
   },
 ];
 
@@ -71,12 +71,12 @@ export function NinthWorkflowScreen({
       <div className={styles.header}>
         <p>WORKFLOW 09</p>
         <h2>
-          一句设定，直接进入
+          Um setup, direto para o roteiro
           <br />
-          镜头
+          Tomada
         </h2>
         <span>
-          不必先写完整剧本。给出一个方向，DramaClaw 会把它拆成角色、冲突、场景和可推进的镜头链路。
+          Não é necessário escrever todo o roteiro completo. Forneça um direcionamento e DramaClaw o desmembrará em personagem, conflito, cena e tomada de cena seguros
         </span>
       </div>
 
@@ -104,16 +104,16 @@ export function NinthWorkflowScreen({
                     <video src={cinematicVideos.pk} muted loop playsInline autoPlay preload="metadata" />
                     <div className={styles.previewScrim} />
                     <div className={styles.previewTitle}>
-                      <strong>鲁班秘术</strong>
+                      <strong>Mágia da equipe</strong>
                     </div>
                     <a
                       className={styles.watchButton}
                       href={`/watch/${COMMUNITY_WATCH_WORK}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="立即观看社区作品"
+                      aria-label="Assista agora ao trabalho criativo da comunidade"
                     >
-                      <span>立即观看</span>
+                      <span>Assista agora a um trabalho criativo</span>
                     </a>
                   </div>
                 </div>

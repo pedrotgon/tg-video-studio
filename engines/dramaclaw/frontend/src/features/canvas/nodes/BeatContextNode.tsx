@@ -266,7 +266,7 @@ function standaloneBeatContextPatchFromCurrentData(
     ...patch,
     schema: stringValue(currentBeatContext.schema) ?? "beat_context.v1",
     source: "standalone",
-    title: stringValue(currentBeatContext.title) ?? "自定义镜头上下文",
+    title: stringValue(currentBeatContext.title) ?? "Contexto Personalizado da Lente",
   };
   const snapshot = {
     ...(data.snapshot ?? {}),
@@ -355,7 +355,7 @@ async function restoreCurrentMainlinePresetCanvas(
   }
   const flushed = await flushFreezoneCanvasRuntime(projectId, canvasId);
   if (flushed === false) {
-    throw new Error("当前画布还有未保存冲突，处理后再同步主线视图");
+    throw new Error("Não há conflitos salvos na tela atual. Sincronize a visualização da linha principal após o processamento");
   }
   const localStateBeforeRestore = useCanvasStore.getState();
   const localNodes = localStateBeforeRestore.nodes;
@@ -552,7 +552,7 @@ function resolveBeatContextTitle(data: BeatContextNodeData): string {
     ) {
       return customTitle;
     }
-    return "自定义镜头上下文";
+    return "Contexto Personalizado da Lente";
   }
   if (customTitle && customTitle !== "Beat Context") {
     return customTitle;
@@ -602,8 +602,8 @@ export const BeatContextNode = memo(
     const titleFromData = resolveBeatContextTitle(data);
     const title =
       isStandaloneContext &&
-      ["自定义 Beat Context", "自定义 Beat 上下文", "Beat Context", "自定义镜头上下文"].includes(titleFromData)
-        ? t("node.beatContextNode.standaloneTitle", { defaultValue: "自定义镜头上下文" })
+      ["Contexto de batida personalizado", "Contexto de batida personalizado", "Beat Context", "Contexto Personalizado da Lente"].includes(titleFromData)
+        ? t("node.beatContextNode.standaloneTitle", { defaultValue: "Contexto Personalizado da Lente" })
         : titleFromData;
     const episode =
       typeof data.episode === "number" ? data.episode : contexts[0]?.episode;
@@ -741,13 +741,13 @@ export const BeatContextNode = memo(
           {
             kind: "identity" as const,
             id: "identity-template",
-            label: "人物",
+            label: "Pessoas",
             token: "{{}}",
           },
           {
             kind: "prop" as const,
             id: "prop-template",
-            label: "道具",
+            label: "Itens",
             token: "[[]]",
           },
         ];
@@ -819,7 +819,7 @@ export const BeatContextNode = memo(
       ) {
         updateNodeData(id, {
           syncStatus: "error",
-          errorMessage: "缺少 project/episode/beat，无法同步到主线",
+          errorMessage: "Projeto/episódio/batida ausente para sincronizar com a linha principal",
         });
         return;
       }
@@ -885,7 +885,7 @@ export const BeatContextNode = memo(
         ) {
           updateNodeData(id, {
             syncStatus: "error",
-            errorMessage: "缺少 project/episode/beat，无法更新本地上下文",
+            errorMessage: "Projeto/episódio/batida ausente para atualizar o contexto local",
           });
           return;
         }
@@ -1140,7 +1140,7 @@ export const BeatContextNode = memo(
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-200/80">
-                  {t("node.beatContextNode.heading", { defaultValue: "镜头上下文" })}
+                  {t("node.beatContextNode.heading", { defaultValue: "Contexto da lente" })}
                 </div>
                 {!isStandaloneContext && (
                   <div className="mt-1 text-sm font-semibold text-amber-50">
@@ -1162,9 +1162,9 @@ export const BeatContextNode = memo(
               >
                 <FolderOpen className="h-3.5 w-3.5" />
                 {openingWorkbench
-                  ? t("node.beatContextNode.openingWorkbench", { defaultValue: "打开中..." })
+                  ? t("node.beatContextNode.openingWorkbench", { defaultValue: "Abrindo..." })
                   : t("node.beatContextNode.openWorkbench", {
-                      defaultValue: "打开工作台",
+                      defaultValue: "Bancada aberta",
                     })}
               </button>
             )}
@@ -1181,14 +1181,14 @@ export const BeatContextNode = memo(
           */}
             <section>
               <div className="mb-2 font-semibold text-amber-100">
-                {t("node.beatContextNode.fields.visual", { defaultValue: "起始画面" })}
+                {t("node.beatContextNode.fields.visual", { defaultValue: "Tela inicial" })}
               </div>
               <div className="relative">
                 <textarea
                   ref={visualTextareaRef}
                   value={visualDraft}
                   placeholder={t("node.beatContextNode.placeholders.visual", {
-                    defaultValue: "未设置;点击输入起始画面描述",
+                    defaultValue: "Não definido; clique para inserir a descrição da tela inicial",
                   })}
                   rows={3}
                   onChange={(event) => {
@@ -1286,14 +1286,14 @@ export const BeatContextNode = memo(
               <section className="grid grid-cols-2 gap-2">
                 <div className="rounded-[8px] border border-white/10 bg-black/15 p-2">
                   <div className="mb-1.5 text-amber-100/70">
-                    {t("node.beatContextNode.fields.scene", { defaultValue: "场景" })}
+                    {t("node.beatContextNode.fields.scene", { defaultValue: "Cenário" })}
                   </div>
                   <div
                     onClick={(event) => event.stopPropagation()}
                     onPointerDown={(event) => event.stopPropagation()}
                   >
                     <UiSelect
-                      aria-label={t("node.beatContextNode.fields.scene", { defaultValue: "场景" })}
+                      aria-label={t("node.beatContextNode.fields.scene", { defaultValue: "Cenário" })}
                       value={sceneDraft || NONE_SENTINEL}
                       className={BEAT_CONTEXT_SELECT_CLASS}
                       menuClassName={BEAT_CONTEXT_SELECT_MENU_CLASS}
@@ -1313,7 +1313,7 @@ export const BeatContextNode = memo(
                       }}
                     >
                       <option value={NONE_SENTINEL}>
-                        {t("node.beatContextNode.unset", { defaultValue: "未设置" })}
+                        {t("node.beatContextNode.unset", { defaultValue: "Não definido" })}
                       </option>
                       {sceneOptions.map((sceneId) => (
                         <option key={sceneId} value={sceneId}>
@@ -1325,14 +1325,14 @@ export const BeatContextNode = memo(
                 </div>
                 <div className="rounded-[8px] border border-white/10 bg-black/15 p-2">
                   <div className="mb-1.5 text-amber-100/70">
-                    {t("node.beatContextNode.fields.time", { defaultValue: "时间" })}
+                    {t("node.beatContextNode.fields.time", { defaultValue: "Tempo" })}
                   </div>
                   <div
                     onClick={(event) => event.stopPropagation()}
                     onPointerDown={(event) => event.stopPropagation()}
                   >
                     <UiSelect
-                      aria-label={t("node.beatContextNode.fields.time", { defaultValue: "时间" })}
+                      aria-label={t("node.beatContextNode.fields.time", { defaultValue: "Tempo" })}
                       value={timeDraft || NONE_SENTINEL}
                       className={BEAT_CONTEXT_SELECT_CLASS}
                       menuClassName={BEAT_CONTEXT_SELECT_MENU_CLASS}
@@ -1361,7 +1361,7 @@ export const BeatContextNode = memo(
             <section className="grid grid-cols-2 gap-2">
               <div className="rounded-[8px] border border-white/10 bg-black/15 p-2">
                 <div className="mb-1.5 text-amber-100/70">
-                  {t("node.beatContextNode.fields.identities", { defaultValue: "出场身份" })}
+                  {t("node.beatContextNode.fields.identities", { defaultValue: "Status da aparência" })}
                 </div>
                 <SelectableTokenGroup
                   options={identityOptions}
@@ -1371,10 +1371,10 @@ export const BeatContextNode = memo(
                   onColorChange={updateIdentityColor}
                   emptyLabel={NO_CHARACTER_MARKER}
                   emptyText={t("node.beatContextNode.empty.noCharacter", {
-                    defaultValue: "无角色出场",
+                    defaultValue: "Nenhuma Função Aparece",
                   })}
                   staleText={t("node.beatContextNode.stale", {
-                    defaultValue: "已移除",
+                    defaultValue: "Removido",
                   })}
                   icon="identity"
                   onToggle={toggleIdentity}
@@ -1382,7 +1382,7 @@ export const BeatContextNode = memo(
               </div>
               <div className="rounded-[8px] border border-white/10 bg-black/15 p-2">
                 <div className="mb-1.5 text-amber-100/70">
-                  {t("node.beatContextNode.fields.props", { defaultValue: "出场道具" })}
+                  {t("node.beatContextNode.fields.props", { defaultValue: "Objeto de cena" })}
                 </div>
                 <SelectableTokenGroup
                   options={propOptions}
@@ -1392,10 +1392,10 @@ export const BeatContextNode = memo(
                   onColorChange={updatePropColor}
                   emptyLabel={NO_PROP_MARKER}
                   emptyText={t("node.beatContextNode.empty.noProp", {
-                    defaultValue: "无道具出场",
+                    defaultValue: "Nenhum adereço para aparecer",
                   })}
                   staleText={t("node.beatContextNode.stale", {
-                    defaultValue: "已移除",
+                    defaultValue: "Removido",
                   })}
                   icon="prop"
                   onToggle={toggleProp}
@@ -1404,13 +1404,13 @@ export const BeatContextNode = memo(
             </section>
             <section className="flex flex-wrap gap-1.5 text-[10px] text-amber-100/80">
               <span className="rounded-full bg-white/10 px-2 py-1">
-                {t("node.beatContextNode.assets.background", { defaultValue: "背景" })} {snapshot.selectedBackgroundExists ? t("node.beatContextNode.assets.selected", { defaultValue: "已选" }) : t("node.beatContextNode.assets.unselected", { defaultValue: "未选" })}
+                {t("node.beatContextNode.assets.background", { defaultValue: "Fundamentos" })} {snapshot.selectedBackgroundExists ? t("node.beatContextNode.assets.selected", { defaultValue: "Selecionado" }) : t("node.beatContextNode.assets.unselected", { defaultValue: "Não selecionado" })}
               </span>
               <span className="rounded-full bg-white/10 px-2 py-1">
-                {t("node.beatContextNode.assets.sketch", { defaultValue: "草图" })} {snapshot.currentSketchExists ? t("node.beatContextNode.assets.exists", { defaultValue: "已有" }) : t("node.beatContextNode.assets.missing", { defaultValue: "缺失" })}
+                {t("node.beatContextNode.assets.sketch", { defaultValue: "Esboço" })} {snapshot.currentSketchExists ? t("node.beatContextNode.assets.exists", { defaultValue: "Existente" }) : t("node.beatContextNode.assets.missing", { defaultValue: "Ausente" })}
               </span>
               <span className="rounded-full bg-white/10 px-2 py-1">
-                {t("node.beatContextNode.assets.frame", { defaultValue: "分镜" })} {snapshot.currentFrameExists ? t("node.beatContextNode.assets.exists", { defaultValue: "已有" }) : t("node.beatContextNode.assets.missing", { defaultValue: "缺失" })}
+                {t("node.beatContextNode.assets.frame", { defaultValue: "Tiro Dividido" })} {snapshot.currentFrameExists ? t("node.beatContextNode.assets.exists", { defaultValue: "Existente" }) : t("node.beatContextNode.assets.missing", { defaultValue: "Ausente" })}
               </span>
             </section>
           </div>
@@ -1423,23 +1423,23 @@ export const BeatContextNode = memo(
               <span className="truncate">
                 {isStandaloneContext
                   ? t("node.beatContextNode.status.standaloneLocalOnly", {
-                      defaultValue: "自定义上下文；仅当前画布使用。",
+                      defaultValue: "Contexto personalizado; usado apenas pela tela atual.",
                     })
                   : syncStatus === "error"
                     ? t("node.beatContextNode.status.syncError", {
-                        defaultValue: "同步失败：{{message}}",
-                        message: data.errorMessage || t("node.beatContextNode.status.unknownError", { defaultValue: "未知错误" }),
+                        defaultValue: "Falha na sincronização: __ TGPH_0 __",
+                        message: data.errorMessage || t("node.beatContextNode.status.unknownError", { defaultValue: "Erro desconhecido" }),
                       })
                     : isSyncing
                       ? t("node.beatContextNode.status.syncing", {
-                          defaultValue: "正在同步到主线...",
+                          defaultValue: "Sincronizando com a linha principal...",
                         })
                       : syncStatus === "stale"
                         ? t("node.beatContextNode.status.stale", {
-                            defaultValue: "本地已修改，未同步主线；技能会使用当前节点。",
+                            defaultValue: "O local foi modificado, a linha principal não está sincronizada; a habilidade usa o nó atual.",
                           })
                         : t("node.beatContextNode.status.fresh", {
-                            defaultValue: "上下文已同步；技能会使用当前节点。",
+                            defaultValue: "O contexto é sincronizado; a habilidade usa o nó atual.",
                           })}
               </span>
             </div>
@@ -1453,7 +1453,7 @@ export const BeatContextNode = memo(
                   void syncToMainline();
                 }}
               >
-                {t("node.beatContextNode.syncToMainline", { defaultValue: "同步到主线" })}
+                {t("node.beatContextNode.syncToMainline", { defaultValue: "Sincronizar com a linha principal" })}
               </button>
             )}
           </div>
@@ -1520,9 +1520,9 @@ function SelectableTokenGroup({
     const color = rawColor ? parseColorValue(rawColor).hex : null;
     const colorLabel =
       icon === "identity"
-        ? t("node.beatContextNode.palette.identityColor", { defaultValue: "身份颜色" })
+        ? t("node.beatContextNode.palette.identityColor", { defaultValue: "Cor da identidade" })
         : t("node.beatContextNode.palette.propColor", {
-            defaultValue: "道具颜色",
+            defaultValue: "Cor do item",
           });
     const chipClassName = `inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-md border px-2 py-1 text-left text-[11px] transition-colors ${isSelected ? (stale ? "border-red-300/35 bg-red-400/10 text-red-100" : "border-cyan-200/45 bg-cyan-300/12 text-cyan-50") : "border-white/10 bg-white/[0.03] text-amber-100/65 hover:border-white/20 hover:text-amber-50"}`;
     return (
@@ -1601,14 +1601,14 @@ function ContextColorPalette({
       onPointerDown={(event) => event.stopPropagation()}
     >
       <PaletteSection
-        title={t("node.beatContextNode.palette.actorColors", { defaultValue: "人物颜色" })}
-        labelPrefix={t("node.beatContextNode.palette.actorColors", { defaultValue: "人物颜色" })}
+        title={t("node.beatContextNode.palette.actorColors", { defaultValue: "Cor do personagem" })}
+        labelPrefix={t("node.beatContextNode.palette.actorColors", { defaultValue: "Cor do personagem" })}
         colors={STANDALONE_ACTOR_COLORS}
         onSelect={onSelect}
       />
       <PaletteSection
-        title={t("node.beatContextNode.palette.propColors", { defaultValue: "道具颜色" })}
-        labelPrefix={t("node.beatContextNode.palette.propColors", { defaultValue: "道具颜色" })}
+        title={t("node.beatContextNode.palette.propColors", { defaultValue: "Cor do item" })}
+        labelPrefix={t("node.beatContextNode.palette.propColors", { defaultValue: "Cor do item" })}
         colors={STANDALONE_PROP_COLORS}
         onSelect={onSelect}
         className="mt-4"

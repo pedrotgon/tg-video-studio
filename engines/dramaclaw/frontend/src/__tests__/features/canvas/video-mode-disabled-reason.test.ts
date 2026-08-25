@@ -45,7 +45,7 @@ describe("videoModeDisabledReason — 上游接了视频时的模式可用性", 
     for (const mode of ["textToVideo", "firstFrame", "firstLastFrame", "imageReference"] as const) {
       expect(
         videoModeDisabledReason(mode, "seedance-2.0-mini", { ...NONE, videos: 1 }, WITH_VIDEO_EDIT),
-      ).toBe("上游含视频素材时只能用「全能参考」或「视频编辑」");
+      ).toBe(" quando houver vídeo na frente, apenas é possível usar «full reference» ou «editar vídeo»");
     }
     expect(
       videoModeDisabledReason(
@@ -65,13 +65,13 @@ describe("videoModeDisabledReason — 上游接了视频时的模式可用性", 
         { ...NONE, videos: 1 },
         WITHOUT_VIDEO_EDIT,
       ),
-    ).toBe("上游含视频素材时只能用「全能参考」");
+    ).toBe(" quando houver vídeo na frente");
   });
 
   it("没接视频时「视频编辑」提示去连一个", () => {
     expect(
       videoModeDisabledReason("videoEdit", "seedance-2.0-mini", NONE, WITH_VIDEO_EDIT),
-    ).toBe("需要连接视频节点（1个）");
+    ).toBe(" é necessário conectar um nó de vídeo (1)");
   });
 
   it("接了多个视频时「视频编辑」不可用", () => {
@@ -82,7 +82,7 @@ describe("videoModeDisabledReason — 上游接了视频时的模式可用性", 
         { ...NONE, videos: 2 },
         WITH_VIDEO_EDIT,
       ),
-    ).toBe("「视频编辑」仅支持连接 1 个视频节点");
+    ).toBe(" «editar vídeo» só suporta um nó de vídeo");
   });
 
   it("模型不支持视频编辑时说清楚是模型的事，不是上游的事", () => {
@@ -93,17 +93,17 @@ describe("videoModeDisabledReason — 上游接了视频时的模式可用性", 
         { ...NONE, videos: 1 },
         WITHOUT_VIDEO_EDIT,
       ),
-    ).toBe("该模型不支持「视频编辑」");
+    ).toBe(" este modelo não suporta «editar vídeo»");
   });
 
   /** HappyHorse 走它自己那套分支，这次改动不能动到它。 */
   it("HappyHorse 的既有判定不受影响", () => {
     expect(videoModeDisabledReason("videoEdit", "happyhorse-1.0", { ...NONE, videos: 1 })).toBeNull();
     expect(videoModeDisabledReason("videoEdit", "happyhorse-1.0", NONE)).toBe(
-      "需要连接视频节点（1个）",
+      " é necessário conectar um nó de vídeo (1)",
     );
     expect(videoModeDisabledReason("textToVideo", "happyhorse-1.0", { ...NONE, videos: 1 })).toBe(
-      "已连接视频节点，请使用「视频编辑」",
+      " já está conectado ao nó de vídeo, por favor use «editar vídeo»",
     );
   });
 });

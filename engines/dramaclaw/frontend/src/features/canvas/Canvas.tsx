@@ -4927,7 +4927,7 @@ export function Canvas({
             [
               {
                 key: 'upload',
-                label: '上传',
+                label: 'Enviar',
                 onSelect: () => {
                   const flowPos = reactFlowInstance.screenToFlowPosition({
                     x: contextMenu.clientX,
@@ -4939,7 +4939,7 @@ export function Canvas({
               },
               {
                 key: 'add-node',
-                label: '添加节点',
+                label: 'Adicionar nó',
                 onSelect: () =>
                   openNodeMenuAtClientPosition({
                     x: contextMenu.clientX,
@@ -4950,7 +4950,7 @@ export function Canvas({
             [
               {
                 key: 'undo',
-                label: '撤销',
+                label: 'Desfazer',
                 shortcut: '⌘Z',
                 disabled: !contextMenu.canUndo,
                 onSelect: () => {
@@ -4961,7 +4961,7 @@ export function Canvas({
               },
               {
                 key: 'redo',
-                label: '重做',
+                label: 'Refazer',
                 shortcut: '⇧⌘Z',
                 disabled: !contextMenu.canRedo,
                 onSelect: () => {
@@ -4974,7 +4974,7 @@ export function Canvas({
             [
               {
                 key: 'paste',
-                label: '粘贴',
+                label: 'Colar',
                 shortcut: '⌘V',
                 disabled: !contextMenu.canPaste,
                 onSelect: () => {
@@ -5000,8 +5000,8 @@ export function Canvas({
           <div className="absolute inset-3 rounded-2xl border-2 border-dashed border-accent/70 bg-accent/[0.06]" />
           <div className="relative flex flex-col items-center gap-3 rounded-2xl bg-surface-dark/90 px-8 py-6 text-center shadow-2xl ring-1 ring-white/10">
             <Upload className="h-8 w-8 text-accent" />
-            <div className="text-sm font-medium text-text-dark">释放以添加到画布</div>
-            <div className="text-xs text-text-muted">支持图片、视频、音频，自动生成对应节点</div>
+            <div className="text-sm font-medium text-text-dark">Solte para adicionar à tela</div>
+            <div className="text-xs text-text-muted">Suporta imagens, vídeos e áudio e gera automaticamente os nós correspondentes</div>
           </div>
         </div>
       )}

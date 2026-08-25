@@ -29,7 +29,7 @@ beforeAll(async () => {
           assets: {
             common: {
               edit: "编辑",
-              delete: "删除",
+              delete: "Remover",
               generated: "已生成",
               missing: "未生成",
             },
@@ -53,7 +53,7 @@ beforeAll(async () => {
               noReverse: "未生成 reverse_master.png",
               noPano: "未生成 pano_360.png",
               stage: {
-                title: "导演世界",
+                title: "Mundo do diretor",
                 customWorld: "自定义导演世界 ✅",
                 masterWorld: "正面导演世界 ✅",
                 reverseWorld: "背面导演世界 ✅",

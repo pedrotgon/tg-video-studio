@@ -3,49 +3,49 @@ import styles from "./tenth-testimonials-screen.module.css";
 
 const quotes = [
   {
-    name: "短片导演",
-    tag: "概念预演",
-    text: "不再从空白时间线开始。先看冲突和镜头，再决定哪条分支值得进入制作。",
+    name: "Diretor de curta-metragem",
+    tag: "Ensaio de Conceito",
+    text: "Não comece mais com uma linha do tempo em branco.Olhe para os conflitos e tiros antes de decidir qual ramo vale a pena fazer.",
   },
   {
-    name: "AI 视频创作者",
-    tag: "连续片段",
-    text: "最有用的不是生成一张图，而是把一个片段继续往前推。",
+    name: "Criador de vídeos com IA",
+    tag: "Fragmentação Contínua",
+    text: "O mais útil não é gerar um diagrama, mas continuar empurrando um segmento para frente.",
   },
   {
-    name: "编剧",
-    tag: "角色测试",
-    text: "角色、冲突和场景被拆开后，我能更快判断故事有没有继续写的价值。",
+    name: "Roteirista",
+    tag: "Teste de Função",
+    text: "Uma vez que os personagens, conflitos e cenários são desmontados, posso julgar mais rapidamente se vale a pena continuar a escrever a história.",
   },
   {
-    name: "动画团队",
-    tag: "节奏验证",
-    text: "我们先用它做概念预演，看节奏和镜头，再决定是否进入正式制作。",
+    name: "Equipe de Animação",
+    tag: "Validação de Ritmo",
+    text: "Usamos isso como um ensaio conceitual para ver o ritmo e as filmagens antes de decidir se vamos entrar em produção.",
   },
   {
-    name: "独立制片",
-    tag: "预告生成",
-    text: "它把想法压成可以被观看的片段，讨论不再停在文字设定里。",
+    name: "Produtor Independente",
+    tag: "Geração de Teaser",
+    text: "Ele comprime ideias em segmentos que podem ser assistidos e a discussão não para mais nas configurações de texto.",
   },
   {
-    name: "视觉导演",
-    tag: "世界观扩展",
-    text: "同一个世界可以不断长出分支，失控感被保留，但方向仍然可控。",
+    name: "Diretor Visual",
+    tag: "Extensão da Visão de Mundo",
+    text: "O mesmo mundo pode continuar a crescer ramos, e a sensação de perda de controle é mantida, mas a direção ainda é controlável.",
   },
   {
-    name: "故事策划",
-    tag: "分支选择",
-    text: "我用它快速排除无效分支，把时间留给真正有张力的那条线。",
+    name: "Planejamento de histórias",
+    tag: "Seleção de filial",
+    text: "Meus modelos de drama são criativos e me ajudam a rapidamente eliminar as brincadeiras, deixando tempo para os diálogos mais envolventes.",
   },
   {
-    name: "创意工作室",
-    tag: "提案样片",
-    text: "从一句设定到可看的片段，足够支撑一次更具体的创意讨论。",
+    name: "Casa de ideias",
+    tag: "Exemplares de proposta",
+    text: "De uma frase de enredo a um fragmento visual, basta para apoiar uma discussão de criação mais específica.",
   },
   {
-    name: "导演助理",
-    tag: "镜头梳理",
-    text: "它让镜头不再散落。每次生成，都能回到一条可继续推进的轨道上。",
+    name: "Assistente de diretor",
+    tag: "Organização de câmeras",
+    text: "Ela me permite organizar as câmeras sem esquecimento. Cada geração é uma oportunidade para voltar à linha de produção.",
   },
 ];
 
@@ -77,8 +77,8 @@ export function TenthTestimonialsScreen({
     <section className={styles.layer} style={style}>
       <div className={styles.header}>
         <p>FIELD NOTES 10</p>
-        <h2>不再从空白开始</h2>
-        <span>概念短片、角色测试、连续片段，正在从一句设定直接进入生产线。</span>
+        <h2>Não começo com um vazio</h2>
+        <span>Pontos curtos, testes de personagem, fragmentos contínuos, vamos direto do enredo para a produção.</span>
       </div>
 
       <div className={styles.wall} aria-label="Creator feedback">

@@ -587,7 +587,7 @@ function getBeatSceneId(beat: Beat): string {
     beat.scene_ref?.scene_id?.trim() ||
     beat.location?.trim() ||
     beat.location_description?.trim() ||
-    "未知场景"
+    "Cenário desconhecido"
   );
 }
 

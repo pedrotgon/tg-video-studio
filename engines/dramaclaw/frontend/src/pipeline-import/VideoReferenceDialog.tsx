@@ -69,12 +69,12 @@ export function VideoReferenceDialog({
 
   const handleSubmit = async () => {
     if (!file) {
-      setError("请先选择视频文件");
+      setError("Por favor, selecione um arquivo de vídeo");
       return;
     }
     setError(null);
     try {
-      setProgress({ stage: "uploading", message: "上传视频...", progress: 0.2 });
+      setProgress({ stage: "uploading", message: "Carregue o vídeo...", progress: 0.2 });
       const upload = await uploadFreezoneImage(project, file, file.name);
 
       setProgress({
@@ -90,7 +90,7 @@ export function VideoReferenceDialog({
       const task = await awaitTaskCompletion(ref.task_key, project, { taskType: ref.task_type });
       const urls = extractFrameUrls(task);
       if (urls.length === 0) {
-        throw new Error("抽帧返回了空结果");
+        throw new Error("Retornou área vazia após a captura de frame");
       }
       const frames: ReferenceFrame[] = urls.map((url, i) => ({ url, index: i }));
       onReferenceReady(frames);
@@ -103,7 +103,7 @@ export function VideoReferenceDialog({
       setTimeout(onClose, 600);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
-      setProgress({ stage: "error", message: "失败", progress: 0 });
+      setProgress({ stage: "error", message: "Falha", progress: 0 });
     }
   };
 
@@ -129,11 +129,11 @@ export function VideoReferenceDialog({
             <Film className="h-[18px] w-[18px]" />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="text-[15px] font-semibold leading-tight text-text-dark">影像参照</h2>
+            <h2 className="text-[15px] font-semibold leading-tight text-text-dark">Referência de imagem</h2>
             <p className="mt-1 text-xs leading-relaxed text-text-muted">
-              上传一段电影 / 短片 → 抽 3-5 关键帧作为 style / 构图 / 色调参考，
+              Enviar uma cena do filme / curta-metragem → capturar 3-5 frames como referência de estilo / arquitetura / cor
               <br />
-              连进 GenNode 作为 reference image，让 AI 复刻视觉语言。
+              Conectar GenNode como referência de imagem para permitir que a IA replique o linguagem visual
             </p>
           </div>
           <button
@@ -141,14 +141,14 @@ export function VideoReferenceDialog({
             onClick={requestClose}
             disabled={submitting}
             className="text-text-muted hover:text-text-dark transition disabled:opacity-30"
-            aria-label="关闭"
+            aria-label="Fechar"
           >
             <X className="h-4 w-4" />
           </button>
         </header>
 
         <div className="px-5 py-4 space-y-5">
-          <Section title="参考视频">
+          <Section title="Referência de vídeo">
             <FilePicker
               file={file}
               disabled={submitting}
@@ -158,9 +158,9 @@ export function VideoReferenceDialog({
           </Section>
 
           <Section
-            title="抽帧数量"
+            title="Número de frames"
             trailing={
-              <span className="text-xs font-semibold tabular-nums text-accent">{maxFrames} 帧</span>
+              <span className="text-xs font-semibold tabular-nums text-accent">{maxFrames} Frame</span>
             }
           >
             <div className="rounded-lg border border-[color:var(--ui-border-soft)] bg-[var(--ui-surface-field)] px-3 py-3">
@@ -180,7 +180,7 @@ export function VideoReferenceDialog({
               </div>
             </div>
             <p className="mt-2 text-[11px] leading-relaxed text-text-muted/80">
-              5-7 帧通常够（多了模型反而抓不住 style 重点）
+              5-7 frames geralmente são suficientes (mais frames podem distrair a modelo da estilo principal)
             </p>
           </Section>
 
@@ -195,7 +195,7 @@ export function VideoReferenceDialog({
 
         <footer className="flex items-center justify-end gap-2 border-t border-[color:var(--ui-border-soft)] px-5 py-3.5">
           <UiButton variant="ghost" size="sm" onClick={requestClose} disabled={submitting}>
-            取消
+            Cancelar
           </UiButton>
           <UiButton
             variant="primary"
@@ -206,10 +206,10 @@ export function VideoReferenceDialog({
             {submitting ? (
               <>
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                处理中
+                Processing in progress
               </>
             ) : (
-              "导入参考"
+              "Importar referência"
             )}
           </UiButton>
         </footer>
@@ -270,8 +270,8 @@ function FilePicker({ file, disabled, inputRef, onChange }: FilePickerProps) {
           </>
         ) : (
           <>
-            <div className="text-sm text-text-dark">选择视频文件</div>
-            <div className="mt-0.5 text-[11px] text-text-muted">支持 mp4 / mov / webm 等格式</div>
+            <div className="text-sm text-text-dark">Select video file</div>
+            <div className="mt-0.5 text-[11px] text-text-muted">Supports mp4, mov, webm formats and others</div>
           </>
         )}
       </div>
@@ -281,7 +281,7 @@ function FilePicker({ file, disabled, inputRef, onChange }: FilePickerProps) {
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
       >
-        {file ? "更换" : "浏览"}
+        {file ? "Change" : "Browse"}
       </UiButton>
       <input
         ref={inputRef}
@@ -306,7 +306,7 @@ function ProgressBar({ progress }: { progress: ProgressState }) {
           {progress.message}
         </span>
         <span className="text-[11px] tabular-nums text-text-muted">
-          {isDone ? "完成" : `${pct}%`}
+          {isDone ? "Concluído" : `${pct}%`}
         </span>
       </div>
       <div className="h-1 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">

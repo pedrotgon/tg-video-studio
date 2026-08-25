@@ -19,9 +19,9 @@ beforeAll(async () => {
       zh: {
         translation: {
           common: {
-            cancel: "取消",
+            cancel: "Cancelar",
             confirmExecute: "确认执行",
-            error: "错误",
+            error: "Erro",
           },
           episode: {
             workbench: {
@@ -40,8 +40,8 @@ beforeAll(async () => {
                   "已分配 {{count}} 个身份、{{propCount}} 个道具",
               },
               sketch: {
-                identityColors: "身份",
-                propColors: "道具",
+                identityColors: "Identidade",
+                propColors: "Itens",
                 aiDetectResults: "AI检测结果",
                 aiDetectResultCounts:
                   "{{beats}} beat / {{identities}} 身份 / {{props}} 道具",
@@ -162,10 +162,10 @@ describe("SketchStudioActions", () => {
       </I18nextProvider>,
     );
 
-    expect(screen.getByText("身份")).toBeInTheDocument();
+    expect(screen.getByText("Identidade")).toBeInTheDocument();
     expect(screen.getByText(/Hero/)).toBeInTheDocument();
     expect(screen.getByText("Main")).toBeInTheDocument();
-    expect(screen.getByText("道具")).toBeInTheDocument();
+    expect(screen.getByText("Itens")).toBeInTheDocument();
     expect(screen.getByText("jade_sword")).toBeInTheDocument();
   });
 

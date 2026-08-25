@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import os
+import re
 import secrets
 import shutil
 import stat
@@ -114,10 +115,15 @@ async def get_ingest_knowledge_graph(
 
 def _commercial_br_error(message: str, project_config: dict | None = None) -> str:
     """Keep legacy DramaClaw errors stable while localizing TG errors."""
-    if not isinstance(project_config, dict) or project_config.get("content_profile") != "commercial_br":
+    if (
+        not isinstance(project_config, dict)
+        or project_config.get("content_profile") != "commercial_br"
+    ):
         return message
     if "解析章节失败" in message and "文件编码" in message:
-        return "Falha ao analisar o capítulo: o arquivo usa uma codificação não suportada."
+        return (
+            "Falha ao analisar o capítulo: o arquivo usa uma codificação não suportada."
+        )
     if "解析章节失败" in message and "未检测到" in message:
         return "Falha ao analisar o capítulo: nenhum capítulo válido foi encontrado."
     if "解析章节失败" in message:
@@ -125,17 +131,38 @@ def _commercial_br_error(message: str, project_config: dict | None = None) -> st
     if "不支持的文件类型" in message:
         return f"Tipo de arquivo não suportado. Formatos aceitos: {supported_novel_extensions_label()}"
     if "文件超过" in message:
-        return message.replace("文件超过", "O arquivo excede").replace("上限，请压缩文件或拆分正文后重新上传。", ". Comprima ou divida o texto e tente novamente.")
+        match = re.search(r"文件超过\s*(.+?)\s*上限", message)
+        limit = match.group(1) if match else "permitido"
+        return f"O arquivo excede o limite de {limit}. Comprima ou divida o texto e tente novamente."
     if "正文共" in message:
-        return message.replace("正文共", "O texto tem").replace("字，超过单次导入上限", " caracteres e excede o limite por importação").replace("字。请拆分后重新上传。", " caracteres. Divida o conteúdo e tente novamente.")
+        return (
+            message.replace("正文共", "O texto tem")
+            .replace(
+                "字，超过单次导入上限", " caracteres e excede o limite por importação"
+            )
+            .replace(
+                "字。请拆分后重新上传。",
+                " caracteres. Divida o conteúdo e tente novamente.",
+            )
+        )
     if "保存上传文件失败" in message:
         return "Não foi possível salvar o arquivo enviado. Tente novamente."
+    if "无法保存历史原文" in message:
+        return (
+            "Não foi possível preservar o roteiro anterior. Envie o arquivo novamente."
+        )
+    if "无法读取上传文件" in message:
+        return "Não foi possível ler o arquivo enviado. Envie-o novamente."
+    if message.startswith("File '") and "not found in uploads" in message:
+        return "O arquivo não foi encontrado nos envios do projeto. Envie-o novamente."
     if "非法文件名" in message:
         return "O nome do arquivo não é válido. Escolha outro arquivo."
     return message
 
 
-def _unsupported_format_response(filename: str, project_config: dict | None = None) -> dict:
+def _unsupported_format_response(
+    filename: str, project_config: dict | None = None
+) -> dict:
     suffix = Path(filename).suffix.lower() or "无扩展名"
     return {
         "ok": False,
@@ -155,23 +182,28 @@ def _format_file_size_limit(limit_bytes: int) -> str:
 
 def _file_too_large_response(
     limit_bytes: int = MAX_NOVEL_UPLOAD_BYTES,
+    project_config: dict | None = None,
 ) -> dict:
     limit_label = _format_file_size_limit(limit_bytes)
+    message = f"文件超过 {limit_label} 上限，请压缩文件或拆分正文后重新上传。"
     return {
         "ok": False,
-        "error": f"文件超过 {limit_label} 上限，请压缩文件或拆分正文后重新上传。",
+        "error": _commercial_br_error(message, project_config),
         "error_type": "file_too_large",
         "data": {"limit_bytes": limit_bytes},
     }
 
 
-def _text_too_large_response(actual_chars: int) -> dict:
+def _text_too_large_response(
+    actual_chars: int, project_config: dict | None = None
+) -> dict:
+    message = (
+        f"正文共 {actual_chars:,} 字，超过单次导入上限 "
+        f"{MAX_NOVEL_IMPORT_CHARS:,} 字。请拆分后重新上传。"
+    )
     return {
         "ok": False,
-        "error": (
-            f"正文共 {actual_chars:,} 字，超过单次导入上限 "
-            f"{MAX_NOVEL_IMPORT_CHARS:,} 字。请拆分后重新上传。"
-        ),
+        "error": _commercial_br_error(message, project_config),
         "error_type": "text_too_large",
         "data": {
             "limit_chars": MAX_NOVEL_IMPORT_CHARS,
@@ -215,7 +247,10 @@ async def upload_novel(
 
     safe_name = sanitize_upload_filename(file.filename)
     if not is_safe_upload_target(uploads_dir, safe_name):
-        return {"ok": False, "error": _commercial_br_error("非法文件名", project_config)}
+        return {
+            "ok": False,
+            "error": _commercial_br_error("非法文件名", project_config),
+        }
     if not is_supported_novel_path(safe_name):
         return _unsupported_format_response(safe_name, project_config)
     dest = uploads_dir / safe_name
@@ -226,18 +261,16 @@ async def upload_novel(
         try:
             size = stream_to_file_with_limit(file.file, staged_path)
         except UploadTooLargeError:
-            return _file_too_large_response()
+            return _file_too_large_response(project_config=project_config)
 
         data = {"filename": safe_name, "size": size}
         try:
             content = load_novel_text(staged_path)
             billable_chars = count_billable_novel_chars(content)
             if billable_chars > MAX_NOVEL_IMPORT_CHARS:
-                return _text_too_large_response(billable_chars)
+                return _text_too_large_response(billable_chars, project_config)
             requested_spine_template = str(
-                spine_template
-                or project_config.get("spine_template")
-                or "drama"
+                spine_template or project_config.get("spine_template") or "drama"
             ).strip()
             preview = build_chapter_preview(
                 content,
@@ -258,8 +291,13 @@ async def upload_novel(
                 "detail": str(exc),
             }
         except Exception:
-            logger.warning("[%s] failed to build chapter preview", project, exc_info=True)
-            return {"ok": False, "error": _commercial_br_error("解析章节失败", project_config)}
+            logger.warning(
+                "[%s] failed to build chapter preview", project, exc_info=True
+            )
+            return {
+                "ok": False,
+                "error": _commercial_br_error("解析章节失败", project_config),
+            }
 
         has_chapters = bool(preview.get("chapters"))
         format_check = build_import_format_check(
@@ -288,8 +326,13 @@ async def upload_novel(
                 staged_path.chmod(destination_mode)
             os.replace(staged_path, dest)
         except OSError:
-            logger.exception("[%s] failed to persist uploaded novel: %s", project, safe_name)
-            return {"ok": False, "error": _commercial_br_error("保存上传文件失败", project_config)}
+            logger.exception(
+                "[%s] failed to persist uploaded novel: %s", project, safe_name
+            )
+            return {
+                "ok": False,
+                "error": _commercial_br_error("保存上传文件失败", project_config),
+            }
 
         data.update(preview)
         data["format_check"] = format_check
@@ -311,16 +354,22 @@ async def start_ingest(
     project: str, body: IngestStart, user: dict = Depends(require_scope("tasks:submit"))
 ):
     """触发小说导入（构建知识图谱）。"""
-    logger.info("[%s] start_ingest: %s (rebuild=%s)", project, body.filename, body.rebuild)
+    logger.info(
+        "[%s] start_ingest: %s (rebuild=%s)", project, body.filename, body.rebuild
+    )
     resolved = await resolve_project_scope(project, user, required_role="editor")
     ctx = resolved.ctx
     project_dir = resolved.project_dir
+    project_config = load_project_config_file_from_state_dir(resolved.state_dir)
     uploads_dir = project_dir / "uploads"
     safe_name = sanitize_upload_filename(body.filename)
     if safe_name != body.filename or not is_safe_upload_target(uploads_dir, safe_name):
-        return {"ok": False, "error": "非法文件名"}
+        return {
+            "ok": False,
+            "error": _commercial_br_error("非法文件名", project_config),
+        }
     if not is_supported_novel_path(safe_name):
-        return _unsupported_format_response(safe_name)
+        return _unsupported_format_response(safe_name, project_config)
     novel_path = uploads_dir / safe_name
 
     # Historical projects may only retain the canonical, already-parsed
@@ -336,27 +385,42 @@ async def start_ingest(
                 shutil.copy2(imported_novel_path, novel_path)
             except OSError:
                 logger.exception("[%s] failed to preserve legacy novel source", project)
-                return {"ok": False, "error": "无法保存历史原文，请重新上传后再导入"}
+                return {
+                    "ok": False,
+                    "error": _commercial_br_error(
+                        "无法保存历史原文，请重新上传后再导入", project_config
+                    ),
+                }
 
     if not novel_path.exists():
-        return {"ok": False, "error": f"File '{body.filename}' not found in uploads/"}
+        return {
+            "ok": False,
+            "error": _commercial_br_error(
+                f"File '{body.filename}' not found in uploads/", project_config
+            ),
+        }
 
     try:
         if novel_path.stat().st_size > MAX_NOVEL_IMPORT_BYTES:
-            return _file_too_large_response(MAX_NOVEL_IMPORT_BYTES)
+            return _file_too_large_response(MAX_NOVEL_IMPORT_BYTES, project_config)
     except OSError:
         logger.warning("[%s] failed to stat uploaded novel", project, exc_info=True)
-        return {"ok": False, "error": "无法读取上传文件，请重新上传后再导入"}
+        return {
+            "ok": False,
+            "error": _commercial_br_error(
+                "无法读取上传文件，请重新上传后再导入", project_config
+            ),
+        }
 
     try:
         content = load_novel_text(novel_path)
         billable_chars = count_billable_novel_chars(content)
         if billable_chars > MAX_NOVEL_IMPORT_CHARS:
-            return _text_too_large_response(billable_chars)
+            return _text_too_large_response(billable_chars, project_config)
     except DocumentParseError as exc:
         return {
             "ok": False,
-            "error": f"解析章节失败: {exc}",
+            "error": _commercial_br_error(f"解析章节失败: {exc}", project_config),
             "error_type": "parse",
             "format": exc.source_format,
             "detail": str(exc),
@@ -367,13 +431,14 @@ async def start_ingest(
             project,
             exc_info=True,
         )
-        return {"ok": False, "error": "解析章节失败"}
+        return {
+            "ok": False,
+            "error": _commercial_br_error("解析章节失败", project_config),
+        }
 
     current_project_config = load_project_config_file_from_state_dir(resolved.state_dir)
     requested_spine_template = str(
-        body.spine_template
-        or current_project_config.get("spine_template")
-        or "drama"
+        body.spine_template or current_project_config.get("spine_template") or "drama"
     ).strip()
     effective_spine_template = (
         "narrated" if requested_spine_template == "narrated" else "drama"

@@ -73,13 +73,13 @@ const MUSIC_LENGTH_SELECT_MENU_CLASS =
   '!z-[260] !min-w-[140px] !border-white/10 !bg-[#202024] !text-text-dark shadow-[0_14px_34px_rgba(0,0,0,0.5)]';
 // 音乐时长预设（毫秒）。后端范围 3000–600000，这里给常用档位。
 const MUSIC_LENGTH_PRESETS: ReadonlyArray<{ ms: number; label: string }> = [
-  { ms: 30000, label: '30秒' },
-  { ms: 60000, label: '1分钟' },
-  { ms: 120000, label: '2分钟' },
-  { ms: 180000, label: '3分钟' },
-  { ms: 240000, label: '4分钟' },
-  { ms: 300000, label: '5分钟' },
-  { ms: 600000, label: '10分钟' },
+  { ms: 30000, label: '30 segundos' },
+  { ms: 60000, label: '1 minuto' },
+  { ms: 120000, label: '2 minutos' },
+  { ms: 180000, label: '3 minutos' },
+  { ms: 240000, label: '4 minutos' },
+  { ms: 300000, label: '5 minutos' },
+  { ms: 600000, label: '10 minutos' },
 ];
 
 function musicBillingSecondsFromMs(ms: number): number {
@@ -258,7 +258,7 @@ export function AudioOperationsPanel({ nodeId, data }: AudioOperationsPanelProps
       <div className="px-3 pt-3">
         <label className="flex flex-col gap-2">
           <span className={AUDIO_INPUT_LABEL_CLASS}>
-            {isMusic ? '输入音乐描述' : '输入要合成的文本'}
+            {isMusic ? 'Insira a descrição da música' : 'Digite o texto a ser sintetizado'}
           </span>
           <textarea
             value={textDraft}
@@ -281,8 +281,8 @@ export function AudioOperationsPanel({ nodeId, data }: AudioOperationsPanelProps
             onKeyDown={(event) => event.stopPropagation()}
             placeholder={
               isMusic
-                ? '描述想要的音乐：风格、乐器、节奏、氛围…'
-                : '输入要合成的文本'
+                ? 'Descreva a música que deseja: estilo, instrumento, ritmo, atmosfera...'
+                : 'Digite o texto a ser sintetizado'
             }
             disabled={isGenerating}
             className={`${AUDIO_INPUT_FIELD_CLASS} ui-scrollbar resize-none py-2 leading-[1.65] ${
@@ -296,8 +296,8 @@ export function AudioOperationsPanel({ nodeId, data }: AudioOperationsPanelProps
       <div className="px-3 pb-3 pt-4">
         <label className="flex flex-col gap-2">
           <span className={AUDIO_INPUT_LABEL_CLASS}>
-            语气词
-            <span className="ml-1 text-text-muted/60">（可选，自由输入）</span>
+            Palavras de tom
+            <span className="ml-1 text-text-muted/60">(opcional, entrada gratuita)</span>
           </span>
           <input
             type="text"
@@ -319,7 +319,7 @@ export function AudioOperationsPanel({ nodeId, data }: AudioOperationsPanelProps
             onMouseDown={(event) => event.stopPropagation()}
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
-            placeholder="如：紧张、压低声音、带一点恐惧感"
+            placeholder="Ex: Nervosa, voz baixa, um pouco de medo"
             disabled={isGenerating}
             className={`${AUDIO_INPUT_FIELD_CLASS} h-9`}
           />
@@ -329,7 +329,7 @@ export function AudioOperationsPanel({ nodeId, data }: AudioOperationsPanelProps
 
       <div className="flex shrink-0 items-center justify-end gap-2 px-3 pb-3 pt-1">
         <IconButton
-          title="翻译（中英文互译）"
+          title="Tradução (Chinês-Inglês)"
           onClick={handleTranslate}
           disabled={isGenerating || isTranslating || text.trim().length === 0}
           active={isTranslating}
@@ -342,7 +342,7 @@ export function AudioOperationsPanel({ nodeId, data }: AudioOperationsPanelProps
         </IconButton>
         {!isMusic && (
           <IconButton
-            title="音色设置"
+            title="Configurações de tom"
             onClick={() => setShowVoiceSettings((v) => !v)}
             active={showVoiceSettings}
           >
@@ -351,7 +351,7 @@ export function AudioOperationsPanel({ nodeId, data }: AudioOperationsPanelProps
         )}
         {isMusic && (
           <IconButton
-            title="高级设置"
+            title="Configurações avançadas"
             onClick={() => setShowMusicSettings((v) => !v)}
             active={showMusicSettings}
           >
@@ -367,7 +367,7 @@ export function AudioOperationsPanel({ nodeId, data }: AudioOperationsPanelProps
         <button
           type="button"
           disabled={submitDisabled}
-          title="生成"
+          title="Gerar"
           onClick={handleSubmit}
           className={`${NODE_GENERATE_BUTTON_BASE_CLASS} ${
             submitDisabled
@@ -482,7 +482,7 @@ function MusicSettingHelp({ text }: { text: string }) {
           render={
             <button
               type="button"
-              aria-label="说明"
+              aria-label="Descrição"
               className="inline-flex cursor-help items-center text-text-muted/70 transition-colors hover:text-text-dark"
               onClick={(event) => event.stopPropagation()}
             />
@@ -513,15 +513,15 @@ function AudioMusicSettingsPanel({
   return (
     <div className="border-t border-white/[0.04] px-4 pb-3 pt-1">
       <div className="flex items-center justify-between py-2">
-        <span className="text-[12px] font-semibold text-text-muted">高级设置</span>
+        <span className="text-[12px] font-semibold text-text-muted">Configurações avançadas</span>
       </div>
       <div className="flex items-center justify-between gap-3 py-1">
         <span className="inline-flex items-center gap-1.5 text-[13px] text-text-dark">
-          音乐时长
-          <MusicSettingHelp text="设定歌曲长度。自动模式下优先保证歌词完整；指定时长后则优先匹配时长。" />
+          Duração da música
+          <MusicSettingHelp text="Defina a duração da música.No modo automático, as letras são garantidas para serem concluídas primeiro; após a duração especificada, a duração é correspondida primeiro." />
         </span>
         <UiSelect
-          aria-label="音乐时长"
+          aria-label="Duração da música"
           value={String(musicLengthMs)}
           onChange={(event) =>
             updateNodeData(nodeId, { musicLengthMs: Number(event.target.value) })
@@ -539,22 +539,22 @@ function AudioMusicSettingsPanel({
       </div>
       <div className="flex items-center justify-between gap-3 py-1">
         <span className="inline-flex items-center gap-1.5 text-[13px] text-text-dark">
-          强制纯音乐
-          <MusicSettingHelp text="是否强制纯音乐（不含人声）。" />
+          Forçar Apenas Música
+          <MusicSettingHelp text="Se deve forçar a música pura (excluindo vocais)." />
         </span>
         <MusicSettingToggle
-          ariaLabel="强制纯音乐"
+          ariaLabel="Forçar Apenas Música"
           checked={forceInstrumental}
           onChange={(next) => updateNodeData(nodeId, { forceInstrumental: next })}
         />
       </div>
       <div className="flex items-center justify-between gap-3 py-1">
         <span className="inline-flex items-center gap-1.5 text-[13px] text-text-dark">
-          遵守段落时长
-          <MusicSettingHelp text="是否严格遵守音乐段落时长策略。" />
+          Aderir à duração do parágrafo
+          <MusicSettingHelp text="Se deve ou não aderir estritamente à política de duração da passagem musical." />
         </span>
         <MusicSettingToggle
-          ariaLabel="遵守段落时长"
+          ariaLabel="Aderir à duração do parágrafo"
           checked={respectSectionsDurations}
           onChange={(next) =>
             updateNodeData(nodeId, { respectSectionsDurations: next })
@@ -569,7 +569,7 @@ function AudioVoiceSettingsPanel({ nodeId, data }: AudioVoiceSettingsPanelProps)
   const updateNodeData = useCanvasStore((state) => state.updateNodeData);
   // 默认音色的拉取放在 AudioNode 里完成（音频节点一挂载就会触发）；这里只负责展示。
   // 显示兜底改为「加载中…」而不是「项目解说人」——避免在 references 落地前误导用户。
-  const voiceLabel = data.voiceLabel ?? '加载中…';
+  const voiceLabel = data.voiceLabel ?? 'Carregando...';
   const voiceLanguage = data.voiceLanguage ?? '';
   const currentRef: AudioVoiceRef = data.voiceRef ?? { scope: 'project_narrator' };
   const [modalOpen, setModalOpen] = useState(false);
@@ -609,7 +609,7 @@ function AudioVoiceSettingsPanel({ nodeId, data }: AudioVoiceSettingsPanelProps)
   return (
     <div className="border-t border-white/[0.04] px-4 pt-1 pb-3">
       <div className="flex items-center justify-between py-2">
-        <span className="text-[12px] font-semibold text-text-muted">音色设置</span>
+        <span className="text-[12px] font-semibold text-text-muted">Configurações de tom</span>
       </div>
       <div className="flex min-h-[55px] w-full items-center gap-3 rounded-[10px] border border-white/[0.08] bg-transparent px-3 py-2">
         <div className="min-w-0 flex-1">
@@ -617,7 +617,7 @@ function AudioVoiceSettingsPanel({ nodeId, data }: AudioVoiceSettingsPanelProps)
             <span className="truncate text-[14px] font-medium text-text-dark">{voiceLabel}</span>
             <button
               type="button"
-              title={copyState === 'success' ? '已复制' : copyState === 'error' ? '复制失败' : '复制声线引用'}
+              title={copyState === 'success' ? 'Copiado' : copyState === 'error' ? 'Falha na cópia' : 'Referência sonora duplicada'}
               onClick={handleCopyVoiceId}
               className={`flex h-4 w-4 shrink-0 items-center justify-center transition-colors ${
                 copyState === 'success'
@@ -643,7 +643,7 @@ function AudioVoiceSettingsPanel({ nodeId, data }: AudioVoiceSettingsPanelProps)
           )}
           <button
             type="button"
-            title="切换音色"
+            title="Alternar tom"
             onClick={() => setModalOpen(true)}
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-text-dark transition-colors hover:bg-white/[0.06]"
           >
@@ -671,17 +671,17 @@ function AudioVoiceSettingsPanel({ nodeId, data }: AudioVoiceSettingsPanelProps)
 function describeVoiceRef(ref: AudioVoiceRef): string {
   switch (ref.scope) {
     case 'project_narrator':
-      return '项目解说人';
+      return 'Narrador do Projeto';
     case 'user_custom':
-      return ref.voiceId ?? '自定义音色';
+      return ref.voiceId ?? 'Tom personalizado';
     case 'character_default':
-      return `${ref.characterName ?? '角色'}（默认声线）`;
+      return `${ref.characterName ?? 'Função'}（默认声线）`;
     case 'character_age_group':
-      return `${ref.characterName ?? '角色'}（${ref.slot ?? '年龄段'}）`;
+      return `${ref.characterName ?? 'Função'}（${ref.slot ?? 'Faixa Etária'}）`;
     case 'identity':
-      return `${ref.identityId ?? '身份'}（自有声线）`;
+      return `${ref.identityId ?? 'Identidade'}（自有声线）`;
     case 'identity_resolved':
-      return `${ref.identityId ?? '身份'}（解析后）`;
+      return `${ref.identityId ?? 'Identidade'}（解析后）`;
     default:
       return ref.scope;
   }

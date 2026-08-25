@@ -178,7 +178,7 @@ export function CropToolEditor({ plugin, sourceImageUrl, options, onOptionsChang
     const field = plugin.fields.find((item) => item.type === 'select' && item.key === 'aspectRatio');
     if (!field) {
       return [
-        { label: '自由', value: 'free' },
+        { label: 'Liberdade', value: 'free' },
         { label: '1:1', value: '1:1' },
         { label: '16:9', value: '16:9' },
         { label: '9:16', value: '9:16' },
@@ -190,7 +190,7 @@ export function CropToolEditor({ plugin, sourceImageUrl, options, onOptionsChang
         { label: '5:4', value: '5:4' },
         { label: '2:1', value: '2:1' },
         { label: '21:9', value: '21:9' },
-        { label: '原图', value: 'original' },
+        { label: 'Original', value: 'original' },
       ];
     }
 
@@ -222,10 +222,10 @@ export function CropToolEditor({ plugin, sourceImageUrl, options, onOptionsChang
       return null;
     }
     if (!customRatioInput.trim()) {
-      return '请输入比例，例如 3:2 或 1.5';
+      return 'Insira uma proporção, por exemplo, 3: 2 ou 1,5';
     }
     if (!parseCustomRatio(customRatioInput)) {
-      return '比例格式无效';
+      return 'Formato de escala inválido';
     }
     return null;
   }, [aspectMode, customRatioInput]);
@@ -387,7 +387,7 @@ export function CropToolEditor({ plugin, sourceImageUrl, options, onOptionsChang
             })
           }
         >
-          自定义
+          Personalizado
         </button>
       </div>
 
@@ -405,7 +405,7 @@ export function CropToolEditor({ plugin, sourceImageUrl, options, onOptionsChang
                 customAspectRatio: next,
               });
             }}
-            placeholder="输入比例，如 3:2 或 1.5"
+            placeholder="Insira uma proporção, por exemplo, 3: 2 ou 1,5"
             className="h-8 w-[220px] rounded-[8px] border border-white/[0.10] bg-bg-dark/42 px-3 text-sm text-text-dark outline-none transition-colors placeholder:text-text-dark/52 focus:border-white/[0.18]"
           />
           {customRatioError && <span className="text-xs text-red-400">{customRatioError}</span>}

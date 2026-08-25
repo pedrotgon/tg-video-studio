@@ -135,12 +135,12 @@ describe("PanoCaptureSurface controls", () => {
     expect(screen.getByText("scene basement")).toBeInTheDocument();
     expect(screen.getByText("EP 1 / Beat 3")).toBeInTheDocument();
     expect(screen.getByText("canonical pano")).toBeInTheDocument();
-    expect(screen.getByText("保存目标 selected_background")).toBeInTheDocument();
+    expect(screen.getByText("Salve o local-target selecionado")).toBeInTheDocument();
     expect(screen.getByText(/yaw 90\.0°/)).toBeInTheDocument();
     expect(screen.getByText(/pitch 30\.0°/)).toBeInTheDocument();
     expect(screen.getByText(/fov 70°/)).toBeInTheDocument();
     expect(screen.getByText(/26mm/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "标准 70°" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Anúncio padrão 70°" })).toBeInTheDocument();
     expect(screen.getByLabelText("Front yaw value")).toHaveValue(15);
     expect(screen.getByLabelText("Correction roll")).toBeInTheDocument();
     expect(screen.getByLabelText("Correction roll value")).toHaveValue(1);
@@ -148,7 +148,7 @@ describe("PanoCaptureSurface controls", () => {
     expect(screen.getByLabelText("Correction pitch value")).toHaveValue(2);
     expect(screen.getByLabelText("Correction yaw")).toBeInTheDocument();
     expect(screen.getByLabelText("Correction yaw value")).toHaveValue(3);
-    expect(screen.getByRole("button", { name: "当前设为正面" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "当前设为Frente" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "重置校正" })).toBeInTheDocument();
   });
 
@@ -164,7 +164,7 @@ describe("PanoCaptureSurface controls", () => {
     await waitFor(() => expect(viewerInstances).toHaveLength(1));
     const viewer = viewerInstances[0];
 
-    await user.click(screen.getByRole("button", { name: "广角 120°" }));
+    await user.click(screen.getByRole("button", { name: "Anúncio lente estreita 120°" }));
     expect(viewer.zoom).toHaveBeenCalledWith(fovToZoom(120));
 
     await user.click(screen.getByRole("button", { name: "Right" }));
@@ -173,7 +173,7 @@ describe("PanoCaptureSurface controls", () => {
       pitch: 0,
     });
 
-    await user.click(screen.getByRole("button", { name: "当前视角矫正" }));
+    await user.click(screen.getByRole("button", { name: "Perspectiva Atual矫正" }));
     expect(viewer.setOption).toHaveBeenCalledWith("sphereCorrection", {
       roll: expect.closeTo((manifest.correction.sphere_correction_deg.roll * Math.PI) / 180, 12),
       tilt: expect.closeTo((32 * Math.PI) / 180, 12),
@@ -197,14 +197,14 @@ describe("PanoCaptureSurface controls", () => {
     await waitFor(() => expect(viewerInstances).toHaveLength(1));
     const viewer = viewerInstances[0];
 
-    await user.click(screen.getByRole("button", { name: "小行星视角" }));
+    await user.click(screen.getByRole("button", { name: "Perspectiva do Asteroide" }));
     expect(viewer.zoom).toHaveBeenLastCalledWith(fovToZoom(160));
     expect(viewer.rotate).toHaveBeenLastCalledWith({
       yaw: 0,
       pitch: -Math.PI / 2,
     });
 
-    await user.click(screen.getByRole("button", { name: "退出小行星" }));
+    await user.click(screen.getByRole("button", { name: "Sair do Asteroide" }));
     expect(viewer.zoom).toHaveBeenLastCalledWith(expect.closeTo(fovToZoom(70), 10));
     expect(viewer.rotate).toHaveBeenLastCalledWith({
       yaw: Math.PI / 2,
@@ -233,7 +233,7 @@ describe("PanoCaptureSurface controls", () => {
       pitch: 0,
     });
 
-    await user.click(screen.getByRole("button", { name: "当前设为正面" }));
+    await user.click(screen.getByRole("button", { name: "当前设为Frente" }));
     expect(screen.getByLabelText("Front yaw value")).toHaveValue(90);
 
     fireEvent.change(screen.getByLabelText("Correction yaw value"), {
@@ -299,16 +299,16 @@ describe("PanoCaptureSurface controls", () => {
     expect(screen.getByTestId("pano-guide-thirds")).toBeInTheDocument();
     expect(screen.getByTestId("pano-capture-frame")).toBeInTheDocument();
     expect(screen.getByTestId("pano-capture-resize-handle")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "重置截图框" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "重置Toma uma foto框" })).toBeInTheDocument();
 
     fireEvent.wheel(screen.getByTestId("pano-capture-frame"), { deltaY: -120 });
 
-    await user.click(screen.getByRole("button", { name: "隐藏辅助线" }));
+    await user.click(screen.getByRole("button", { name: "Ocultar guias" }));
     expect(screen.queryByTestId("pano-guide-horizon")).not.toBeInTheDocument();
     expect(screen.queryByTestId("pano-guide-center")).not.toBeInTheDocument();
     expect(screen.queryByTestId("pano-guide-thirds")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "显示辅助线" }));
+    await user.click(screen.getByRole("button", { name: "Mostrar guias" }));
     expect(screen.getByTestId("pano-guide-horizon")).toBeInTheDocument();
   });
 
@@ -324,18 +324,18 @@ describe("PanoCaptureSurface controls", () => {
 
     await waitFor(() => expect(viewerInstances).toHaveLength(1));
 
-    await user.click(screen.getByRole("button", { name: "截图" }));
+    await user.click(screen.getByRole("button", { name: "Toma uma foto" }));
 
     await waitFor(() => expect(onCapture).toHaveBeenCalledTimes(1));
-    expect(screen.getByText("截图 1")).toBeInTheDocument();
+    expect(screen.getByText("Toma uma foto 1")).toBeInTheDocument();
     expect(screen.getByText(/640 x 360/)).toBeInTheDocument();
-    expect(screen.getByAltText("截图 1")).toHaveAttribute("src", "blob:pano-shot");
-    expect(screen.getByRole("link", { name: "下载截图 1" })).toHaveAttribute(
+    expect(screen.getByAltText("Toma uma foto 1")).toHaveAttribute("src", "blob:pano-shot");
+    expect(screen.getByRole("link", { name: "下载Toma uma foto 1" })).toHaveAttribute(
       "download",
       "pano-capture-1.png",
     );
-    await user.click(screen.getByRole("button", { name: "清空截图列表" }));
-    expect(screen.queryByText("截图 1")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "清空Toma uma foto列表" }));
+    expect(screen.queryByText("Toma uma foto 1")).not.toBeInTheDocument();
   });
 
   it("shows saved anchor metadata returned by the capture handler", async () => {
@@ -351,7 +351,7 @@ describe("PanoCaptureSurface controls", () => {
     );
 
     await waitFor(() => expect(viewerInstances).toHaveLength(1));
-    await user.click(screen.getByRole("button", { name: "截图" }));
+    await user.click(screen.getByRole("button", { name: "Toma uma foto" }));
 
     expect(await screen.findByText(/已保存 selected_background/)).toBeInTheDocument();
     expect(
@@ -417,7 +417,7 @@ describe("PanoCaptureSurface controls", () => {
     );
 
     await waitFor(() => expect(viewerInstances).toHaveLength(1));
-    await user.click(screen.getByRole("button", { name: "保存校正" }));
+    await user.click(screen.getByRole("button", { name: "Salvar correção" }));
 
     expect(onSaveCorrection).toHaveBeenCalledWith({
       front_yaw_deg: 15,

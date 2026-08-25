@@ -70,7 +70,7 @@ describe("CommitDialog submit", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "提交" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enviar" }));
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalled());
     expect(onSuccess.mock.calls[0]?.[2]).toEqual(target);

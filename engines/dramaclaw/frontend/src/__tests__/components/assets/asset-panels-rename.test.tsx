@@ -292,7 +292,7 @@ describe("asset panel rename behavior", () => {
     await user.click(await screen.findByRole("button", { name: "New scene" }));
     expect(
       screen.getByText(
-        "普通独立场景只填名称；不要在这里填写变体或时间。需要状态/时间版时，在场景详情里添加变体。",
+        "Preencha apenas o nome da cena de cenário independente comum; não preencha variantes ou tempo aqui. Se precisar de uma versão com estado/tempo, adicione a variante nos detalhes da cena.",
       ),
     ).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Scene name"), {
@@ -373,9 +373,9 @@ describe("asset panel rename behavior", () => {
     renderWithProviders(<ScenesPanel project="demo" />);
 
     expect(await screen.findAllByText("Door")).not.toHaveLength(0);
-    expect(screen.queryByText("1 个场景变体")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "选择场景 Hall" }));
-    expect(screen.queryByText("2 个场景变体")).not.toBeInTheDocument();
+    expect(screen.queryByText("1 个CenárioVariante")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "SelecionarCenário Hall" }));
+    expect(screen.queryByText("2 个CenárioVariante")).not.toBeInTheDocument();
   });
 
   it("uses a character-tab style split view for scene bases and selected variants", async () => {
@@ -401,11 +401,11 @@ describe("asset panel rename behavior", () => {
 
     renderWithProviders(<ScenesPanel project="demo" />);
 
-    expect(await screen.findByRole("button", { name: "选择场景 Door" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "选择场景 Hall" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "SelecionarCenário Door" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "SelecionarCenário Hall" })).toBeInTheDocument();
     expect(screen.queryByText("Hall_Night")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "选择场景 Hall" }));
+    await user.click(screen.getByRole("button", { name: "SelecionarCenário Hall" }));
 
     expect(screen.getByText("Hall_Night")).toBeInTheDocument();
     expect(screen.queryByText("Door_上午")).not.toBeInTheDocument();
@@ -434,15 +434,15 @@ describe("asset panel rename behavior", () => {
 
     const firstRender = renderWithProviders(<ScenesPanel project="demo" />);
 
-    await screen.findByRole("button", { name: "选择场景 Door" });
-    await user.click(screen.getByRole("button", { name: "选择场景 Hall" }));
+    await screen.findByRole("button", { name: "SelecionarCenário Door" });
+    await user.click(screen.getByRole("button", { name: "SelecionarCenário Hall" }));
     expect(screen.getByText("Hall_Night")).toBeInTheDocument();
 
     firstRender.unmount();
     renderWithProviders(<ScenesPanel project="demo" />);
 
-    await screen.findByRole("button", { name: "选择场景 Door" });
-    expect(screen.getByRole("button", { name: "选择场景 Hall" })).toHaveAttribute(
+    await screen.findByRole("button", { name: "SelecionarCenário Door" });
+    expect(screen.getByRole("button", { name: "SelecionarCenário Hall" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
@@ -463,9 +463,9 @@ describe("asset panel rename behavior", () => {
     const dialog = screen.getByRole("dialog");
 
     expect(within(dialog).getByLabelText("Scene name")).toBeInTheDocument();
-    expect(within(dialog).queryByLabelText("基础场景")).not.toBeInTheDocument();
-    expect(within(dialog).queryByLabelText("变体")).not.toBeInTheDocument();
-    expect(within(dialog).queryByLabelText("时间")).not.toBeInTheDocument();
+    expect(within(dialog).queryByLabelText("Cena Base")).not.toBeInTheDocument();
+    expect(within(dialog).queryByLabelText("Variante")).not.toBeInTheDocument();
+    expect(within(dialog).queryByLabelText("Tempo")).not.toBeInTheDocument();
   });
 
   it("creates scene variants from the selected base scene and stores only variant delta prompt", async () => {
@@ -496,29 +496,29 @@ describe("asset panel rename behavior", () => {
 
     renderWithProviders(<ScenesPanel project="demo" />);
 
-    await screen.findByRole("button", { name: "选择场景 Hall" });
-    await user.click(screen.getByRole("button", { name: "添加场景变体" }));
+    await screen.findByRole("button", { name: "SelecionarCenário Hall" });
+    await user.click(screen.getByRole("button", { name: "Adicionar Variação da Cena" }));
 
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("填写变体或时间后自动生成")).toBeInTheDocument();
+    expect(within(dialog).getByText("Preencher Variação ou Gerar Automaticamente Após o Tempo")).toBeInTheDocument();
     expect(within(dialog).queryByDisplayValue("wide hall")).not.toBeInTheDocument();
     expect(within(dialog).queryByDisplayValue("soft skylight")).not.toBeInTheDocument();
-    fireEvent.change(within(dialog).getByLabelText("变体"), {
+    fireEvent.change(within(dialog).getByLabelText("Variante"), {
       target: { value: "漏水" },
     });
     fireEvent.change(within(dialog).getByLabelText("Variant delta prompt"), {
       target: { value: "floor water and dripping ceiling" },
     });
-    await user.click(within(dialog).getByRole("combobox", { name: "时间" }));
+    await user.click(within(dialog).getByRole("combobox", { name: "Tempo" }));
     await user.click(await screen.findByRole("option", { name: "夜晚" }));
-    expect(within(dialog).getByText("Hall_漏水_夜晚")).toBeInTheDocument();
+    expect(within(dialog).getByText("Hall_Vazamento_夜晚")).toBeInTheDocument();
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
 
     await waitFor(() => expect(postBody).toBeDefined());
     expect(postBody).toMatchObject({
-      name: "Hall_漏水_夜晚",
+      name: "Hall_Vazamento_夜晚",
       base_scene_id: "Hall",
-      variant_id: "漏水",
+      variant_id: "Vazamento",
       time_of_day: "夜晚",
       variant_prompt: "floor water and dripping ceiling",
       description: "",

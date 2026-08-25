@@ -50,22 +50,22 @@ interface ColumnDef {
 }
 
 const COLUMNS: ColumnDef[] = [
-  { key: 'shotNumber', label: '镜号', widthClass: 'min-w-[60px]' },
-  { key: 'startTime', label: '开始时间', widthClass: 'min-w-[90px]' },
-  { key: 'endTime', label: '结束时间', widthClass: 'min-w-[90px]' },
-  { key: 'duration', label: '时长', widthClass: 'min-w-[70px]' },
-  { key: 'visualDescription', label: '画面描述', widthClass: 'min-w-[220px]', wide: true },
-  { key: 'narrative', label: '叙事内容', widthClass: 'min-w-[220px]', wide: true },
-  { key: 'shotSize', label: '景别', widthClass: 'min-w-[80px]' },
-  { key: 'cameraAngle', label: '摄影机角度', widthClass: 'min-w-[100px]' },
-  { key: 'cameraMovement', label: '摄影机运动', widthClass: 'min-w-[120px]' },
-  { key: 'focalAndDof', label: '焦距与景深', widthClass: 'min-w-[120px]' },
-  { key: 'lighting', label: '光线', widthClass: 'min-w-[120px]' },
-  { key: 'backgroundMusic', label: '背景音乐', widthClass: 'min-w-[140px]' },
-  { key: 'voiceAndSfx', label: '人声/音效', widthClass: 'min-w-[140px]' },
-  { key: 'imagePrompt', label: '图像生成提示词', widthClass: 'min-w-[260px]', wide: true },
-  { key: 'videoMotionPrompt', label: '视频运动提示词', widthClass: 'min-w-[240px]', wide: true },
-  { key: 'keyframeUrl', label: '关键帧', widthClass: 'min-w-[120px]' },
+  { key: 'shotNumber', label: 'Nº do espelho', widthClass: 'min-w-[60px]' },
+  { key: 'startTime', label: 'Hora de início', widthClass: 'min-w-[90px]' },
+  { key: 'endTime', label: 'Hora de fim', widthClass: 'min-w-[90px]' },
+  { key: 'duration', label: 'Duração', widthClass: 'min-w-[70px]' },
+  { key: 'visualDescription', label: 'Descrição visual', widthClass: 'min-w-[220px]', wide: true },
+  { key: 'narrative', label: 'Conteúdo narrativo', widthClass: 'min-w-[220px]', wide: true },
+  { key: 'shotSize', label: 'Paisagem', widthClass: 'min-w-[80px]' },
+  { key: 'cameraAngle', label: 'Ângulo da câmera', widthClass: 'min-w-[100px]' },
+  { key: 'cameraMovement', label: 'Movimento da Câmera', widthClass: 'min-w-[120px]' },
+  { key: 'focalAndDof', label: 'Distância focal e profundidade de campo', widthClass: 'min-w-[120px]' },
+  { key: 'lighting', label: 'Iluminação', widthClass: 'min-w-[120px]' },
+  { key: 'backgroundMusic', label: 'Música de fundo', widthClass: 'min-w-[140px]' },
+  { key: 'voiceAndSfx', label: 'Voz/Som', widthClass: 'min-w-[140px]' },
+  { key: 'imagePrompt', label: 'Prompt de geração de imagem', widthClass: 'min-w-[260px]', wide: true },
+  { key: 'videoMotionPrompt', label: 'Prompt de movimento de vídeo', widthClass: 'min-w-[240px]', wide: true },
+  { key: 'keyframeUrl', label: 'Quadro-chave', widthClass: 'min-w-[120px]' },
 ];
 
 interface StoryCellProps {
@@ -167,16 +167,16 @@ function EmptyStoryState({ rawResult }: { rawResult?: Record<string, unknown> | 
   return (
     <div className="flex h-full w-full items-center justify-center p-6">
       <div className="flex max-w-[460px] flex-col items-center gap-3 text-center">
-        <div className="text-sm font-medium text-text-dark">未识别出分镜</div>
+        <div className="text-sm font-medium text-text-dark">Divisão de escopo não reconhecida</div>
         <div className="text-[12px] leading-5 text-text-muted/80">
-          返回内容中没有可用分镜行。原始返回已保留为辅助信息，可用于排查接口结果。
+          Nenhuma linha de espelhamento está disponível no conteúdo retornado.O retorno original é reservado como informação secundária e pode ser usado para solucionar problemas de resultados de interface.
         </div>
         <details className="w-full rounded-md border border-white/[0.08] bg-bg-dark/45 text-left">
           <summary className="cursor-pointer list-none px-3 py-2 text-[11px] font-medium text-text-dark/82 transition-colors hover:text-text-dark">
-            查看原始返回
+            Ver devolução original
           </summary>
           <pre className="ui-scrollbar max-h-[120px] overflow-auto border-t border-white/[0.06] p-3 text-[11px] leading-5 text-text-muted/86">
-{rawResult ? JSON.stringify(rawResult, null, 2) : '(空)'}
+{rawResult ? JSON.stringify(rawResult, null, 2) : '(vazio)'}
           </pre>
         </details>
       </div>
@@ -189,7 +189,7 @@ function ErrorStoryState({ message }: { message: string }) {
     <div className="flex h-full w-full items-center justify-center p-6">
       <div className="flex max-w-[420px] flex-col items-center gap-3 text-center">
         <AlertTriangle className="h-7 w-7 text-red-300/90" />
-        <div className="text-sm font-medium text-red-200">解析失败</div>
+        <div className="text-sm font-medium text-red-200">Falha na análise</div>
         <div className="max-h-[88px] overflow-auto break-words text-[12px] leading-5 text-red-200/82 [overflow-wrap:anywhere]">
           {message}
         </div>
@@ -283,13 +283,13 @@ export const VideoStoryNode = memo(({ id, data, selected, width, height }: Video
         <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.08)] px-3 py-2">
           <div className="flex items-center gap-2 text-[12px] text-text-muted">
             {isAnalyzing ? (
-              <span>解析中…</span>
+              <span>Analisando...</span>
             ) : hasError ? (
-              <span className="text-red-300">解析失败</span>
+              <span className="text-red-300">Falha na análise</span>
             ) : hasRows ? (
-              <span>{rows.length} 条分镜</span>
+              <span>{rows.length} Espelho dividido em tiras</span>
             ) : (
-              <span>未识别出分镜</span>
+              <span>Divisão de escopo não reconhecida</span>
             )}
           </div>
           <button
@@ -302,14 +302,14 @@ export const VideoStoryNode = memo(({ id, data, selected, width, height }: Video
             disabled={!hasRows}
           >
             <Expand className="h-3 w-3" />
-            全屏
+            Tela cheia
           </button>
         </div>
         <div className="flex-1 overflow-hidden p-2">
           {isAnalyzing ? (
             <div className="h-full w-full" />
           ) : hasError ? (
-            <ErrorStoryState message={data.analysisError ?? '未知错误'} />
+            <ErrorStoryState message={data.analysisError ?? 'Erro desconhecido'} />
           ) : hasRows ? (
             <StoryTable rows={rows} compact onCellCommit={handleCellCommit} />
           ) : (
@@ -336,7 +336,7 @@ export const VideoStoryNode = memo(({ id, data, selected, width, height }: Video
             <div className="flex items-center gap-3">
               <FileVideo2 className="h-5 w-5" />
               <span className="text-base font-medium">{resolvedTitle}</span>
-              <span className="text-sm text-text-muted">共 {rows.length} 条分镜</span>
+              <span className="text-sm text-text-muted">de {rows.length} Espelho dividido em tiras</span>
             </div>
             <button
               type="button"
@@ -344,7 +344,7 @@ export const VideoStoryNode = memo(({ id, data, selected, width, height }: Video
               onClick={() => setIsFullscreen(false)}
             >
               <X className="h-4 w-4" />
-              关闭
+              Fechar
             </button>
           </div>
           <div className="flex-1 overflow-hidden rounded-lg border border-[rgba(255,255,255,0.12)] bg-surface-dark/95">

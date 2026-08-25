@@ -19,9 +19,9 @@ beforeAll(async () => {
       zh: {
         translation: {
           common: {
-            cancel: "取消",
+            cancel: "Cancelar",
             confirmExecute: "确认执行",
-            error: "错误",
+            error: "Erro",
             ok: "OK",
             billingRuleNotConfiguredShort: "需配置",
           },
@@ -79,15 +79,15 @@ beforeAll(async () => {
                 globalOptimizeStarted: "已启动 AI 优化",
                 selectedCount: "已选 {{count}} 个节拍",
                 clearSelection: "清除选择",
-                singleRegen: "单张重抽",
-                autoCombine: "批量重抽",
+                singleRegen: "Retocar quadro individual",
+                autoCombine: "Retocar em lote",
                 regenSketchSingleTitle: "单张重抽 {{count}} 个 beat 草图？",
                 regenSketchSingleDesc: "按当前画幅把 #{{beats}} 拆成 1×1 草图任务。",
                 dispatched: "已发配 {{count}} 个 beat → {{mode}}",
                 dispatchedBatch: " × {{batches}} 组",
                 dispatchFailed: "发配失败",
-                sketch: "草图",
-                sketchGroupRunning: "相同草图组正在运行中",
+                sketch: "Esboço",
+                sketchGroupRunning: "Mesma composição está em execução",
                 sketchGroupSkippedRunning: "已跳过 {{count}} 个正在运行的草图组",
               },
               video: {
@@ -96,8 +96,8 @@ beforeAll(async () => {
               },
             },
             renderSettings: {
-              model: "模型",
-              modelPlaceholder: "请选择",
+              model: "Modelo",
+              modelPlaceholder: "Selecione",
               sketchAspectPadding: "草图适配",
             },
             sketchSettings: {

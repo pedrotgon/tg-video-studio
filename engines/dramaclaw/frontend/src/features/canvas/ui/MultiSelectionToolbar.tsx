@@ -364,7 +364,7 @@ export const MultiSelectionToolbar = memo(() => {
             onClick={() => setArrangeMenuOpen((open) => !open)}
           >
             <LayoutGrid className="h-4 w-4 text-text-muted" />
-            <span>排列</span>
+            <span>Arranjo</span>
             <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
           </button>
 
@@ -376,7 +376,7 @@ export const MultiSelectionToolbar = memo(() => {
             onClick={handleDuplicate}
           >
             <Copy className="h-4 w-4 text-text-muted" />
-            <span>创建副本</span>
+            <span>Fazer uma cópia</span>
           </button>
 
           <button
@@ -390,7 +390,7 @@ export const MultiSelectionToolbar = memo(() => {
             ) : (
               <Download className="h-4 w-4 text-text-muted" />
             )}
-            <span>批量下载</span>
+            <span>Download em lote</span>
           </button>
 
           <div className={MULTI_TOOLBAR_SEPARATOR_CLASS} />
@@ -402,7 +402,7 @@ export const MultiSelectionToolbar = memo(() => {
               onClick={() => setGroupMenuOpen((open) => !open)}
             >
               <Group className="h-4 w-4 text-text-muted" />
-              <span>打组</span>
+              <span>Grupo</span>
               <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
             </button>
 
@@ -414,7 +414,7 @@ export const MultiSelectionToolbar = memo(() => {
                   onClick={handleGroup}
                 >
                   <Group className="h-4 w-4 text-text-muted" />
-                  <span>打组</span>
+                  <span>Grupo</span>
                 </button>
                 <div className="group/sb relative">
                   <button
@@ -432,11 +432,11 @@ export const MultiSelectionToolbar = memo(() => {
                     }}
                   >
                     <Clapperboard className="h-4 w-4 text-text-muted" />
-                    <span>合并分镜组</span>
+                    <span>Mesclar grupos de preparação</span>
                   </button>
                   {!canMergeStoryboard ? (
                     <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden w-max max-w-[240px] rounded-lg border border-white/10 bg-[#1c1c1e]/95 px-3 py-1.5 text-xs leading-relaxed text-white/80 shadow-[0_10px_24px_rgba(0,0,0,0.35)] backdrop-blur-2xl group-hover/sb:block">
-                      分镜组仅支持图片节点，且组内节点数量不可超过25个
+                      O grupo espelho suporta apenas nós de imagem, e o número de nós no grupo não pode exceder 25
                     </div>
                   ) : null}
                 </div>
@@ -453,12 +453,12 @@ export const MultiSelectionToolbar = memo(() => {
             onClick={handleBatchDelete}
             title={
               deletableIds.length === 0
-                ? '所选节点均为主线锁定节点，不可删除'
+                ? 'Os nós selecionados são todos nós de bloqueio da linha principal e não podem ser excluídos'
                 : `删除 ${deletableIds.length} 个节点`
             }
           >
             <Trash2 className="h-4 w-4 text-text-muted" />
-            <span>批量删除</span>
+            <span>Exclusão em massa</span>
           </button>
         </div>
 
@@ -474,7 +474,7 @@ export const MultiSelectionToolbar = memo(() => {
               onClick={() => handleArrange('graph')}
             >
               <Workflow className="h-4 w-4 text-text-muted" />
-              <span>宫格排列</span>
+              <span>Arranjo de treliça</span>
             </button>
             <button
               type="button"
@@ -482,7 +482,7 @@ export const MultiSelectionToolbar = memo(() => {
               onClick={() => handleArrange('horizontal')}
             >
               <StretchHorizontal className="h-4 w-4 text-text-muted" />
-              <span>水平排列</span>
+              <span>Alinhamento horizontal</span>
             </button>
             <button
               type="button"
@@ -490,7 +490,7 @@ export const MultiSelectionToolbar = memo(() => {
               onClick={() => handleArrange('vertical')}
             >
               <StretchVertical className="h-4 w-4 text-text-muted" />
-              <span>垂直排列</span>
+              <span>Alinhamento vertical</span>
             </button>
           </div>
         )}

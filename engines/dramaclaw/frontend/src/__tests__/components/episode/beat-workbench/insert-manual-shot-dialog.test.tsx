@@ -18,7 +18,7 @@ beforeAll(async () => {
     resources: {
       zh: {
         translation: {
-          common: { cancel: "取消", error: "错误" },
+          common: { cancel: "Cancelar", error: "Erro" },
           episode: {
             workbench: {
               insertManual: {
@@ -27,7 +27,7 @@ beforeAll(async () => {
                 audioType: "镜头类型",
                 audioTypeSilence: "无声",
                 audioTypeNarration: "旁白",
-                audioTypeDialogue: "对白",
+                audioTypeDialogue: "Diálogo",
                 narration: "台词/旁白",
                 narrationPlaceholder: "填写需要朗读的对白或旁白",
                 narrationRequired: "请填写台词或旁白",
@@ -36,31 +36,31 @@ beforeAll(async () => {
                 speakerPlaceholder: "选择或输入说话人身份",
                 speakerRequired: "请选择说话人",
                 narrator: "解说人",
-                projectNarrator: "项目解说人",
-                visualDescription: "画面描述",
+                projectNarrator: "Narrador do Projeto",
+                visualDescription: "Descrição visual",
                 visualPlaceholder: "用一句话描述这个镜头里看到的画面",
                 visualRequired: "画面描述不能为空",
                 type: "类型",
                 typeManual: "手工",
-                location: "场景",
-                sceneVariant: "变体",
-                noSceneVariant: "无变体",
+                location: "Cenário",
+                sceneVariant: "Variante",
+                noSceneVariant: "Sem variações",
                 locationPlaceholder: "选择场景",
                 locationNone: "（不指定）",
-                timeOfDay: "时间",
+                timeOfDay: "Tempo",
                 timeOfDayPlaceholder: "选择时间",
                 timeOfDayNone: "（不指定）",
                 duration: "视频时长（秒）",
-                identities: "出场身份",
+                identities: "Status da aparência",
                 identitiesPlaceholder:
-                  "逗号分隔，如 {{example}}；留空自动从画面描述提取",
+                  "Separado por vírgula, como {{example}}; deixe em branco para extrair automaticamente da descrição da cena",
                 identitiesPlaceholderEmpty:
                   "逗号分隔身份ID；留空自动从画面描述提取",
-                props: "出场道具",
+                props: "Objeto de cena",
                 propsPlaceholder:
-                  "逗号分隔，如 {{example}}；留空自动从画面描述提取",
+                  "Separado por vírgula, como {{example}}; deixe em branco para extrair automaticamente da descrição da cena",
                 propsPlaceholderEmpty:
-                  "逗号分隔道具ID；留空自动从画面描述提取",
+                  "ID do objeto separado por vírgula; deixe em branco para extrair automaticamente da descrição da cena",
                 submit: "插入",
                 success: "已插入手工镜头",
               },
@@ -199,11 +199,11 @@ describe("InsertManualShotDialog", () => {
       </Wrapper>,
     );
 
-    expect(screen.getByText("画面描述")).toBeInTheDocument();
+    expect(screen.getByText("Descrição visual")).toBeInTheDocument();
     expect(screen.getByText("无声")).toBeInTheDocument();
     expect(screen.getByText("旁白")).toBeInTheDocument();
-    expect(screen.getByText("对白")).toBeInTheDocument();
-    expect(screen.getByText("场景")).toBeInTheDocument();
+    expect(screen.getByText("Diálogo")).toBeInTheDocument();
+    expect(screen.getByText("Cenário")).toBeInTheDocument();
     expect(screen.queryByText("视频提示词")).not.toBeInTheDocument();
     expect(screen.queryByText(/置景/)).not.toBeInTheDocument();
     expect(screen.queryByDisplayValue("旧置景场景")).not.toBeInTheDocument();
@@ -267,7 +267,7 @@ describe("InsertManualShotDialog", () => {
     });
 
     expect(screen.getByText("解说人")).toBeInTheDocument();
-    expect(screen.getByText("项目解说人")).toBeInTheDocument();
+    expect(screen.getByText("Narrador do Projeto")).toBeInTheDocument();
     expect(screen.queryByText("说话人")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "插入" }));
@@ -288,13 +288,13 @@ describe("InsertManualShotDialog", () => {
       {
         scene_id: "卫生间_漏水",
         base_scene_id: "卫生间",
-        variant_id: "漏水",
+        variant_id: "Vazamento",
         time_of_day: "",
       },
       {
         scene_id: "卫生间_漏水_夜晚",
         base_scene_id: "卫生间",
-        variant_id: "漏水",
+        variant_id: "Vazamento",
         time_of_day: "夜晚",
       },
     ];
@@ -310,15 +310,15 @@ describe("InsertManualShotDialog", () => {
       </Wrapper>,
     );
 
-    await user.click(screen.getByRole("combobox", { name: "场景" }));
+    await user.click(screen.getByRole("combobox", { name: "Cenário" }));
     await user.click(await screen.findByRole("option", { name: "卫生间" }));
-    await user.click(screen.getByRole("combobox", { name: "变体" }));
-    await user.click(await screen.findByRole("option", { name: "漏水" }));
+    await user.click(screen.getByRole("combobox", { name: "Variante" }));
+    await user.click(await screen.findByRole("option", { name: "Vazamento" }));
     fireEvent.click(screen.getByRole("button", { name: "插入" }));
 
     expect(insertMutateAsync).toHaveBeenCalledTimes(1);
     expect(insertMutateAsync.mock.calls[0][0]).toMatchObject({
-      scene_ref: { scene_id: "卫生间", variant_id: "漏水" },
+      scene_ref: { scene_id: "卫生间", variant_id: "Vazamento" },
     });
   });
 
@@ -338,7 +338,7 @@ describe("InsertManualShotDialog", () => {
     fireEvent.click(screen.getByRole("button", { name: "旁白" }));
 
     expect(screen.queryByText("解说人")).not.toBeInTheDocument();
-    expect(screen.queryByText("项目解说人")).not.toBeInTheDocument();
+    expect(screen.queryByText("Narrador do Projeto")).not.toBeInTheDocument();
     expect(screen.queryByText("说话人")).not.toBeInTheDocument();
   });
 
@@ -359,7 +359,7 @@ describe("InsertManualShotDialog", () => {
       screen.getByPlaceholderText("用一句话描述这个镜头里看到的画面"),
       { target: { value: "陆辰在仓库门口回头" } },
     );
-    fireEvent.click(screen.getByText("对白"));
+    fireEvent.click(screen.getByText("Diálogo"));
     fireEvent.change(screen.getByPlaceholderText("填写需要朗读的对白或旁白"), {
       target: { value: "别回头。" },
     });
@@ -397,7 +397,7 @@ describe("InsertManualShotDialog", () => {
       { target: { value: "陆辰在仓库门口回头" } },
     );
     fireEvent.click(screen.getByRole("button", { name: "无声" }));
-    fireEvent.click(screen.getByText("对白"));
+    fireEvent.click(screen.getByText("Diálogo"));
     fireEvent.change(screen.getByPlaceholderText("填写需要朗读的对白或旁白"), {
       target: { value: "别回头。" },
     });

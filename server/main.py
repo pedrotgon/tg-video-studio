@@ -1,19 +1,15 @@
 """Gateway real do TG Video Studio para MoneyPrinterTurbo e DramaClaw."""
 
 from urllib.parse import urljoin
-from pathlib import Path
 import re
 import unicodedata
 import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 MONEY_API = "http://127.0.0.1:8080"
 DRAMA_API = "http://127.0.0.1:8780"
-DEMO_VIDEO = Path(__file__).resolve().parents[1] / "engines" / "moneyprinter" / "storage" / "tasks" / "26cff4ec-6d38-4653-a148-81e8546da3e8" / "final-1.mp4"
-
 app = FastAPI(title="TG Video Studio Gateway", version="2.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
@@ -57,14 +53,6 @@ async def health_check():
     money = await probe(f"{MONEY_API}/ping")
     drama = await probe(f"{DRAMA_API}/healthz")
     return {"status": "online" if money and drama else "partial", "engines": {"money_printer_turbo": money, "drama_claw": drama}}
-
-
-@app.get("/api/demo/roma-antiga.mp4", include_in_schema=False)
-async def demo_video():
-    """Serve a renderização real aprovada usada nas demonstrações comerciais."""
-    if not DEMO_VIDEO.is_file() or DEMO_VIDEO.stat().st_size == 0:
-        raise HTTPException(status_code=404, detail="Vídeo demonstrativo não encontrado")
-    return FileResponse(DEMO_VIDEO, media_type="video/mp4", filename="tg-video-studio-roma-antiga.mp4")
 
 
 @app.post("/api/simple/generate", status_code=202)

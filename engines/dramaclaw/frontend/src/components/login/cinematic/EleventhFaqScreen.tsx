@@ -7,54 +7,54 @@ import { businessWechatQrUrl } from "./media";
 
 const faqs = [
   {
-    question: "DramaClaw 和普通 AI 视频生成工具有什么区别？",
+    question: "Quais são as diferenças entre DramaClaw e ferramentas de geração de vídeo padrão? ",
     answer:
-      "普通工具通常围绕一次提示词、一个片段或一张图工作。DramaClaw 面向的是完整项目：从文本导入、资产沉淀、剧集规划、镜头制作到合成导出，形成可追踪、可协作、可复用的生产闭环。",
+      "Ferramentas padrão geralmente se concentram em uma única instrução, um episódio ou uma imagem. DramaClaw é projetado para projetos completos: desde importação de texto, acumulação de recursos, planejamento da série e planificação de cenas até a exportação sintética. Isso criou um loop de produção reutilizável, colaborável e rastreável. ",
   },
   {
-    question: "第一次使用应该从哪里开始？",
+    question: "Qual é o melhor lugar para começar? ",
     answer:
-      "建议先走主线工作流：虾料导入文本，虾塘确认角色/场景/道具/声线，虾镜规划剧集并生成脚本和镜头，最后进入合成页导出成片。第一次目标不是做完美，而是先跑通一集。",
+      "Recomendamos começar com o fluxo de trabalho principal: importação de texto de DramaClaw, confirmação de personagem/cenário/prop/linha de voz, planejamento de cenas e geração de roteiro e cena, finalmente, entre no painel de sintetização para exportação. O objetivo inicial não é criar uma obra-prima, mas sim correr um episódio. ",
   },
   {
-    question: "虾镜和虾画分别适合做什么？",
+    question: "Quais são as funções de DramaClaw e DramaArt? ",
     answer:
-      "虾镜是主生产线，适合批量、稳定、按剧集推进；虾画是导演工作台，适合关键镜头精修、多版本探索、资产定稿和复杂视频处理。正式项目通常是普通镜头走虾镜，难镜头进虾画。",
+      "O espelho de camarão é a principal linha de produção, adequada para episódios descontínuos, estáveis e progressivos; a pintura de camarão é a bancada de trabalho do diretor, adequada para acabamento de lentes-chave, exploração de múltiplas versões, finalização de ativos e processamento de vídeo complexo.Projetos formais geralmente são lentes comuns com espelhos de camarão, e é difícil para as lentes entrarem em pinturas de camarão.",
   },
   {
-    question: "虾画里的结果会自动覆盖主线资产吗？",
+    question: "Os resultados na pintura de camarão substituirão automaticamente os ativos da linha principal?",
     answer:
-      "不会。虾画里的生成或上传内容默认是候选结果。只有明确点击写回，并选择角色、场景、道具、Beat 草图、首帧或视频等目标槽位后，结果才会进入正式项目主线。",
+      "Não. O conteúdo gerado ou carregado em desenhos de camarão é um candidato por padrão.Somente depois de clicar explicitamente em Escrever de volta e selecionar um slot de destino, como um personagem, cena, adereço, esboço de batida, primeiro quadro ou vídeo, o resultado entrará na linha principal oficial do projeto.",
   },
   {
-    question: "为什么要先整理角色、场景、道具和声线？",
+    question: "Por que organizar personagens, cenas, adereços e vozes primeiro?",
     answer:
-      "AI 视频创作最容易返工的原因，往往不是最后一步视频生成，而是前面的角色不稳定、场景不清楚、道具缺参考、声线没统一。虾塘把这些内容先变成资产，可以显著减少后续镜头阶段的混乱。",
+      "A razão pela qual a criação de vídeo com IA é a mais fácil de retrabalhar muitas vezes não é o último passo da geração de vídeo, mas a instabilidade dos personagens na frente, cenas pouco claras, falta de referência para adereços e linhas de som inconsistentes.As lagoas de camarão transformam esses conteúdos em ativos primeiro, o que pode reduzir significativamente a confusão dos estágios subsequentes da câmera.",
   },
   {
-    question: "DramaClaw 适合哪些内容类型？",
+    question: "Para quais tipos de conteúdo o DramaClaw é adequado?",
     answer:
-      "适合 AI 短剧、漫剧、小说推文、解说剧、广告宣传、教育培训视频，以及需要长期维护 IP 角色和系列内容的团队项目。个人创作者可以用它跑通流程，团队可以用它协作生产。",
+      "Adequado para esquetes de IA, comédias, novos tweets, peças narrativas, campanhas publicitárias, vídeos de treinamento educacional e projetos de equipe que exigem manutenção de longo prazo de personagens IP e conteúdo da série.Os criadores individuais podem usá-lo para executar o processo e as equipes podem usá-lo para colaborar na produção.",
   },
   {
-    question: "团队协作时应该怎么分工？",
+    question: "Como o trabalho em equipe deve ser dividido?",
     answer:
-      "建议按环节分工：负责人管理项目、成本和质检；编剧处理文本和脚本；美术维护角色、场景和道具；分镜/导演负责镜头表现；视频操作处理首帧、视频和合成。权限上可按查看者、编辑者、管理员和所有者分配。",
+      "Recomenda-se dividir o trabalho de acordo com o link: o responsável gerencia o projeto, o custo e a inspeção de qualidade; o roteirista lida com o texto e o roteiro; a arte mantém os personagens, cenas e adereços; o tiro/diretor é responsável pela performance do tiro; a operação de vídeo lida com o primeiro quadro, vídeo e síntese.As permissões podem ser atribuídas pelo visualizador, editor, administrador e proprietário.",
   },
   {
-    question: "生成效果不稳定时应该先检查什么？",
+    question: "O que deve ser verificado primeiro quando o efeito de geração é instável?",
     answer:
-      "先检查问题出在哪个环节：文本是否清楚，角色身份是否正确，场景和道具是否有参考，草图是否讲清楚镜头，首帧是否稳定，音频是否匹配。不要一开始就反复生成视频，先把上游资产和镜头描述修正好。",
+      "Primeiro, verifique onde está o problema: se o texto está claro, se a identidade do personagem está correta, se a cena e os adereços são referenciados, se o esboço explica claramente a foto, se o primeiro quadro é estável e se o áudio corresponde.Em vez de gerar vídeo repetidamente desde o início, primeiro corrija o ativo upstream e as descrições das lentes.",
   },
   {
-    question: "什么是 “Make Your DC Universe.”？",
+    question: "O que é “Faça seu Universo DC”?",
     answer:
-      "DC 不只是 DramaClaw 的缩写，也代表每个创作者自己的内容宇宙。DramaClaw 希望帮助创作者从一个故事开始，逐步建立角色、世界观、场景资产和系列化内容生产能力。",
+      "DC não é apenas um acrônimo para DramaClaw, mas também representa o próprio universo de conteúdo de cada criador.A DramaClaw quer ajudar os criadores a construir personagens, visão de mundo, ativos de cena e recursos de produção de conteúdo serializado, começando com uma história.",
   },
   {
-    question: "登录后我会进入哪里？",
+    question: "Para onde devo ir depois de fazer login?",
     answer:
-      "登录后会进入项目管理中心。你可以打开已有项目，也可以新建项目开始新的剧集。每个项目都是独立空间，包含文本、资产、剧集、镜头、视频、任务和合成结果。",
+      "Após login, você entrará no centro de gerenciamento de projetos. Você pode abrir projetos existentes ou criar novos para iniciar uma nova série. Cada projeto é um espaço independente que contém texto, recursos, projetos, cenas, vídeos, tarefas e resultados de sintaxe.",
   },
 ];
 
@@ -94,8 +94,8 @@ export function EleventhFaqScreen({
       />
       <div className={styles.inner}>
         <header className={styles.header}>
-          <h2>问题，直接回答</h2>
-          <span>关于生成、控制、协作和商务接入，这里只保留真正会影响判断的问题。</span>
+          <h2>Pergunta, resposta direta</h2>
+          <span>Sobre a geração, controle, colaboração e acesso comercial, apenas preserva as questões que realmente afetam a decisão. </span>
         </header>
 
         <div className={styles.list}>
@@ -128,25 +128,25 @@ export function EleventhFaqScreen({
         </div>
 
         <div className={styles.footer}>
-          <p>还有具体合作问题？</p>
+          <p>Outras perguntas específicas?</p>
           <div className={`${loginStyles.businessWechat} ${styles.contactHover}`}>
             <button
               type="button"
               className={`${loginStyles.businessWechatTrigger} ${styles.contactButton}`}
-              aria-label="打开商务联系"
+              aria-label="Abrir contato comercial"
             >
-              联系商务
+              Entre em contato com o comércio
             </button>
             <div
               className={`${loginStyles.businessWechatPopover} ${styles.contactPopover}`}
               role="dialog"
-              aria-label="商务联系"
+              aria-label="Contato comercial"
             >
               <div className={`${loginStyles.businessWechatPanel} ${styles.contactPanel}`}>
                 <img
                   className={styles.contactQr}
                   src={businessWechatQrUrl}
-                  alt="商务微信二维码"
+                  alt="Código de dois dimensões do WeChat para comércio"
                   draggable={false}
                 />
               </div>

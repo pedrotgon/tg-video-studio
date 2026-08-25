@@ -76,8 +76,8 @@ export interface ModelOption {
 }
 
 export const SHARED_PROVIDERS: ProviderOption[] = [
-  { id: 'newapi', label: '虾驿 / NewAPI' },
-  { id: 'huimeng', label: '绘梦 / HuiMeng' },
+  { id: 'newapi', label: 'Relé de Camarão/NewAPI' },
+  { id: 'huimeng', label: 'Desenho dos Sonhos/HuiMeng' },
   { id: 'openrouter', label: 'OpenRouter' },
   { id: 'openai', label: 'OpenAI' },
 ];
@@ -119,7 +119,7 @@ export const DEFAULT_SHARED_MODEL_ID = 'huimeng/gpt-image-2';
 // /freezone/video/gen so we don't need a separate apiModel mapping.
 export const VIDEO_PROVIDERS: ProviderOption[] = [
   { id: 'seedance', label: 'Seedance' },
-  { id: 'huimeng', label: '绘梦 / HuiMeng' },
+  { id: 'huimeng', label: 'Desenho dos Sonhos/HuiMeng' },
 ];
 
 // 兜底视频模型列表。同 SHARED_MODELS：仅在 /freezone/video/models 拉取失败时

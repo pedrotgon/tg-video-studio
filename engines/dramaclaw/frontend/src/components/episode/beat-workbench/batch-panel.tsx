@@ -569,7 +569,7 @@ export function BatchPanel({
     if (dispatchableItems.length === 0) {
       toast.warning(
         t("episode.workbench.batch.sketchGroupRunning", {
-          defaultValue: "相同草图组正在运行中",
+          defaultValue: "Mesma composição está em execução",
         }),
       );
       return;
@@ -736,11 +736,11 @@ export function BatchPanel({
                   askConfirm(
                     t("episode.workbench.batch.regenSketchSingleTitle", {
                       count,
-                      defaultValue: "单张重抽草图",
+                      defaultValue: "Retocar quadro individual",
                     }),
                     t("episode.workbench.batch.regenSketchSingleDesc", {
                       beats: beatList.join(", #"),
-                      defaultValue: "按当前画幅把选中 beats 拆成 1x1 草图任务。",
+                      defaultValue: "Divida a tomada selecionada em 1x1 tarefa de esboço, conforme a pintura atual.",
                     }),
                     handleDispatchSingleSketches,
                   );
@@ -749,7 +749,7 @@ export function BatchPanel({
               >
                 <Square className="size-3" />
                 {t("episode.workbench.batch.singleRegen", {
-                  defaultValue: "单张重抽",
+                  defaultValue: "Retocar quadro individual",
                 })}
               </Button>
               <Button
@@ -761,7 +761,7 @@ export function BatchPanel({
               >
                 <Grid2X2 className="size-3" />
                 {t("episode.workbench.batch.autoCombine", {
-                  defaultValue: "批量重抽",
+                  defaultValue: "Retocar em lote",
                 })}
                 <CreditCostInline
                   display={sketchPlanCostDisplay}
@@ -783,7 +783,7 @@ export function BatchPanel({
                 </AlertDialogTitle>
                 <AlertDialogDescription>
                   {t("episode.sketchPlan.subtitle", {
-                    defaultValue: "系统已根据场景自动分组。确认后会直接发配草图任务。",
+                    defaultValue: "O sistema agrupou automaticamente por cena. Confirme para enviar diretamente as tarefas de esboço.",
                   })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
@@ -819,7 +819,7 @@ export function BatchPanel({
                       <div className="truncate text-[10px] text-muted-foreground">
                         {lockedSketchItemIds.has(item.id)
                           ? t("episode.workbench.batch.sketchGroupRunning", {
-                              defaultValue: "相同草图组正在运行中",
+                              defaultValue: "Mesma composição está em execução",
                             })
                           : item.modeLabel}
                       </div>
@@ -869,7 +869,7 @@ export function BatchPanel({
               >
                 <Square className="size-3" />
                 {t("episode.workbench.batch.singleRegen", {
-                  defaultValue: "单张重抽",
+                  defaultValue: "Retocar quadro individual",
                 })}
               </Button>
               <Button
@@ -881,7 +881,7 @@ export function BatchPanel({
               >
                 <Grid2X2 className="size-3" />
                 {t("episode.workbench.batch.autoCombine", {
-                  defaultValue: "自动组合",
+                  defaultValue: "Combinação automática",
                 })}
               </Button>
             </div>

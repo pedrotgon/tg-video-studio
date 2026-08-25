@@ -28,7 +28,7 @@ export function CreditCostInline({
     ? display.split("→", 2)
     : [null, display];
   const promotionLabel = originalDisplay
-    ? (formatCreditPromotionLabel(promotion) ?? "促销中")
+    ? (formatCreditPromotionLabel(promotion) ?? "Em promoção")
     : null;
   return (
     <span

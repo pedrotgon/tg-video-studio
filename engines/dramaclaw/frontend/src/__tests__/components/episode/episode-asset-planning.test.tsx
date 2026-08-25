@@ -17,9 +17,9 @@ vi.mock("@/lib/api", () => ({
 import { EpisodeAssetPlanning } from "@/components/episode/episode-asset-planning";
 
 const labels = {
-  identities: "身份",
-  scenes: "场景",
-  props: "道具",
+  identities: "Identidade",
+  scenes: "Cenário",
+  props: "Itens",
   noIdentities: "身份未规划",
   noScenes: "场景未规划",
   noProps: "道具未规划",
@@ -39,7 +39,7 @@ const labels = {
   promoteVisualPrompt: "视觉 Prompt",
   promoteOwner: "所属角色",
   promoteSubmit: "加入全局",
-  promoteCancel: "取消",
+  promoteCancel: "Cancelar",
   propTypeLabel: (value: string) => value,
 };
 

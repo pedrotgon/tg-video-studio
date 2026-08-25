@@ -466,7 +466,7 @@ export function InsertManualShotDialog({
 
             <Field
               label={t("episode.workbench.insertManual.sceneVariant", {
-                defaultValue: "变体",
+                defaultValue: "Variante",
               })}
             >
               <Select
@@ -480,21 +480,21 @@ export function InsertManualShotDialog({
               >
                 <SelectTrigger
                   aria-label={t("episode.workbench.insertManual.sceneVariant", {
-                    defaultValue: "变体",
+                    defaultValue: "Variante",
                   })}
                   className={`h-8 w-full text-xs ${FIELD_SURFACE_CLASS}`}
                 >
                   <SelectValue>
                     {locationVariant ||
                       t("episode.workbench.insertManual.noSceneVariant", {
-                        defaultValue: "无变体",
+                        defaultValue: "Sem variações",
                       })}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={NO_VARIANT_SENTINEL}>
                     {t("episode.workbench.insertManual.noSceneVariant", {
-                      defaultValue: "无变体",
+                      defaultValue: "Sem variações",
                     })}
                   </SelectItem>
                   {locationVariantChoices.map((variant) => (
@@ -563,7 +563,7 @@ export function InsertManualShotDialog({
 
             <Field
               label={t("episode.workbench.insertManual.props", {
-                defaultValue: "出场道具",
+                defaultValue: "Objeto de cena",
               })}
             >
               <Input
@@ -576,10 +576,10 @@ export function InsertManualShotDialog({
                   placeholderProps
                     ? t("episode.workbench.insertManual.propsPlaceholder", {
                         example: placeholderProps,
-                        defaultValue: "逗号分隔，如 {{example}}；留空自动从画面描述提取",
+                        defaultValue: "Separado por vírgula, como {{example}}; deixe em branco para extrair automaticamente da descrição da cena",
                       })
                     : t("episode.workbench.insertManual.propsPlaceholderEmpty", {
-                        defaultValue: "逗号分隔道具ID；留空自动从画面描述提取",
+                        defaultValue: "ID do objeto separado por vírgula; deixe em branco para extrair automaticamente da descrição da cena",
                       })
                 }
                 className={INPUT_CLASS}

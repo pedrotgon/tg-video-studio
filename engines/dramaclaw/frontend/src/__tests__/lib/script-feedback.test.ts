@@ -34,10 +34,10 @@ describe("script feedback helpers", () => {
   });
 
   it("deduplicates task logs while preserving order", () => {
-    expect(mergeTaskLogs(["启动", "生成第 1 行"], ["生成第 1 行", "完成"])).toEqual([
+    expect(mergeTaskLogs(["启动", "生成第 1 行"], ["生成第 1 行", "Concluído"])).toEqual([
       "启动",
       "生成第 1 行",
-      "完成",
+      "Concluído",
     ]);
   });
 });

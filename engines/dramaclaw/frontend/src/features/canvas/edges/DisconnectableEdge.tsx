@@ -392,7 +392,7 @@ export const DisconnectableEdge = memo(function DisconnectableEdge(props: EdgePr
                 event.stopPropagation();
                 deleteEdge(id);
               }}
-              aria-label="断开连线"
+              aria-label="Desconectar"
             >
               <Scissors className="h-6 w-6 stroke-[2.35]" />
             </button>

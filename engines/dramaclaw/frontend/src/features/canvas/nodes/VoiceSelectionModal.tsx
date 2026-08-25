@@ -100,7 +100,7 @@ export function VoiceSelectionModal({
   const reload = useCallback(async () => {
     const project = readUrl().project;
     if (!project) {
-      setError('当前 URL 缺少 project 参数');
+      setError('O URL atual está sem o parâmetro do projeto');
       return;
     }
     setLoading(true);
@@ -109,7 +109,7 @@ export function VoiceSelectionModal({
       const res = await fetchFreezoneAudioReferences(project);
       setItems(res.available ?? []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '加载声线失败');
+      setError(err instanceof Error ? err.message : 'Falha ao carregar a linha de som');
     } finally {
       setLoading(false);
     }
@@ -150,12 +150,12 @@ export function VoiceSelectionModal({
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex items-center justify-between px-5 pb-3 pt-4">
-          <h2 className="text-[15px] font-semibold text-text-dark">音色选择</h2>
+          <h2 className="text-[15px] font-semibold text-text-dark">Seleção de tom</h2>
           <button
             type="button"
             onClick={onClose}
             className="flex h-7 w-7 items-center justify-center rounded-md text-text-dark/70 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
-            title="关闭"
+            title="Fechar"
           >
             <X className="h-4 w-4" />
           </button>
@@ -199,8 +199,8 @@ interface TabsRowProps {
 
 function TabsRow({ tab, onChange }: TabsRowProps) {
   const tabs: Array<{ id: TabId; label: string }> = [
-    { id: 'library', label: '音色库' },
-    { id: 'mine', label: '我的音色' },
+    { id: 'library', label: 'Biblioteca de tons' },
+    { id: 'mine', label: 'Meu tom' },
   ];
   return (
     <div className="flex items-center gap-2 px-5">
@@ -276,21 +276,21 @@ function LibraryTab({ currentRef, onPick, items, loading, error }: LibraryTabPro
         <SearchBox
           value={query}
           onChange={setQuery}
-          placeholder="搜索音色库"
+          placeholder="Pesquisar Bibliotecas de Tons"
         />
       </ToolbarRow>
 
       <ListBody>
         {loading && (
           <CenteredHint>
-            <Loader2 className="h-4 w-4 animate-spin" /> 加载中…
+            <Loader2 className="h-4 w-4 animate-spin" /> Carregando...
           </CenteredHint>
         )}
         {!loading && error && (
           <CenteredHint className="text-rose-400">{error}</CenteredHint>
         )}
         {!loading && !error && total === 0 && (
-          <CenteredHint>暂无可用音色</CenteredHint>
+          <CenteredHint>Ainda não há sons disponíveis</CenteredHint>
         )}
         {!loading &&
           !error &&
@@ -373,7 +373,7 @@ function MyVoicesTab({
       e.target.value = '';
       if (!file) return;
       if (!isAllowedAudioFile(file)) {
-        toast.error('请选择音频文件（mp3 / wav / m4a / aac / ogg / webm）');
+        toast.error('Selecione um arquivo de áudio (mp3/wav/m4a/aac/ogg/webm)');
         return;
       }
       if (file.size > MAX_VOICE_FILE_BYTES) {
@@ -385,7 +385,7 @@ function MyVoicesTab({
       }
       const project = readUrl().project;
       if (!project) {
-        toast.error('当前 URL 缺少 project 参数');
+        toast.error('O URL atual está sem o parâmetro do projeto');
         return;
       }
       setUploading(true);
@@ -400,7 +400,7 @@ function MyVoicesTab({
         // error: ..."）。多数情况是文件偏大导致连接被提前关闭,给一句可读提示。
         const friendly = /network error/i.test(raw)
           ? `上传失败：网络中断（音频过大可能被中途断开，请确认不超过 ${MAX_VOICE_FILE_MB}MB 后重试）`
-          : raw || '上传失败';
+          : raw || 'Falha ao carregar';
         toast.error(friendly);
       } finally {
         setUploading(false);
@@ -450,7 +450,7 @@ function MyVoicesTab({
           ) : (
             <Plus className="h-3.5 w-3.5" />
           )}
-          {uploading ? '上传中…' : '克隆新音色'}
+          {uploading ? 'Carregando...' : 'Clonar novo tom'}
         </button>
         <input
           ref={fileInputRef}
@@ -462,14 +462,14 @@ function MyVoicesTab({
         <SearchBox
           value={query}
           onChange={setQuery}
-          placeholder="搜索我的音色"
+          placeholder="Pesquisar meus tons"
         />
       </ToolbarRow>
 
       <ListBody>
         {loading && (
           <CenteredHint>
-            <Loader2 className="h-4 w-4 animate-spin" /> 加载中…
+            <Loader2 className="h-4 w-4 animate-spin" /> Carregando...
           </CenteredHint>
         )}
         {!loading && error && (
@@ -488,7 +488,7 @@ function MyVoicesTab({
             };
             const key = voiceRefKey(ref);
             const isActive = key === currentKey;
-            const label = item.label ?? voiceId ?? '自定义音色';
+            const label = item.label ?? voiceId ?? 'Tom personalizado';
             return (
               <VoiceRow
                 key={voiceId ? `${voiceId}` : `mine-${idx}`}
@@ -612,7 +612,7 @@ function VoiceRow({ title, language, gender, isActive, onSelect }: VoiceRowProps
             : 'bg-[rgb(var(--accent-rgb))] text-bg-dark hover:bg-[rgb(var(--accent-rgb))]/90'
         }`}
       >
-        {isActive ? '已选' : '选择'}
+        {isActive ? 'Selecionado' : 'Selecionar'}
       </button>
     </div>
   );
@@ -635,14 +635,14 @@ function EmptyState({ onClone }: { onClone: () => void }) {
           />
         </svg>
       </div>
-      <span>暂无可用音色，快去克隆你的新音色吧～</span>
+      <span>Não há tons disponíveis, vá e clone seu novo tom ~</span>
       <button
         type="button"
         onClick={onClone}
         className="inline-flex h-8 items-center gap-1 rounded-full border border-[rgb(var(--accent-rgb))]/35 bg-[rgb(var(--accent-rgb))]/12 px-3 text-[12px] font-medium text-[rgb(var(--accent-rgb))] transition-colors hover:bg-[rgb(var(--accent-rgb))]/20"
       >
         <Plus className="h-3 w-3" />
-        克隆新音色
+        Clonar novo tom
       </button>
     </div>
   );
@@ -694,14 +694,14 @@ function FooterPagination({
           {'>'}
         </PaginationButton>
         <span className="ml-3 inline-flex h-7 items-center rounded-full border border-white/[0.1] bg-transparent px-2.5 text-[12px] text-text-dark">
-          {PAGE_SIZE} 条/页
+          {PAGE_SIZE} bars/page
         </span>
       </div>
       <div className="flex items-center gap-2">
-        <span>跳至</span>
+        <span>Pular para</span>
         <PaginationJump page={page} totalPages={totalPages} onChange={onChange} />
-        <span>页</span>
-        <span className="ml-3">共 {total} 条</span>
+        <span>Página</span>
+        <span className="ml-3">de {total} Tiras</span>
       </div>
     </footer>
   );
@@ -801,17 +801,17 @@ function voiceRefKey(ref: AudioVoiceRef): string {
 function describeVoiceRef(ref: AudioVoiceRef): string {
   switch (ref.scope) {
     case 'project_narrator':
-      return '项目解说人';
+      return 'Narrador do Projeto';
     case 'user_custom':
-      return ref.voiceId ?? '自定义音色';
+      return ref.voiceId ?? 'Tom personalizado';
     case 'character_default':
-      return `${ref.characterName ?? '角色'}（默认声线）`;
+      return `${ref.characterName ?? 'Função'}（默认声线）`;
     case 'character_age_group':
-      return `${ref.characterName ?? '角色'}（${ref.slot ?? '年龄段'}）`;
+      return `${ref.characterName ?? 'Função'}（${ref.slot ?? 'Faixa Etária'}）`;
     case 'identity':
-      return `${ref.identityId ?? '身份'}（自有声线）`;
+      return `${ref.identityId ?? 'Identidade'}（自有声线）`;
     case 'identity_resolved':
-      return `${ref.identityId ?? '身份'}（解析后）`;
+      return `${ref.identityId ?? 'Identidade'}（解析后）`;
     default:
       return ref.scope;
   }

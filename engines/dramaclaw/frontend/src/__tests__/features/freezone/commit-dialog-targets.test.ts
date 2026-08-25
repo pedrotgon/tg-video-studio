@@ -65,8 +65,8 @@ describe("CommitDialog target kinds", () => {
 
     expect(source).toContain("commitSourceTitle");
     expect(source).toContain('target?.kind === "scene_director_world"');
-    expect(source).toContain("导演世界状态");
-    expect(source).toContain("提交当前导演世界 manifest");
+    expect(source).toContain("Mundo do Diretor do Escena");
+    expect(source).toContain("Enviar Manifeste do Mundo do Diretor");
   });
 
   it("shows model scene targets as scene selection instead of a raw scene_id-only field", () => {
@@ -76,7 +76,7 @@ describe("CommitDialog target kinds", () => {
     );
 
     expect(source).toContain("listScenes(project)");
-    expect(source).toContain('aria-label="场景"');
+    expect(source).toContain('aria-label="Cenário"');
     expect(source).toContain("sceneOptionLabel(scene)");
   });
 
@@ -103,7 +103,7 @@ describe("CommitDialog target kinds", () => {
       },
       "/static/u/p/freezone/generated/master_sharp.sog",
       "master_sharp.sog",
-    )).toBe("自定义 3D 世界");
+    )).toBe("Mundos 3D personalizados");
   });
 
   it("does not allow scene director world through the file-copy commit route", async () => {

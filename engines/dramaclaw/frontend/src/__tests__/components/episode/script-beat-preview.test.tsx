@@ -15,7 +15,7 @@ const labels = {
   audioType: (type: string) =>
     ({
       narration: "旁白",
-      dialogue: "对白",
+      dialogue: "Diálogo",
       silence: "无声镜头",
       action: "动作镜头",
     })[type] ?? type,
@@ -24,7 +24,7 @@ const labels = {
   dialogueLine: "对白台词",
   narrationLine: "旁白台词",
   noNarration: "暂无台词",
-  visualDescription: "画面描述",
+  visualDescription: "Descrição visual",
   noVisualDescription: "暂无画面描述",
 };
 
@@ -62,7 +62,7 @@ describe("ScriptBeatPreview", () => {
     expect(screen.getByText("#1")).toBeInTheDocument();
     expect(screen.getByText("#2")).toBeInTheDocument();
     expect(screen.getByText("旁白")).toBeInTheDocument();
-    expect(screen.getByText("对白")).toBeInTheDocument();
+    expect(screen.getByText("Diálogo")).toBeInTheDocument();
     expect(screen.getByText("无说话人")).toBeInTheDocument();
     expect(screen.getByText("陈锋_和尚")).toBeInTheDocument();
     // Narration beat shows the 旁白台词 label; dialogue beat shows 对白台词.
@@ -70,7 +70,7 @@ describe("ScriptBeatPreview", () => {
     expect(screen.getByText("对白台词")).toBeInTheDocument();
     expect(screen.getByText("旁白文案")).toBeInTheDocument();
     expect(screen.getByText("对白文案")).toBeInTheDocument();
-    expect(screen.getAllByText("画面描述")).toHaveLength(2);
+    expect(screen.getAllByText("Descrição visual")).toHaveLength(2);
     expect(screen.getByText("画面一")).toBeInTheDocument();
     expect(screen.getByText("画面二")).toBeInTheDocument();
   });

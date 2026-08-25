@@ -369,7 +369,7 @@ describe("commitSceneDirectorWorldFromCanvasNode", () => {
       expect.objectContaining({ id: "custom-local", current: true }),
     ]);
     expect((patchedData.scenesBySourceId as Record<string, unknown>)["stale-local"]).toBeUndefined();
-    expect((patchedData.sources as Array<{ label?: string }>).some((source) => source.label === "正面世界")).toBe(false);
+    expect((patchedData.sources as Array<{ label?: string }>).some((source) => source.label === "Mundo positivo")).toBe(false);
   });
 
   it("does not treat a plain source slot commit as a director-world state commit", () => {

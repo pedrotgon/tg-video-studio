@@ -177,14 +177,14 @@ const AGE_GROUP_OPTIONS = [
 ] as const;
 
 const GENDER_OPTIONS = [
-  { value: "男", labelKey: "characters.genders.male" },
-  { value: "女", labelKey: "characters.genders.female" },
+  { value: "Homens", labelKey: "characters.genders.male" },
+  { value: "Mulheres", labelKey: "characters.genders.female" },
 ] as const;
 
 const ROLE_OPTIONS = [
-  { value: "主角", labelKey: "characters.roles.lead" },
-  { value: "配角", labelKey: "characters.roles.supporting" },
-  { value: "反派", labelKey: "characters.roles.villain" },
+  { value: "Personagem principal", labelKey: "characters.roles.lead" },
+  { value: "Pessoa secundária", labelKey: "characters.roles.supporting" },
+  { value: "Vilão", labelKey: "characters.roles.villain" },
 ] as const;
 
 const ATTEMPT_WARN_THRESHOLD = 3;
@@ -812,10 +812,10 @@ function CharacterHeaderRow({
   return (
     <div className="flex items-start gap-2">
       <div className="min-w-0 flex-1 flex flex-wrap items-center gap-2">
-        {character.gender === "男" && (
+        {character.gender === "Homens" && (
           <Mars className="size-4 text-sky-400" aria-hidden />
         )}
-        {character.gender === "女" && (
+        {character.gender === "Mulheres" && (
           <Venus className="size-4 text-pink-400" aria-hidden />
         )}
         <h2 className="truncate text-[19px] font-semibold tracking-tight text-foreground">

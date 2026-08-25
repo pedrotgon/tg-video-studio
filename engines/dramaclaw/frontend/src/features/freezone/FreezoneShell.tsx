@@ -630,13 +630,13 @@ export function FreezoneShell({ project, canvasId }: FreezoneShellProps) {
     return canvasEventBus.subscribe("freezone/commit-node", ({ nodeId, auto, successMessage }) => {
       const node = useCanvasStore.getState().nodes.find((n) => n.id === nodeId);
       if (!node) {
-        setToast("当前节点没有可提交的内容");
+        setToast("Número atual não tem conteúdo para enviar");
         return;
       }
       // 泛化:不再只认 imageUrl,而是按节点类型推断媒体 url(图像/视频/音频/3GS)。
       const info = deriveNodeDropInfo(node);
       if (!info?.sourceUrl) {
-        setToast("当前节点没有可提交的内容");
+        setToast("Número atual não tem conteúdo para enviar");
         return;
       }
       const sourceUrl = info.sourceUrl;
@@ -660,17 +660,17 @@ export function FreezoneShell({ project, canvasId }: FreezoneShellProps) {
             if (savedOpenScene) {
               const flushed = await sync.flush();
               if (!flushed) {
-                throw new Error("当前画布未保存成功，处理冲突后再提交");
+                throw new Error("A tela atual ainda não foi salvada, resolve as conflitos após o processamento");
               }
             }
             const latestNode = useCanvasStore.getState().nodes.find((candidate) => candidate.id === nodeId);
             if (!latestNode) {
-              setToast("当前节点没有可提交的内容");
+              setToast("Número atual não tem conteúdo para enviar");
               return;
             }
             const latestInfo = deriveNodeDropInfo(latestNode);
             if (!latestInfo?.sourceUrl) {
-              setToast("当前节点没有可提交的内容");
+              setToast("Número atual não tem conteúdo para enviar");
               return;
             }
             const latestData = (latestNode.data ?? {}) as Record<string, unknown>;
@@ -702,15 +702,15 @@ export function FreezoneShell({ project, canvasId }: FreezoneShellProps) {
         return;
       }
       if (!defaultTarget) {
-        setToast("当前节点没有可自动提交的主线目标");
+        setToast("Não há nenhum alvo principal automático para a linha de trabalho atual");
         return;
       }
       void (async () => {
-        setToast("正在写入当前背景…");
+        setToast("Está escrevendo no fundo... ");
         try {
           const flushed = await sync.flush();
           if (!flushed) {
-            throw new Error("当前画布未保存成功，处理冲突后再提交");
+            throw new Error("A tela atual ainda não foi salvada, resolve as conflitos após o processamento");
           }
           const latestData = resolveSubmitNodeData(latestCanvasNodeData(nodeId), data) ?? data;
           const latestSourceUrl =
@@ -751,7 +751,7 @@ export function FreezoneShell({ project, canvasId }: FreezoneShellProps) {
           setToast(
             successMessage ??
               `${renderCommitSuccessMessage(target, result)}${
-                manifestNodeData ? "；已同步导演世界状态" : ""
+                manifestNodeData ? "O diretor mundo está agora sincronizado" : ""
               }`,
           );
           void sync.flush();
@@ -821,7 +821,7 @@ export function FreezoneShell({ project, canvasId }: FreezoneShellProps) {
         sourceFileName: `${baseLabel}-mask`,
       } as Record<string, unknown>,
     );
-    setToast(`Mask edit 完成 — 新图已入画布`);
+    setToast(`Edição de mask finalizada - Novo quadro adicionado à tela`);
     void DEFAULT_NODE_WIDTH; // unused but keep import alive
   };
 
@@ -882,7 +882,7 @@ export function FreezoneShell({ project, canvasId }: FreezoneShellProps) {
             onRestoreMainlineDefault={async () => {
               try {
                 await sync.restoreMainlineDefault();
-                setToast("已按当前主流程事实同步主线视图");
+                setToast("A linha de trabalho atual foi sincronizada com o fluxo principal do produto");
               } catch (err) {
                 setToast(err instanceof Error ? err.message : String(err));
               }
@@ -1440,13 +1440,13 @@ function CanvasConflictOverlay({
   return (
     <div className="absolute inset-0 bg-bg-dark/60 flex items-center justify-center">
       <div className="px-4 py-3 rounded-lg bg-surface border border-amber-400/50 text-sm text-amber-100 max-w-md flex flex-col gap-3">
-        <div className="font-medium">画布保存冲突</div>
+        <div className="font-medium">Salvaguarda de tela</div>
         <div className="text-text-muted">
-          {error ?? "画布已被其他窗口或用户修改。刷新会丢弃当前本地未保存修改，另存为副本会保留当前画布。"}
+          {error ?? "A tela foi modificada por outra janela ou usuário. Reinicie para perder as alterações locais não salvas, ou salve uma cópia para manter a versão atual."}
         </div>
         {snapshot && (
           <div className="text-[11px] text-text-muted/80">
-            本地未保存修改已暂存到浏览器，可下载备份后再决定是否刷新。
+            As alterações locais não salvas foram temporariamente armazenadas no navegador, você pode baixar o backup e decidir se reiniciar ou não
           </div>
         )}
         <div className="flex flex-wrap gap-2">
@@ -1455,7 +1455,7 @@ function CanvasConflictOverlay({
             onClick={onRefresh}
             className="px-3 py-1 rounded-md border border-amber-400/40 text-amber-100 hover:bg-amber-400/10 transition-colors"
           >
-            刷新
+            Reinicie
           </button>
           <button
             type="button"
@@ -1472,7 +1472,7 @@ function CanvasConflictOverlay({
             className="px-3 py-1 rounded-md border border-cyan-300/45 bg-cyan-400/18 text-cyan-50 shadow-[0_0_18px_rgba(34,211,238,0.12)] transition-colors hover:border-cyan-200/70 hover:bg-cyan-400/28 disabled:border-white/10 disabled:bg-white/[0.04] disabled:text-white/30 disabled:shadow-none"
             title={snapshot ? undefined : t("freezone.canvases.noConflictSnapshot")}
           >
-            {savingCopy ? "保存中..." : "另存为副本"}
+            {savingCopy ? "Salvando..." : "Salve como cópia"}
           </button>
           {snapshot && (
             <button
@@ -1481,7 +1481,7 @@ function CanvasConflictOverlay({
               className="px-3 py-1 rounded-md border border-[var(--ui-border-soft)] text-text hover:bg-bg-dark/50 transition-colors"
               title={`下载本地修改快照（${snapshot.nodes.length} 节点 · ${snapshot.edges.length} 连线）`}
             >
-              下载本地 JSON
+              Baixe arquivo JSON
             </button>
           )}
         </div>
@@ -1514,10 +1514,10 @@ function BackupStatusIndicator({
     return null;
   }
   const isFailed = status === "failed";
-  const label = isFailed ? "云端备份失败" : "云端备份中";
+  const label = isFailed ? "Backup local às camadas falhou" : "Backup local em andamento";
   const detail = isFailed
-    ? "本地修改已保存，但云端备份未完成。请保留页面，稍后会自动重试。"
-    : "本地修改已保存，云端备份还在同步中。可以继续编辑。";
+    ? "As alterações locais foram salvas, mas o backup local ainda não foi concluído. Por favor, mantenha a página, e solicite uma revisão automatica posteriormente."
+    : "As alterações locais foram salvas, o backup local ainda não foi sincronizado. Você pode continuar a editar.";
   const palette = isFailed
     ? "border-red-500/45 bg-red-500/10 text-red-200"
     : "border-amber-300/40 bg-amber-300/10 text-amber-100";
@@ -1537,7 +1537,7 @@ function BackupStatusIndicator({
 function CanvasLoadingScreen() {
   return (
     <div className="w-full h-full flex items-center justify-center text-text-muted text-sm">
-      正在加载画布...
+      Carregando tela...
     </div>
   );
 }
@@ -1563,7 +1563,7 @@ function CanvasErrorOverlay({
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-bg-dark/45 px-6">
       <div className="flex w-full max-w-2xl flex-col gap-3 rounded-xl border border-red-400/25 bg-red-950/[0.14] px-4 py-3 text-sm shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl">
-        <div className="font-medium text-red-200">画布同步失败</div>
+        <div className="font-medium text-red-200">Sync failed</div>
         <div className="max-h-32 overflow-y-auto whitespace-pre-wrap break-words rounded-lg border border-white/[0.06] bg-black/20 px-3 py-2 text-xs leading-5 text-red-100/75">
           {error}
         </div>
@@ -1572,7 +1572,7 @@ function CanvasErrorOverlay({
           onClick={onRetry}
           className="self-start rounded-lg border border-red-300/25 bg-red-950/20 px-3 py-1.5 text-xs font-medium text-red-100/80 transition-colors hover:border-red-200/40 hover:bg-red-500/10 hover:text-red-50"
         >
-          重试
+          Tentar novamente
         </button>
       </div>
     </div>

@@ -482,18 +482,18 @@ export function SplitStoryboardToolEditor({ sourceImageUrl, options, onOptionsCh
       </div>
 
       <div className="h-full space-y-4 rounded-[10px] border border-white/[0.10] bg-[#111214]/72 p-3.5">
-        <div className="text-sm font-medium text-text-dark">分格参数</div>
+        <div className="text-sm font-medium text-text-dark">Parâmetros de grade</div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
           <NumberStepper
-            label="行数"
+            label="Número de linhas"
             value={rows}
             min={MIN_GRID_SIZE}
             max={MAX_GRID_SIZE}
             onChange={(value) => updateOptions({ rows: value })}
           />
           <NumberStepper
-            label="列数"
+            label="Número de colunas"
             value={cols}
             min={MIN_GRID_SIZE}
             max={MAX_GRID_SIZE}
@@ -503,7 +503,7 @@ export function SplitStoryboardToolEditor({ sourceImageUrl, options, onOptionsCh
 
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs text-text-muted">
-            <span>分隔线粗细</span>
+            <span>Espessura do Divisor</span>
             <span>
               {formatPercent(lineThicknessPercent)}
               {naturalSize ? ` (${lineThicknessPx}px)` : ''}
@@ -542,17 +542,17 @@ export function SplitStoryboardToolEditor({ sourceImageUrl, options, onOptionsCh
 
         <div className="rounded-[8px] border border-white/[0.10] bg-bg-dark/42 px-3 py-2 text-xs text-text-muted">
           <div className="flex items-center justify-between">
-            <span>输出小格数量</span>
+            <span>Número de células de saída</span>
             <span className="font-medium text-text-dark">{rows * cols}</span>
           </div>
           {layout && (
             <>
               <div className="mt-1 flex items-center justify-between">
-                <span>单格宽度(px)</span>
+                <span>Largura de célula única (px)</span>
                 <span>{splitSizeLabel(layout.minCellWidth, layout.maxCellWidth)}</span>
               </div>
               <div className="mt-1 flex items-center justify-between">
-                <span>单格高度(px)</span>
+                <span>Altura da célula (px)</span>
                 <span>{splitSizeLabel(layout.minCellHeight, layout.maxCellHeight)}</span>
               </div>
             </>
@@ -561,7 +561,7 @@ export function SplitStoryboardToolEditor({ sourceImageUrl, options, onOptionsCh
 
         {hasLayoutError && (
           <div className="rounded-[8px] border border-red-400/35 bg-red-500/10 px-3 py-2 text-xs text-red-300">
-            当前分隔线过粗，导致可抽取区域不足。请减少线宽或降低行列数。
+            A linha separadora atual é muito espessa, resultando em área extraível insuficiente.Reduza a largura da linha ou o número de linhas e colunas.
           </div>
         )}
       </div>

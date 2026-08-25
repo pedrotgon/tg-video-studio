@@ -31,28 +31,28 @@ export interface MatchedContextOperation {
 export const CONTEXT_OPERATIONS: ContextOperation[] = [
   {
     id: "beat_to_sketch",
-    label: "Beat 生成草图",
+    label: "Beat Generate Sketch",
     outputKind: "sketch",
     match: matchForBeatToSketch,
     compilePrompt: compileBeatToSketchPrompt,
   },
   {
     id: "director_combined_to_sketch",
-    label: "导演合成图生成草图",
+    label: "Esboço de Geração de Gráfico Composto do Diretor",
     outputKind: "sketch",
     match: matchForDirectorCombinedToSketch,
     compilePrompt: compileDirectorCombinedToSketchPrompt,
   },
   {
     id: "selected_background_to_sketch",
-    label: "背景锚点生成草图",
+    label: "Esboço de geração de âncora de fundo",
     outputKind: "sketch",
     match: matchForSelectedBackgroundToSketch,
     compilePrompt: compileSelectedBackgroundToSketchPrompt,
   },
   {
     id: "sketch_to_frame",
-    label: "按主线上下文生成分镜",
+    label: "Gerar Espelho Dividido por Contexto da Linha Principal",
     outputKind: "frame",
     match: matchForFrameGeneration,
     compilePrompt: compileFrameGenerationContextPrompt,
@@ -82,8 +82,8 @@ export function ContextOperationsPanel({
   return (
     <div className="mb-2 rounded-xl border border-amber-300/25 bg-amber-300/10 p-2">
       <div className="mb-1 flex items-center justify-between gap-2">
-        <div className="text-[11px] font-medium text-amber-100">主线上下文</div>
-        <div className="text-[10px] text-amber-100/65">只在身份/场景/Beat 匹配时出现</div>
+        <div className="text-[11px] font-medium text-amber-100">Cena de abertura</div>
+        <div className="text-[10px] text-amber-100/65">Aparece apenas quando há uma correspondência de personagem/cenário/frame</div>
       </div>
       <div className="flex flex-wrap gap-2">
         {operations.map((item) => (

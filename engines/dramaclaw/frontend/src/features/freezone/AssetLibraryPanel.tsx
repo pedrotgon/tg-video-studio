@@ -307,12 +307,12 @@ function MiniThumb({
 /* ─────────────────── Beat 行（可折叠） ─────────────────── */
 
 const ROLE_LABELS: Record<string, string> = {
-  current_sketch: "草图",
-  current_frame: "分镜",
-  current_video: "视频",
-  current_audio: "音频",
-  selected_background: "背景",
-  director_combined: "导演合成图",
+  current_sketch: "Esboço",
+  current_frame: "Tiro Dividido",
+  current_video: "Vídeo",
+  current_audio: "Áudio",
+  selected_background: "Fundamentos",
+  director_combined: "Diagrama de Composição do Diretor",
 };
 
 const ROLE_ORDER = [
@@ -483,7 +483,7 @@ function DefaultCanvasBeatPanel({
   if (assets.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center px-6 py-12 text-center text-xs text-white/25">
-        暂无镜头上下文素材
+        Nenhum material contextual de lente disponível
       </div>
     );
   }
@@ -529,15 +529,15 @@ export function AssetLibraryPanel({
   const canvasKind = resolveCanvasKind(metadata);
   const beatTabLabel =
     canvasKind === "default" || canvasKind === "blank"
-      ? "全部Beat"
+      ? "All Beat"
       : canvasKind === "episode"
-        ? "本集Beat"
-        : "当前Beat";
+        ? "Episode Beat"
+        : "Batimento atual";
   const tabs: Array<{ id: AssetTab; label: string }> = [
     { id: "beat", label: beatTabLabel },
-    { id: "characters", label: "人物" },
-    { id: "scenes", label: "场景" },
-    { id: "props", label: "道具" },
+    { id: "characters", label: "Pessoas" },
+    { id: "scenes", label: "Cenário" },
+    { id: "props", label: "Itens" },
   ];
 
   const [panelTab, setPanelTab] = useState<PanelTab>("canvases");
@@ -551,9 +551,9 @@ export function AssetLibraryPanel({
     if (!mainlineAvailable) setPanelTab("canvases");
   }, [mainlineAvailable]);
   const panelTabItems: Array<{ id: PanelTab; label: string }> = [
-    { id: "canvases", label: label("canvas.panel.projectCanvas", "项目画布") },
-    ...(mainlineAvailable ? [{ id: "library" as const, label: label("canvas.panel.mainlineAssets", "主线资产") }] : []),
-    { id: "assets", label: label("canvas.panel.assetLibrary", "资产库") },
+    { id: "canvases", label: label("canvas.panel.projectCanvas", "Tela do projeto") },
+    ...(mainlineAvailable ? [{ id: "library" as const, label: label("canvas.panel.mainlineAssets", "Ativos da linha principal") }] : []),
+    { id: "assets", label: label("canvas.panel.assetLibrary", "Biblioteca de Ativos") },
   ];
   const [tab, setTab] = useState<AssetTab>("beat");
   const [query, setQuery] = useState("");
@@ -670,7 +670,7 @@ export function AssetLibraryPanel({
       const target = assetToPushTarget(asset.source);
       if (!target) {
         const src = asset.source as Record<string, unknown>;
-        console.warn("[freezone] 无法推断替换目标", asset.label, asset.source);
+        console.warn("[freezone] não pode inferir o alvo de substituição", asset.label, asset.source);
         onReplaced?.(
           null,
           `无法识别「${asset.label}」的提交目标（kind=${String(src.kind)} / role=${String(src.role)}）`,
@@ -748,7 +748,7 @@ export function AssetLibraryPanel({
           <button
             type="button"
             onClick={() => setCollapsed(!collapsed)}
-            aria-label={collapsed ? label("canvas.panel.expandAssets", "展开素材抽屉") : label("canvas.panel.collapseAssets", "收起素材抽屉")}
+            aria-label={collapsed ? label("canvas.panel.expandAssets", "Expandir gaveta de elementos") : label("canvas.panel.collapseAssets", "Recolher a gaveta de material")}
             aria-expanded={!collapsed}
             className={`group/btn relative flex h-10 w-10 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 ${
               collapsed
@@ -773,7 +773,7 @@ export function AssetLibraryPanel({
           <span
             className="pointer-events-none absolute left-11 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#101116]/95 px-2 py-1 text-[11px] font-medium text-white/75 opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-md transition-opacity duration-150 group-hover/handle:opacity-100"
           >
-            {collapsed ? label("canvas.panel.expand", "展开") : label("canvas.panel.collapse", "收起")}
+            {collapsed ? label("canvas.panel.expand", "Expandir") : label("canvas.panel.collapse", "Recolher")}
           </span>
         </div>
 
@@ -814,13 +814,13 @@ export function AssetLibraryPanel({
               <button
                 type="button"
                 onClick={() => setAssetManagerOpen(true)}
-                aria-label={label("canvas.panel.assetManagement", "资产管理")}
-                title={label("canvas.panel.assetManagement", "资产管理")}
+                aria-label={label("canvas.panel.assetManagement", "Gestão de Ativos")}
+                title={label("canvas.panel.assetManagement", "Gestão de Ativos")}
                 className="group/assets relative ml-auto mb-1.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[6px] border border-white/[0.10] text-white/60 transition-colors hover:border-white/[0.22] hover:bg-white/[0.06] hover:text-white/90"
               >
                 <BookOpen className="h-3.5 w-3.5" />
                 <span className="pointer-events-none absolute right-0 top-8 z-20 whitespace-nowrap rounded-[6px] border border-white/10 bg-[#101116]/95 px-2 py-1 text-[11px] font-medium text-white/75 opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-md transition-opacity duration-150 group-hover/assets:opacity-100">
-                  {label("canvas.panel.assetManagement", "资产管理")}
+                  {label("canvas.panel.assetManagement", "Gestão de Ativos")}
                 </span>
               </button>
             </div>
@@ -854,7 +854,7 @@ export function AssetLibraryPanel({
                     <input
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
-                      placeholder="搜索素材..."
+                      placeholder="Pesquisar elementos..."
                       className="w-full h-7 rounded-md border border-white/[0.06] bg-white/[0.03] px-2.5 text-[11px] text-white/80 placeholder:text-white/40 focus:outline-none focus:border-white/[0.12] transition-colors"
                     />
                   </div>
@@ -864,7 +864,7 @@ export function AssetLibraryPanel({
               {/* ─ 列表内容 ── */}
               {error ? (
                 <div className="mx-3 mt-2 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2 text-xs text-red-400">
-                  项目素材加载失败：{error}
+                  Falha ao carregar os ativos do projeto:{error}
                 </div>
               ) : tab === "beat" ? (
                 <BeatContextPanel
@@ -876,7 +876,7 @@ export function AssetLibraryPanel({
                 />
               ) : filtered.length === 0 ? (
                 <div className="flex flex-1 items-center justify-center px-6 py-12 text-center text-xs text-white/25">
-                  当前分类没有可用素材
+                  Nenhum ativo disponível para a categoria atual
                 </div>
               ) : (
                 <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-1.5">
@@ -953,7 +953,7 @@ function BeatContextPanel({
   if (canvasKind !== "beat") {
     return (
       <div className="flex flex-1 items-center justify-center px-6 py-12 text-center text-xs text-white/25">
-        当前画布没有镜头上下文
+        A tela atual não tem contexto de lente
       </div>
     );
   }
@@ -990,13 +990,13 @@ function PresetBeatPanel({
   return (
     <div className="min-h-0 overflow-y-auto px-3 pt-1 pb-3 space-y-3">
       <BeatSectionHeader
-        primary={episode !== null ? `第${episode}集` : "第?集"}
+        primary={episode !== null ? `第${episode}集` : "Episódio?"}
         secondary={beatNum !== null ? `Beat ${beatNum}` : "Beat ?"}
       />
 
       {assets.length === 0 ? (
         <div className="flex items-center justify-center py-12 text-xs text-white/25">
-          当前镜头没有可用上下文素材
+          Nenhum material contextual disponível para a lente atual
         </div>
       ) : (
         groups.map((group) => (
@@ -1154,15 +1154,15 @@ function AssetCard({
         type="button"
         className="tap-button h-6 px-2 text-[11px] opacity-0 transition group-hover:opacity-100 focus-visible:opacity-100 hover:border-white/20 hover:text-white/90 disabled:opacity-40 text-white/50 border border-white/10 rounded"
         onClick={(e) => { e.stopPropagation(); onAdd(); }}
-        title="加入画布"
+        title="Adicionar tela"
         disabled={disabled}
       >
-        加入
+        Participar
       </button>
       {isConfirming && (
         <div className="absolute inset-0 z-10 flex flex-col justify-center gap-1.5 rounded-lg bg-[#0c0c0e]/95 px-2.5 backdrop-blur-sm">
           <div className="line-clamp-2 text-[11px] leading-snug text-white/80">
-            用画布节点替换「{asset.label}」？
+            Substituir "pelo nó do Canvas{asset.label}」？
           </div>
           <div className="flex gap-1.5">
             <button
@@ -1171,7 +1171,7 @@ function AssetCard({
               onClick={() => replaceCtx?.onConfirm(asset)}
               disabled={isReplacing}
             >
-              {isReplacing ? "替换中…" : "替换"}
+              {isReplacing ? "Substituindo..." : "Substituir"}
             </button>
             <button
               type="button"
@@ -1179,7 +1179,7 @@ function AssetCard({
               onClick={() => replaceCtx?.onCancel()}
               disabled={isReplacing}
             >
-              取消
+              Cancelar
             </button>
           </div>
         </div>
@@ -1532,12 +1532,12 @@ function directorWorldSourceUrl(source: DirectorWorldSource | undefined): string
 }
 
 function sourceKindLabel(source: Pick<DirectorWorldSource, "source_kind" | "source_type">): string {
-  if (source.source_type === "pano360") return "360图";
-  if (source.source_kind === "master") return "正面世界";
-  if (source.source_kind === "reverse") return "背面世界";
-  if (source.source_kind === "pano") return "360世界";
-  if (source.source_kind === "custom") return "自定义世界";
-  return "导演世界";
+  if (source.source_type === "pano360") return "Diagramas 360";
+  if (source.source_kind === "master") return "Mundo positivo";
+  if (source.source_kind === "reverse") return "O mundo nas costas";
+  if (source.source_kind === "pano") return "360 World";
+  if (source.source_kind === "custom") return "Custom World";
+  return "Mundo do diretor";
 }
 
 function isUsableAsset(asset: FreezoneProjectAsset): boolean {
@@ -1607,57 +1607,57 @@ function sceneAssetTypeBadge(
   if (asset.tab !== "scenes") return null;
   if (asset.role === "scene_master") {
     return {
-      label: "正面图",
-      title: "场景正面图",
+      label: "Vista frontal",
+      title: "Vista frontal da cena",
       className: "border-sky-300/25 bg-sky-300/10 text-sky-100/90",
     };
   }
   if (asset.role === "scene_reverse_master") {
     return {
-      label: "背面图",
-      title: "场景背面图",
+      label: "Vista traseira",
+      title: "Vista traseira da cena",
       className: "border-cyan-300/25 bg-cyan-300/10 text-cyan-100/90",
     };
   }
   if (asset.role === "scene_director_pano_360") {
     return {
-      label: "360图",
-      title: "360 全景图",
+      label: "Diagramas 360",
+      title: "Panorama 360",
       className: "border-amber-300/30 bg-amber-300/10 text-amber-100/90",
     };
   }
   if (asset.role === SCENE_DIRECTOR_WORLD_ROLE) {
     return {
-      label: "导演世界",
-      title: "场景导演世界",
+      label: "Mundo do diretor",
+      title: "Diretor de Cena Mundial",
       className: "border-violet-300/30 bg-violet-300/10 text-violet-100/90",
     };
   }
   if (asset.role === "scene_3gs_master_ply") {
     return {
-      label: "正面世界",
-      title: "3D 导演世界（正面）",
+      label: "Mundo positivo",
+      title: "Mundo do Diretor 3D (Frente)",
       className: "border-violet-300/30 bg-violet-300/10 text-violet-100/90",
     };
   }
   if (asset.role === "scene_3gs_reverse_ply") {
     return {
-      label: "背面世界",
-      title: "3D 导演世界（背面）",
+      label: "O mundo nas costas",
+      title: "3D Director's World (verso)",
       className: "border-fuchsia-300/30 bg-fuchsia-300/10 text-fuchsia-100/90",
     };
   }
   if (asset.role === "scene_3gs_pano_ply") {
     return {
-      label: "360世界",
-      title: "3D 导演世界（360）",
+      label: "360 World",
+      title: "Mundo do Diretor 3D (360)",
       className: "border-violet-300/30 bg-violet-300/10 text-violet-100/90",
     };
   }
   if (asset.role === "scene_3gs_custom_scene") {
     return {
-      label: "自定义世界",
-      title: "3D 导演世界（自定义）",
+      label: "Custom World",
+      title: "3D Director World (Personalizado)",
       className: "border-rose-300/30 bg-rose-300/10 text-rose-100/90",
     };
   }
@@ -1791,23 +1791,23 @@ function fromPresetReference(ref: PresetReference): LibraryAsset {
 }
 
 function normalizeMainlineAssetLabel(label: string, role: string | undefined): string {
-  if (role === "current_frame") return "当前分镜";
+  if (role === "current_frame") return "Disparo Dividido Atual";
   return replaceText(
     replaceText(
       replaceText(
         replaceText(
-          replaceText(String(label || ""), "成图/首帧", "分镜"),
-          "成图/分镜",
-          "分镜",
+          replaceText(String(label || ""), "Gráfico/Primeiro Quadro", "Tiro Dividido"),
+          "Plotagem/Divisão",
+          "Tiro Dividido",
         ),
-        "成图首帧",
-        "分镜",
+        "Formatando o primeiro quadro",
+        "Tiro Dividido",
       ),
-      "当前成图",
-      "当前分镜",
+      "Gráfico atual",
+      "Disparo Dividido Atual",
     ),
-    "成图候选",
-    "分镜候选",
+    "Candidatos Gráficos",
+    "Candidato a tiro",
   );
 }
 
@@ -1909,12 +1909,12 @@ function groupBeatAssets(assets: LibraryAsset[]): Array<{
 }> {
   const order = ["outputs", "director", "characters", "scenes", "props", "other"];
   const labels: Record<string, string> = {
-    outputs: "当前产物",
-    director: "3GS / 控制图",
-    characters: "角色参考",
-    scenes: "场景参考",
-    props: "道具参考",
-    other: "其他上下文",
+    outputs: "Atual Produto",
+    director: "3GS / Control Graph",
+    characters: "Referência de Personagem",
+    scenes: "Referência de Cena",
+    props: "Referência de Objetos",
+    other: "Outros Contextos",
   };
   const buckets = new Map<string, LibraryAsset[]>();
   for (const asset of assets) {
@@ -2289,7 +2289,7 @@ async function sendLibraryItemToCanvas(entry: LibraryItem): Promise<void> {
   const store = useCanvasStore.getState();
   const newId = spawnAssetNode(store, sized, viewportCenteredPosition(store, 0, width, height));
   store.requestFocusNode(newId);
-  toast.success(`已发送到画布：${entry.name || "素材"}`);
+  toast.success(`已发送到画布：${entry.name || "Materiais"}`);
 }
 
 function addAssetToCanvas(asset: LibraryAsset, index: number): void {

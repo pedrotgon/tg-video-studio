@@ -9,7 +9,7 @@ describe("getCurrentBeatContextFromNode", () => {
     const context = {
       schema: "beat_context.v1",
       source: "standalone",
-      title: "自定义镜头上下文",
+      title: "Contexto Personalizado da Lente",
       visual_description: "{{女主_雨衣}} 在雨夜便利店门口拿着 [[红伞]]",
       detected_identities: ["女主_雨衣"],
       detected_props: ["红伞"],

@@ -17,7 +17,7 @@ beforeAll(async () => {
     resources: {
       zh: {
         translation: {
-          common: { cancel: "取消", save: "保存" },
+          common: { cancel: "Cancelar", save: "Salvar" },
           identityPicker: {
             title: "选择本集身份",
             empty: "暂无角色身份",
@@ -77,7 +77,7 @@ describe("IdentityPickerDialog", () => {
     );
 
     await user.click(screen.getByRole("radio", { name: "青年 默认" }));
-    await user.click(screen.getByRole("button", { name: "保存" }));
+    await user.click(screen.getByRole("button", { name: "Salvar" }));
 
     expect(onChange).toHaveBeenCalledWith(
       ["秦_幼年", "秦_青年"],

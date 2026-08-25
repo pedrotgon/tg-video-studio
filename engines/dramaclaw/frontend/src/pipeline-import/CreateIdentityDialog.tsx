@@ -14,7 +14,7 @@ interface CreateIdentityDialogProps {
 }
 
 const AGE_OPTIONS = [
-  { value: "", label: "不指定年龄" },
+  { value: "", label: "Não há idade especificada" },
   { value: "child", label: "child" },
   { value: "youth", label: "youth" },
   { value: "middle", label: "middle" },
@@ -92,9 +92,9 @@ export function CreateIdentityDialog({
       <div className="w-full max-w-2xl rounded-xl border border-border-default bg-surface shadow-xl overflow-hidden">
         <div className="px-4 py-3 border-b border-border-default flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-semibold text-text">创建新 Identity</h2>
+            <h2 className="text-sm font-semibold text-text">Crie um novo Identity</h2>
             <p className="text-xs text-text-muted mt-0.5">
-              从当前选中图片创建新的全局角色身份，不覆盖已有 canonical identity。
+              Crie um novo Identity global a partir do imagem selecionado atual, sem sobrescrever o Identity canônico.
             </p>
           </div>
           <button
@@ -116,7 +116,7 @@ export function CreateIdentityDialog({
               />
             ) : (
               <div className="h-40 flex items-center justify-center text-xs text-text-muted">
-                无预览
+                Sem pré-visualização
               </div>
             )}
             <div className="text-[11px] text-text-muted mt-2 break-all">
@@ -126,7 +126,7 @@ export function CreateIdentityDialog({
 
           <div className="space-y-3">
             <label className="block">
-              <span className="text-xs text-text-muted">角色</span>
+              <span className="text-xs text-text-muted">Função</span>
               <select
                 value={character}
                 onChange={(e) => setCharacter(e.target.value)}
@@ -145,17 +145,17 @@ export function CreateIdentityDialog({
             </label>
 
             <label className="block">
-              <span className="text-xs text-text-muted">身份名</span>
+              <span className="text-xs text-text-muted">Nome do Identity</span>
               <input
                 value={identityName}
                 onChange={(e) => setIdentityName(e.target.value)}
-                placeholder="例如：老年时期、工装时期、战损时期"
+                placeholder="Por exemplo: Idade avançada, vestimenta de trabalho, vestimenta danificada."
                 className="mt-1 w-full rounded-md border border-border-default bg-bg-dark px-3 py-2 text-sm text-text"
               />
             </label>
 
             <label className="block">
-              <span className="text-xs text-text-muted">年龄段</span>
+              <span className="text-xs text-text-muted">Faixa Etária</span>
               <select
                 value={ageGroup}
                 onChange={(e) => setAgeGroup(e.target.value)}
@@ -170,23 +170,23 @@ export function CreateIdentityDialog({
             </label>
 
             <label className="block">
-              <span className="text-xs text-text-muted">服装/造型描述</span>
+              <span className="text-xs text-text-muted">Descrição da vestimenta/apresentação</span>
               <textarea
                 value={appearanceDetails}
                 onChange={(e) => setAppearanceDetails(e.target.value)}
                 rows={3}
-                placeholder="该身份的服装、配饰、发型造型，不写动作。"
+                placeholder="A vestimenta, a aparência e o estilo do Identity, não incluindo movimentos."
                 className="mt-1 w-full rounded-md border border-border-default bg-bg-dark px-3 py-2 text-sm text-text"
               />
             </label>
 
             <label className="block">
-              <span className="text-xs text-text-muted">身份级脸部提示词（可选）</span>
+              <span className="text-xs text-text-muted">Palavra-chave de graça facial (opcional)</span>
               <textarea
                 value={facePrompt}
                 onChange={(e) => setFacePrompt(e.target.value)}
                 rows={2}
-                placeholder="只有年龄变化很大时才填；默认复用角色 portrait。"
+                placeholder="Só preencha quando há mudanças significativas na idade; padrão é reutilizar a identidade do personagem."
                 className="mt-1 w-full rounded-md border border-border-default bg-bg-dark px-3 py-2 text-sm text-text"
               />
             </label>
@@ -205,7 +205,7 @@ export function CreateIdentityDialog({
             onClick={onClose}
             className="px-3 py-1.5 rounded-md border border-border-default text-xs text-text-muted hover:text-text"
           >
-            取消
+            Cancelar
           </button>
           <button
             type="button"
@@ -213,7 +213,7 @@ export function CreateIdentityDialog({
             disabled={!canSubmit}
             className="px-3 py-1.5 rounded-md bg-accent text-bg-dark text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? "创建中..." : "创建 Identity"}
+            {submitting ? "Criando..." : "Crie Identity"}
           </button>
         </div>
       </div>

@@ -41,10 +41,10 @@ interface NodeSelectionMenuProps {
 }
 
 const skillProviderLabels: Record<SkillProvider, string> = {
-  freezone_mainline: '主线技能',
-  agent: 'Agent 技能',
-  tool: '工具技能',
-  workflow: '工作流技能',
+  freezone_mainline: 'Habilidades da linha principal',
+  agent: 'Habilidades do agente',
+  tool: 'Habilidades com ferramentas',
+  workflow: 'Habilidades de fluxo de trabalho',
 };
 
 const skillProviderOrder: SkillProvider[] = ['freezone_mainline', 'agent', 'tool', 'workflow'];
@@ -96,7 +96,7 @@ export function NodeSelectionMenu({
     const items: ReferenceGenerateAction[] = [
       {
         key: 'text',
-        label: '文本',
+        label: 'Texto',
         Icon: Type,
         type: allowedTypeSet.has(CANVAS_NODE_TYPES.textAnnotation)
           ? CANVAS_NODE_TYPES.textAnnotation
@@ -105,7 +105,7 @@ export function NodeSelectionMenu({
       },
       {
         key: 'image',
-        label: '图片',
+        label: 'Imagem',
         Icon: Image,
         // 创建顺序：imageGen（默认生成节点） → imageEdit（编辑节点） →
         // upload（纯上传节点，目标端创建参考图时用）。
@@ -123,7 +123,7 @@ export function NodeSelectionMenu({
       },
       {
         key: 'video',
-        label: '视频',
+        label: 'Vídeo',
         Icon: Video,
         type: allowedTypeSet.has(CANVAS_NODE_TYPES.video)
           ? CANVAS_NODE_TYPES.video
@@ -132,7 +132,7 @@ export function NodeSelectionMenu({
       },
       {
         key: 'audio',
-        label: '音频',
+        label: 'Áudio',
         Icon: Music,
         type: allowedTypeSet.has(CANVAS_NODE_TYPES.audio)
           ? CANVAS_NODE_TYPES.audio
@@ -141,7 +141,7 @@ export function NodeSelectionMenu({
       },
       {
         key: 'script',
-        label: '脚本',
+        label: 'Roteiro',
         Icon: FileText,
         type: allowedTypeSet.has(CANVAS_NODE_TYPES.script)
           ? CANVAS_NODE_TYPES.script
@@ -150,7 +150,7 @@ export function NodeSelectionMenu({
       },
       {
         key: 'pano360',
-        label: '360° 全景',
+        label: 'Panorama 360°',
         Icon: Globe,
         type: allowedTypeSet.has(CANVAS_NODE_TYPES.pano360Viewer)
           ? CANVAS_NODE_TYPES.pano360Viewer
@@ -159,7 +159,7 @@ export function NodeSelectionMenu({
       },
       {
         key: 'threeDWorld',
-        label: '3D 世界',
+        label: 'Mundo 3D',
         Icon: Orbit,
         type: allowedTypeSet.has(CANVAS_NODE_TYPES.threeDWorld)
           ? CANVAS_NODE_TYPES.threeDWorld
@@ -352,7 +352,7 @@ export function NodeSelectionMenu({
         <div className="ui-scrollbar max-h-[min(560px,70vh)] overflow-y-auto px-5 py-5 [scrollbar-gutter:stable]">
         {referenceGenerateItems ? (
           <>
-            <CanvasMenuSectionHeader label="引用该节点生成" className="pb-4" />
+            <CanvasMenuSectionHeader label="Faça referência a este nó para construir" className="pb-4" />
             <div className="grid grid-cols-4 justify-items-center gap-x-2 gap-y-5">
               {referenceGenerateItems.map((item, index) => {
                 const Icon = item.Icon;
@@ -426,7 +426,7 @@ export function NodeSelectionMenu({
                           {skillProviderLabels[group.provider]}
                         </div>
                         <div className="text-[11px] leading-4 text-white/35">
-                          {group.items.length} 个技能
+                          {group.items.length} Habilidades
                         </div>
                       </div>
                       <ChevronRight className="h-4 w-4 shrink-0 text-white/35" />

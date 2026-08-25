@@ -85,7 +85,7 @@ export function VersionUpdateDialog() {
                   if (item.title?.includes("ComfyUI") || item.body?.includes("MiniMax")) {
                     title = "ComfyUI Local Integrado";
                     body = "MiniMax-H3 conectado com seleção automática de modelos e suporte a fluxos avançados.";
-                  } else if (item.title?.includes("视频") || item.body?.includes("首尾帧")) {
+                  } else if (item.title?.includes("Vídeo") || item.body?.includes("Primeiros e últimos quadros")) {
                     title = "Geração de Vídeo Precisa";
                     body = "Melhorias no controle de primeiro/último quadro e renderização contínua.";
                   }

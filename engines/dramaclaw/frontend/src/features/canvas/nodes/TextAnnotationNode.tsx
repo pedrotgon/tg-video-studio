@@ -99,7 +99,7 @@ const COMPACT_OPS_PANEL_MIN_WIDTH = 480;
 const COMPACT_MODES = new Set<TextNodeMode>(['textToVideo', 'imageToPrompt']);
 
 const IMAGE_TO_PROMPT_DEFAULT_CONTENT =
-  '根据图片生成结构化中文提示词，包括主体描述、环境、光影、镜头语言、风格关键词。';
+  'Gera uma estrutura de palavras estruturada em chinês, incluindo descrição principal, ambiente, luz, linguagem de câmera e palavras-chave do estilo.';
 
 function countBillableTextChars(text: string): number {
   return text.replace(/[\s\u3000]+/gu, '').length;
@@ -107,7 +107,7 @@ function countBillableTextChars(text: string): number {
 
 // 「文字生成音乐」的默认音乐描述——点击后预填进文本节点，用户可在此基础上改。
 const TEXT_TO_MUSIC_DEFAULT_CONTENT =
-  '生成一首现代品牌电子音乐（约 110 BPM），干净有力的低频贝斯，清晰电子鼓点，整体风格高级、未来感强。开场节奏型贝斯与简洁合成器音色建立律动。主段加入稳定鼓点，节奏清晰，保持克制的张力。强化段加入更丰富的音层，合成器音色提升，律动增强但不过度拥挤。结尾鼓点减弱，仅保留低频与氛围音渐出，干净利落收尾。';
+  'Gera uma faixa moderna de música eletrônica (aproximadamente 110 BPM), bass com baixo volume e clareza no piano, estilo avançado e forte futuro. Inicia com um ritmo base do basso com um som de fundo simples e uma sonoridade clara do sintetizador. Na seção principal, adicione um ritmo estável do piano para manter a tensão. Aumente o ritmo na seção forte com um som mais rico e um sintetizador mais poderoso, mas não sobrepondo. Encerra com uma música de cabeça reduzida que apenas mantém o basso e a atmosfera para uma saída limpa.';
 
 const SPAWN_UPLOAD_WIDTH = 320;
 
@@ -304,7 +304,7 @@ export const TextAnnotationNode = memo(({
     };
     const newNodeId = addNode(CANVAS_NODE_TYPES.video, position, seedData);
     addEdge(id, newNodeId);
-    useCanvasStore.getState().autoGroupSpawn(id, [newNodeId], { label: '文生视频组' });
+    useCanvasStore.getState().autoGroupSpawn(id, [newNodeId], { label: 'Grupo de vídeo de cultura' });
   }, [addEdge, addNode, findNodePosition, id]);
 
   const spawnUploadNode = useCallback(() => {
@@ -322,7 +322,7 @@ export const TextAnnotationNode = memo(({
     const seedData: Partial<UploadImageNodeData> = { imageOnly: true };
     const newNodeId = addNode(CANVAS_NODE_TYPES.upload, position, seedData);
     addEdge(newNodeId, id);
-    useCanvasStore.getState().autoGroupSpawn(id, [newNodeId], { label: '图片反推提示词组' });
+    useCanvasStore.getState().autoGroupSpawn(id, [newNodeId], { label: 'Reversação de imagens para geração de palavras' });
   }, [addEdge, addNode, id]);
 
   // 克隆音频 / 文字生成音乐：在文本节点下游派生一个音频节点并连边（文本 → 音频），
@@ -332,7 +332,7 @@ export const TextAnnotationNode = memo(({
     const position = findNodePosition(id, 480, 180);
     const newNodeId = addNode(CANVAS_NODE_TYPES.audio, position, { audioKind });
     addEdge(id, newNodeId);
-    const label = audioKind === 'music' ? '文字生成音乐组' : '克隆音频组';
+    const label = audioKind === 'music' ? 'Geração de texto da música' : 'Grupo de áudio de clonagem';
     useCanvasStore.getState().autoGroupSpawn(id, [newNodeId], { label });
   }, [addEdge, addNode, findNodePosition, id]);
 
@@ -704,7 +704,7 @@ export const TextAnnotationNode = memo(({
                     />
                     <button
                       type="button"
-                      title="取消引用此素材"
+                      title="Desfazer as citações deste material"
                       className="nodrag absolute right-0 top-0 z-10 hidden h-4 w-4 items-center justify-center rounded-bl-md bg-black/75 text-white transition-colors hover:bg-red-500 group-hover:flex"
                       onMouseDown={(event) => event.stopPropagation()}
                       onClick={(event) => {

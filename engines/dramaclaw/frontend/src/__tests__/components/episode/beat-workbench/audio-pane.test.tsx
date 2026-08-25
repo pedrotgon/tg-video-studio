@@ -199,9 +199,9 @@ describe("AudioPane", () => {
       </Wrapper>,
     );
 
-    expect(screen.queryByText("本条解说音频")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "上传本条音频" })).not.toBeInTheDocument();
-    expect(screen.queryByText("解说声线")).not.toBeInTheDocument();
+    expect(screen.queryByText("本条解说Áudio")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Enviar本条Áudio" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Linhas Sonoras Interpretativas")).not.toBeInTheDocument();
   });
 
   it("hides beat upload and project narrator voice controls for narrated project narration", () => {
@@ -217,9 +217,9 @@ describe("AudioPane", () => {
       </Wrapper>,
     );
 
-    expect(screen.queryByText("本条解说音频")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "上传本条音频" })).not.toBeInTheDocument();
-    expect(screen.queryByText("解说声线")).not.toBeInTheDocument();
+    expect(screen.queryByText("本条解说Áudio")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Enviar本条Áudio" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Linhas Sonoras Interpretativas")).not.toBeInTheDocument();
   });
 
   it("keeps voice controls out of the audio pane when narration text is empty", () => {
@@ -235,10 +235,10 @@ describe("AudioPane", () => {
       </Wrapper>,
     );
 
-    expect(screen.getByText("旁白为空，此 beat 无法生成音频。请先到「文案」填写。")).toBeInTheDocument();
-    expect(screen.queryByText("本条解说音频")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "上传本条音频" })).not.toBeInTheDocument();
-    expect(screen.queryByText("解说声线")).not.toBeInTheDocument();
+    expect(screen.getByText("旁白为空，此 beat 无法GerarÁudio。请先到「文案」填写。")).toBeInTheDocument();
+    expect(screen.queryByText("本条解说Áudio")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Enviar本条Áudio" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Linhas Sonoras Interpretativas")).not.toBeInTheDocument();
   });
 
   it("does not expose beat voice upload when audio_type is blank narration", () => {
@@ -254,9 +254,9 @@ describe("AudioPane", () => {
       </Wrapper>,
     );
 
-    expect(screen.queryByText("本条解说音频")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "上传本条音频" })).not.toBeInTheDocument();
-    expect(screen.queryByText("解说声线")).not.toBeInTheDocument();
+    expect(screen.queryByText("本条解说Áudio")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Enviar本条Áudio" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Linhas Sonoras Interpretativas")).not.toBeInTheDocument();
   });
 
   it("offers a jump to project voice assets when beat audio generation lacks default narrator voice", async () => {
@@ -279,7 +279,7 @@ describe("AudioPane", () => {
       </Wrapper>,
     );
 
-    await user.click(screen.getByRole("button", { name: "重新生成" }));
+    await user.click(screen.getByRole("button", { name: "Regenerar" }));
     await user.click(screen.getByRole("button", { name: "确认" }));
 
     expect(toastError).toHaveBeenCalledWith(
@@ -319,7 +319,7 @@ describe("AudioPane", () => {
       </Wrapper>,
     );
 
-    await user.click(screen.getByRole("button", { name: "重新生成" }));
+    await user.click(screen.getByRole("button", { name: "Regenerar" }));
     await user.click(screen.getByRole("button", { name: "确认" }));
 
     expect(toastError).toHaveBeenCalledWith(
@@ -358,7 +358,7 @@ describe("AudioPane", () => {
       </Wrapper>,
     );
 
-    await user.click(screen.getByRole("button", { name: "重新生成" }));
+    await user.click(screen.getByRole("button", { name: "Regenerar" }));
     await user.click(screen.getByRole("button", { name: "确认" }));
 
     expect(toastError).toHaveBeenCalledWith(

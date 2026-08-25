@@ -54,7 +54,7 @@ beforeAll(async () => {
             },
           },
           common: {
-            error: "错误",
+            error: "Erro",
           },
         },
       },

@@ -1976,3 +1976,7 @@ src/novelvideo/styles/presets/tg_product_demo_br.json,Elastic-2.0,2026 Teixeira 
 src/novelvideo/styles/presets/tg_retail_offer_br.json,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo preset
 src/novelvideo/styles/presets/tg_testimonial_br.json,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo preset
 src/novelvideo/styles/presets/tg_ugc_natural_br.json,Elastic-2.0,2026 Teixeira Gonçalves,Derived TG Criativo preset
+tests/test_commercial_br.py,Elastic-2.0,2026 Teixeira Gonçalves,TG Criativo commercial adapter tests
+tests/test_tg_pt_br_locale.py,Elastic-2.0,2026 Teixeira Gonçalves,TG Criativo pt-BR regression tests
+tests/test_ingest_commercial_br_errors.py,Elastic-2.0,2026 Teixeira Gonçalves,TG Criativo pt-BR API tests
+tests/test_tg_pt_br_source_literals.py,Elastic-2.0,2026 Teixeira Gonçalves,TG Criativo Canvas localization tests

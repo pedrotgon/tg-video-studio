@@ -563,7 +563,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
   );
   useReferenceMentionSync(
     promptDraft,
-    [{ prefix: "图", ids: incomingImages }],
+    [{ prefix: "Figura", ids: incomingImages }],
     applyPromptRemap,
   );
 
@@ -975,7 +975,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
         addEdge(newId, id);
         newIds.push(newId);
       });
-      state.autoGroupSpawn(id, newIds, { label: '资产参考组' });
+      state.autoGroupSpawn(id, newIds, { label: 'Grupo de Referência de Ativos' });
     },
     [addEdge, addNode, id],
   );
@@ -1085,7 +1085,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
         <div className="relative min-h-[190px] flex-[1.25] border-b border-[rgba(255,255,255,0.08)] bg-black/20">
           <div className="pointer-events-none absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-black/40 px-2 py-1 text-[11px] text-text-muted">
             <ImageIcon className="h-3.5 w-3.5" />
-            图片节点 {incomingImageItems.length > 0 ? incomingImageItems.length : ''}
+            Nó de imagem {incomingImageItems.length > 0 ? incomingImageItems.length : ''}
           </div>
           {incomingImageItems.length > 0 ? (
             <div className={`grid h-full gap-2 p-3 ${incomingImageItems.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
@@ -1116,7 +1116,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
               ))}
               {incomingImageItems.length > 4 && (
                 <div className="absolute bottom-3 left-3 rounded-full border border-[rgba(255,255,255,0.12)] bg-black/55 px-2 py-0.5 text-[11px] text-text-dark">
-                  +{incomingImageItems.length - 4} 张引用图
+                  +{incomingImageItems.length - 4} diagramas de citação
                 </div>
               )}
             </div>
@@ -1131,23 +1131,23 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
                   event.stopPropagation();
                   promptRef.current?.focus();
                 }}
-                title="从素材库拖入图片，或从图片节点点击 AI 改图自动连接"
+                title="Arraste a imagem da biblioteca de elementos ou clique no link de retoque de IA do nó da imagem para se conectar automaticamente"
               >
                 <UploadCloud className="h-4 w-4" />
-                连接参考图
+                Diagrama de referência de conexão
               </button>
               <div className="flex items-center gap-3 text-xs">
-                <span className="text-[var(--canvas-node-input-helper)]">试试：</span>
+                <span className="text-[var(--canvas-node-input-helper)]">Experimente:</span>
                 <button
                   type="button"
                   className="nodrag rounded-full bg-white/8 px-2 py-1 text-text-dark transition hover:bg-white/12"
                   onMouseDown={(event) => event.stopPropagation()}
                   onClick={(event) => {
                     event.stopPropagation();
-                    applyPromptSuggestion('基于参考图生成一个更稳定、更精细的版本，保持主体身份和构图。');
+                    applyPromptSuggestion('Gerar uma versão mais estável e refinada com base no diagrama de referência, mantendo a identidade e composição do sujeito.');
                   }}
                 >
-                  图生图
+                  diagrama de Tucson
                 </button>
                 <button
                   type="button"
@@ -1155,10 +1155,10 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
                   onMouseDown={(event) => event.stopPropagation()}
                   onClick={(event) => {
                     event.stopPropagation();
-                    applyPromptSuggestion('对参考图做高清修复，提升细节、边缘和质感，保持原图内容不变。');
+                    applyPromptSuggestion('Faça uma restauração de alta definição do diagrama de referência para melhorar os detalhes, bordas e textura e mantenha o conteúdo original inalterado.');
                   }}
                 >
-                  图片高清
+                  Picture HD
                 </button>
               </div>
             </div>
@@ -1172,7 +1172,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
               event.stopPropagation();
               promptRef.current?.focus();
             }}
-            title="聚焦 prompt"
+            title="Concentre-se no prompt"
           >
             <Maximize2 className="h-4 w-4" />
           </button>
@@ -1181,12 +1181,12 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
         <div className="relative flex min-h-[180px] flex-1 flex-col p-3">
           <div className="mb-2 flex flex-wrap gap-2">
             {[
-              { key: 'text_to_image', label: '文生图', disabled: incomingImages.length > 0 },
-              { key: 'all_reference', label: '全能参考', disabled: false },
-              { key: 'image_reference', label: '图片参考', disabled: false },
-              { key: 'image_to_image', label: '图生图', disabled: false },
-              { key: 'image_to_video', label: '图生视频', disabled: true },
-              { key: 'first_last_frame', label: '首尾帧', disabled: true },
+              { key: 'text_to_image', label: 'diagrama de Vincent', disabled: incomingImages.length > 0 },
+              { key: 'all_reference', label: 'Referência Todo-Poderosa', disabled: false },
+              { key: 'image_reference', label: 'Referência de imagens', disabled: false },
+              { key: 'image_to_image', label: 'diagrama de Tucson', disabled: false },
+              { key: 'image_to_video', label: 'Vídeo de imagem', disabled: true },
+              { key: 'first_last_frame', label: 'Primeiros e últimos quadros', disabled: true },
             ].map((item) => {
               const active = generationMode === item.key;
               return (
@@ -1259,7 +1259,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
                     {capability.name}
                   </div>
                   <div className="truncate text-[10px] text-text-muted">
-                    候选图能力 · Commit 后才成为资产
+                    Capacidade do diagrama de candidato · Comprometa-se a se tornar um ativo
                   </div>
                 </div>
                 <button
@@ -1278,7 +1278,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
                     });
                   }}
                 >
-                  自由提示词
+                  Prompt gratuito
                 </button>
               </div>
               <div
@@ -1308,7 +1308,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
                 promptRef.current?.focus();
               }}
             >
-              标记
+              Bandeira
             </button>
             <button
               type="button"
@@ -1319,7 +1319,7 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
                 applyPromptSuggestion(`${promptDraft}${promptDraft ? '\n' : ''}镜头运动：轻微推进，保持主体稳定，电影级质感。`);
               }}
             >
-              运镜
+              Espelho Corrente
             </button>
             <button
               type="button"
@@ -1329,9 +1329,9 @@ export const ImageEditNode = memo(({ id, data, selected, width, height }: ImageE
                 event.stopPropagation();
                 setIsAssetLibraryOpen(true);
               }}
-              title="从资产库选择参考图（人物 / 场景 / 道具）"
+              title="Selecione Diagrama de Referência da Biblioteca de Ativos (Personagem/Cena/Prop)"
             >
-              资产库
+              Biblioteca de Ativos
             </button>
             {upstreamTextContents.map((content) => (
               <ReferenceTextChip

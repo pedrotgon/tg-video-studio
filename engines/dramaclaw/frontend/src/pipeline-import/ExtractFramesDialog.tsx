@@ -81,17 +81,17 @@ export function ExtractFramesDialog({
 
   const handleSubmit = async () => {
     if (!file) {
-      setError("请先选择视频文件");
+      setError("Por favor, selecione um arquivo de vídeo");
       return;
     }
     setError(null);
     try {
-      setProgress({ stage: "uploading", message: "上传视频...", progress: 0.1 });
+      setProgress({ stage: "uploading", message: "Carregue o vídeo...", progress: 0.1 });
       const upload = await uploadFreezoneImage(project, file, file.name);
 
       setProgress({
         stage: "extracting",
-        message: "ffmpeg 抽帧（最多 60 秒）...",
+        message: "Extrair frames com ffmpeg (max. 60 segundos)",
         progress: 0.3,
       });
       const extractRef = await submitFreezoneExtract(project, {
@@ -102,7 +102,7 @@ export function ExtractFramesDialog({
       const extractTask = await awaitTaskCompletion(extractRef.task_key, project, { taskType: extractRef.task_type });
       const frameUrls = extractFrameUrls(extractTask);
       if (frameUrls.length === 0) {
-        throw new Error("抽帧返回了空结果，可能视频太短或格式不支持");
+        throw new Error("Não foi extrair nenhum frame; possivelmente o vídeo é curto ou não suporta a formato");
       }
 
       let analyses: ShotAnalysis[] = [];
@@ -132,7 +132,7 @@ export function ExtractFramesDialog({
       onFramesReady(frames);
       setProgress({
         stage: "done",
-        message: `已抽 ${frames.length} 帧${analyses.length > 0 ? "，并完成镜头分析" : ""}`,
+        message: `已抽 ${frames.length} 帧${analyses.length > 0 ? "e complete a análise do quadro" : ""}`,
         progress: 1,
       });
       onDone(`拉片完成：${frames.length} 帧已加入画布`);
@@ -140,7 +140,7 @@ export function ExtractFramesDialog({
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);
-      setProgress({ stage: "error", message: "失败", progress: 0 });
+      setProgress({ stage: "error", message: "Falha", progress: 0 });
     }
   };
 
@@ -166,9 +166,9 @@ export function ExtractFramesDialog({
             <Clapperboard className="h-[18px] w-[18px]" />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="text-[15px] font-semibold leading-tight text-text-dark">拉片分析</h2>
+            <h2 className="text-[15px] font-semibold leading-tight text-text-dark">Análise de frames</h2>
             <p className="mt-1 text-xs leading-relaxed text-text-muted">
-              视频 → ffmpeg 抽关键帧 →（可选）后端 Vision 分析镜头语言
+              Vídeo → Extrair frames com ffmpeg → (opcional) Análise de vídeo com Vision após
             </p>
           </div>
           <button
@@ -176,14 +176,14 @@ export function ExtractFramesDialog({
             onClick={requestClose}
             disabled={submitting}
             className="text-text-muted hover:text-text-dark transition disabled:opacity-30"
-            aria-label="关闭"
+            aria-label="Fechar"
           >
             <X className="h-4 w-4" />
           </button>
         </header>
 
         <div className="px-5 py-4 space-y-5">
-          <Section title="视频文件">
+          <Section title="Video File">
             <FilePicker
               file={file}
               disabled={submitting}
@@ -192,9 +192,9 @@ export function ExtractFramesDialog({
             />
           </Section>
 
-          <Section title="抽帧参数">
+          <Section title="Frame Parameters">
             <div className="grid grid-cols-2 gap-3">
-              <Field label="最大帧数" hint="3 - 50">
+              <Field label="Maximum Frames" hint="3 - 50">
                 <UiInput
                   type="number"
                   min={3}
@@ -204,7 +204,7 @@ export function ExtractFramesDialog({
                   disabled={submitting}
                 />
               </Field>
-              <Field label="场景阈值" hint="0 - 1">
+              <Field label="Scene Threshold" hint="0 - 1">
                 <UiInput
                   type="number"
                   min={0.1}
@@ -217,11 +217,11 @@ export function ExtractFramesDialog({
               </Field>
             </div>
             <p className="mt-2 text-[11px] leading-relaxed text-text-muted/80">
-              阈值越高 = 只在画面突变大时采样（长镜头视频选 0.2-0.3，快剪 MV 选 0.5+）
+              Higher threshold = Only sample when the scene changes significantly (Long shots video selected 0.2-0.3, Fast cuts MV selected &gt; 0.5)
             </p>
           </Section>
 
-          <Section title="后续处理">
+          <Section title="Post-processing">
             <label
               className={`flex w-full items-start gap-3 rounded-lg border border-[color:var(--ui-border-soft)] bg-[var(--ui-surface-field)] px-3 py-2.5 text-left transition-colors hover:border-[color:var(--ui-border-strong)] ${
                 submitting ? "cursor-not-allowed opacity-60" : "cursor-pointer"
@@ -240,9 +240,9 @@ export function ExtractFramesDialog({
                 </svg>
               </span>
               <div className="min-w-0 flex-1">
-                <div className="text-sm text-text-dark">用 Vision 分析每帧的镜头语言</div>
+                <div className="text-sm text-text-dark">Analyze each frame's language using Vision</div>
                 <div className="mt-0.5 text-[11px] text-text-muted">
-                  景别 / 角度 / 运镜 / 氛围 / 色调 · 使用后端默认 Vision capability
+                  Perspective / Angle / Zoom / Atmosphere / Color Tone · Use backend default Vision capability
                 </div>
               </div>
             </label>
@@ -261,7 +261,7 @@ export function ExtractFramesDialog({
 
         <footer className="flex items-center justify-end gap-2 border-t border-[color:var(--ui-border-soft)] px-5 py-3.5">
           <UiButton variant="ghost" size="sm" onClick={requestClose} disabled={submitting}>
-            取消
+            Cancelar
           </UiButton>
           <UiButton
             variant="primary"
@@ -272,10 +272,10 @@ export function ExtractFramesDialog({
             {submitting ? (
               <>
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                处理中
+                Processing in progress
               </>
             ) : (
-              "开始拉片"
+              "Start trimming"
             )}
           </UiButton>
         </footer>
@@ -345,8 +345,8 @@ function FilePicker({ file, disabled, inputRef, onChange }: FilePickerProps) {
           </>
         ) : (
           <>
-            <div className="text-sm text-text-dark">选择视频文件</div>
-            <div className="mt-0.5 text-[11px] text-text-muted">支持 mp4 / mov / webm 等格式</div>
+            <div className="text-sm text-text-dark">Select video file</div>
+            <div className="mt-0.5 text-[11px] text-text-muted">Supports mp4, mov, webm formats and others</div>
           </>
         )}
       </div>
@@ -356,7 +356,7 @@ function FilePicker({ file, disabled, inputRef, onChange }: FilePickerProps) {
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
       >
-        {file ? "更换" : "浏览"}
+        {file ? "Change" : "Browse"}
       </UiButton>
       <input
         ref={inputRef}
@@ -381,7 +381,7 @@ function ProgressBar({ progress }: { progress: ProgressState }) {
           {progress.message}
         </span>
         <span className="text-[11px] tabular-nums text-text-muted">
-          {isDone ? "完成" : `${pct}%`}
+          {isDone ? "Concluído" : `${pct}%`}
         </span>
       </div>
       <div className="h-1 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">

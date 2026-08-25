@@ -109,7 +109,7 @@ describe("AssetLibraryBrowser item actions", () => {
   it("falls back to the folder icon when nothing inside is an image", async () => {
     fetchFreezoneVideoCharacterLibrary.mockResolvedValue([VOICE_ONLY]);
     renderBrowser(() => {});
-    const folder = await screen.findByLabelText("文件夹 音效");
+    const folder = await screen.findByLabelText("文件夹 Som");
 
     expect(folder.querySelector("img")).toBeNull();
   });
@@ -119,10 +119,10 @@ describe("AssetLibraryBrowser item actions", () => {
     await openFolder("待分类资产");
     await openItemMenu("原子朋克");
 
-    expect(screen.getByRole("menuitem", { name: "发送到画布" })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: "Enviar para o Canvas" })).toBeTruthy();
     expect(screen.getByRole("menuitem", { name: "下载" })).toBeTruthy();
-    expect(screen.getByRole("menuitem", { name: "重命名" })).toBeTruthy();
-    expect(screen.getByRole("menuitem", { name: "删除" })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: "Renomear" })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: "Remover" })).toBeTruthy();
   });
 
   it("hides 发送到画布 when there is no canvas to send to", async () => {
@@ -130,7 +130,7 @@ describe("AssetLibraryBrowser item actions", () => {
     await openFolder("待分类资产");
     await openItemMenu("原子朋克");
 
-    expect(screen.queryByRole("menuitem", { name: "发送到画布" })).toBeNull();
+    expect(screen.queryByRole("menuitem", { name: "Enviar para o Canvas" })).toBeNull();
     expect(screen.getByRole("menuitem", { name: "下载" })).toBeTruthy();
   });
 
@@ -140,10 +140,10 @@ describe("AssetLibraryBrowser item actions", () => {
     await openFolder("主线");
     await openItemMenu("林小满");
 
-    expect(screen.getByRole("menuitem", { name: "发送到画布" })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: "Enviar para o Canvas" })).toBeTruthy();
     expect(screen.getByRole("menuitem", { name: "下载" })).toBeTruthy();
-    expect(screen.queryByRole("menuitem", { name: "重命名" })).toBeNull();
-    expect(screen.queryByRole("menuitem", { name: "删除" })).toBeNull();
+    expect(screen.queryByRole("menuitem", { name: "Renomear" })).toBeNull();
+    expect(screen.queryByRole("menuitem", { name: "Remover" })).toBeNull();
   });
 
   it("sends the clicked asset to the canvas", async () => {
@@ -151,7 +151,7 @@ describe("AssetLibraryBrowser item actions", () => {
     renderBrowser(onSend);
     await openFolder("待分类资产");
     await openItemMenu("原子朋克");
-    fireEvent.click(screen.getByRole("menuitem", { name: "发送到画布" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Enviar para o Canvas" }));
 
     expect(onSend).toHaveBeenCalledTimes(1);
     expect(onSend.mock.calls[0][0]).toMatchObject({
@@ -176,11 +176,11 @@ describe("AssetLibraryBrowser item actions", () => {
     renderBrowser(() => {});
     await openFolder("待分类资产");
     await openItemMenu("原子朋克");
-    fireEvent.click(screen.getByRole("menuitem", { name: "重命名" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Renomear" }));
 
     const input = screen.getByLabelText(/资产名称/);
     fireEvent.change(input, { target: { value: "赛博霓虹" } });
-    fireEvent.click(screen.getByRole("button", { name: "保存" }));
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
 
     await waitFor(() =>
       expect(renameFreezoneVideoCharacterLibraryItem).toHaveBeenCalledWith(
@@ -198,7 +198,7 @@ describe("AssetLibraryBrowser item actions", () => {
     renderBrowser(() => {});
     await openFolder("待分类资产");
     await openItemMenu("原子朋克");
-    fireEvent.click(screen.getByRole("menuitem", { name: "删除" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Remover" }));
 
     const dialog = await screen.findByRole("alertdialog");
     // 走原生 confirm 的话这个对话框根本不会出现，删除也早就发出去了。
@@ -208,15 +208,15 @@ describe("AssetLibraryBrowser item actions", () => {
     // 取消：按文案之外的那个按钮找，免得跟着 i18n 的「取消」文案一起碎。
     const cancel = within(dialog)
       .getAllByRole("button")
-      .find((button) => button.textContent !== "删除");
+      .find((button) => button.textContent !== "Remover");
     fireEvent.click(cancel as HTMLElement);
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull());
     expect(deleteFreezoneVideoCharacterLibraryItem).not.toHaveBeenCalled();
 
     await openItemMenu("原子朋克");
-    fireEvent.click(screen.getByRole("menuitem", { name: "删除" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Remover" }));
     const retry = await screen.findByRole("alertdialog");
-    fireEvent.click(within(retry).getByRole("button", { name: "删除" }));
+    fireEvent.click(within(retry).getByRole("button", { name: "Remover" }));
 
     await waitFor(() =>
       expect(deleteFreezoneVideoCharacterLibraryItem).toHaveBeenCalledWith(

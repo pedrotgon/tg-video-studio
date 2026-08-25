@@ -251,7 +251,7 @@ export function LoginCinematicHero({
               className={`${styles.heroPrimary} ${layout.heroPrimary}`}
               onClick={onStart}
             >
-              让灵感发生
+              Encourage creativity
             </button>
             <a
               className={`${styles.heroSecondary} ${layout.heroSecondary}`}
@@ -273,7 +273,7 @@ export function LoginCinematicHero({
         >
           <div className={layout.scrollCueInner}>
             <Mouse className={layout.scrollMouseIcon} />
-            <span>向下滑动</span>
+            <span>Desligando para baixo</span>
             <ChevronDown className={layout.scrollArrowIcon} />
           </div>
         </div>

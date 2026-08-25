@@ -131,8 +131,8 @@ vi.mock("@/lib/queries/characters", () => ({
         {
           name: "Li Qing",
           aliases: [],
-          role: "主角",
-          gender: "男",
+          role: "Personagem principal",
+          gender: "Homens",
           age_group: "middle",
           is_main: true,
           description: "Lead character",

@@ -9,30 +9,30 @@ interface NodeContextBadgesProps {
 }
 
 const LABELS: Record<string, string> = {
-  identity: "身份",
-  voice: "声线",
-  narrator_voice: "解说声线",
+  identity: "Identidade",
+  voice: "Som",
+  narrator_voice: "Linhas Sonoras Interpretativas",
   bgm: "BGM",
-  sfx: "音效",
-  ambient_audio: "环境音",
-  scene: "场景",
-  prop: "道具",
+  sfx: "Som",
+  ambient_audio: "Som ambiente",
+  scene: "Cenário",
+  prop: "Itens",
   beat: "Beat",
-  sketch: "草图",
-  frame: "分镜",
-  video: "视频",
-  audio: "音频",
-  director_combined: "导演合成图",
-  selected_background: "当前背景",
+  sketch: "Esboço",
+  frame: "Tiro Dividido",
+  video: "Vídeo",
+  audio: "Áudio",
+  director_combined: "Diagrama de Composição do Diretor",
+  selected_background: "Histórico Atual",
 };
 
 const BINDING_LABELS: Record<CandidateBindingRole, string> = {
-  background_candidate: "背景候选",
-  sketch_candidate: "草图候选",
-  frame_candidate: "分镜候选",
-  selected_background: "当前背景",
-  current_sketch: "当前草图",
-  current_frame: "当前分镜",
+  background_candidate: "Candidato em segundo plano",
+  sketch_candidate: "Candidatos a esboço",
+  frame_candidate: "Candidato a tiro",
+  selected_background: "Histórico Atual",
+  current_sketch: "Esboço atual",
+  current_frame: "Disparo Dividido Atual",
 };
 
 function badgeText(ctx: MainlineContext): string {
@@ -110,7 +110,7 @@ export function NodeContextBadges({ contexts, variant = "floating" }: NodeContex
       <div className="flex max-w-full flex-wrap items-center gap-1">
         <div className="inline-flex max-w-full items-center gap-1 rounded-full border border-amber-200/18 bg-amber-200/8 px-2 py-0.5 text-[10px] font-medium leading-none tracking-wide text-amber-100/78 backdrop-blur">
           <LinkIconDot />
-          <span className="shrink-0">主线资产</span>
+          <span className="shrink-0">Ativos da linha principal</span>
           <span className="min-w-0 truncate text-amber-100/72">{badgeText(primary)}</span>
         </div>
         {visible.map((ctx, index) => (
@@ -140,7 +140,7 @@ export function NodeContextBadges({ contexts, variant = "floating" }: NodeContex
     <div className="pointer-events-none absolute left-2 top-9 z-20 flex max-w-[calc(100%-16px)] flex-col items-start gap-1.5">
       <div className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-cyan-200/50 bg-cyan-950/80 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-cyan-50 shadow-[0_0_18px_rgba(34,211,238,0.22)] backdrop-blur">
         <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(103,232,249,0.9)]" />
-        <span className="shrink-0">主线资产</span>
+        <span className="shrink-0">Ativos da linha principal</span>
         <span className="min-w-0 truncate text-cyan-100/85">{badgeText(primary)}</span>
       </div>
       <div className="flex max-w-full flex-wrap gap-1">

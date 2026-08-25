@@ -71,17 +71,17 @@ describe("CharacterStatsStrip", () => {
       />,
     );
 
-    const strip = screen.getByRole("list", { name: "角色统计" });
+    const strip = screen.getByRole("list", { name: "Função统计" });
     expect(strip).toHaveClass("custom-strip");
-    expect(strip).toHaveTextContent("总角色3");
-    expect(strip).toHaveTextContent("解说主角1");
+    expect(strip).toHaveTextContent("总Função3");
+    expect(strip).toHaveTextContent("Legenda do protagonista1");
     expect(strip).toHaveTextContent("头像2/3");
-    expect(strip).toHaveTextContent("身份2/3");
-    expect(strip).toHaveTextContent("声线1/3");
+    expect(strip).toHaveTextContent("Identidade2/3");
+    expect(strip).toHaveTextContent("Som1/3");
 
-    expect(screen.getByLabelText("总角色: 3")).toBeInTheDocument();
+    expect(screen.getByLabelText("总Função: 3")).toBeInTheDocument();
     expect(screen.getByLabelText("头像: 2/3")).toBeInTheDocument();
-    expect(screen.getByLabelText("声线: 1/3")).toBeInTheDocument();
+    expect(screen.getByLabelText("Som: 1/3")).toBeInTheDocument();
   });
 
   it("uses the supplied main character label for drama projects", () => {
@@ -92,7 +92,7 @@ describe("CharacterStatsStrip", () => {
       />,
     );
 
-    expect(screen.getByLabelText("主角: 1")).toBeInTheDocument();
-    expect(screen.queryByLabelText("解说主角: 1")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Personagem principal: 1")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Legenda do protagonista: 1")).not.toBeInTheDocument();
   });
 });

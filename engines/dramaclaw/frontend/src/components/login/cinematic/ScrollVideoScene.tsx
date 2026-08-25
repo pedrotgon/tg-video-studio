@@ -85,9 +85,9 @@ export function ScrollVideoScene({
         href={`/watch/${COMMUNITY_WATCH_WORK}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="立即观看社区作品"
+        aria-label="Assista agora ao trabalho criativo da comunidade"
       >
-        <span>立即观看</span>
+        <span>Assista agora a um trabalho criativo</span>
       </a>
       <div className={`${styles.copy} ${align === "right" ? styles.copyRight : ""}`}>
         <p className={styles.kicker}>{kicker}</p>

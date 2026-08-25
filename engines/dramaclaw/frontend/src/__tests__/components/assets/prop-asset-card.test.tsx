@@ -81,14 +81,14 @@ describe("PropAssetCard", () => {
 
     expect(screen.getByText("七星剑")).toBeInTheDocument();
     expect(screen.getByText("武器")).toBeInTheDocument();
-    expect(screen.getByText("所属角色：李青")).toBeInTheDocument();
-    expect(screen.getByText("参考图 已生成")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "重生参考图" })).toBeInTheDocument();
+    expect(screen.getByText("所属Função：李青")).toBeInTheDocument();
+    expect(screen.getByText("Diagrama de referência 已Gerar")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "重生Diagrama de referência" })).toBeInTheDocument();
 
     expect(screen.queryByRole("button", { name: /上传/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /删除参考图/ })).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "重生参考图" }));
+    fireEvent.click(screen.getByRole("button", { name: "重生Diagrama de referência" }));
     expect(handlers.onGenerateReference).toHaveBeenCalledTimes(1);
   });
 
@@ -103,8 +103,8 @@ describe("PropAssetCard", () => {
       notes: "",
     });
 
-    expect(screen.getByText("未生成参考图")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "生成参考图" })).toBeInTheDocument();
+    expect(screen.getByText("未GerarDiagrama de referência")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "GerarDiagrama de referência" })).toBeInTheDocument();
   });
 
   it("renders NiceGUI prop type labels instead of raw prop type codes", () => {
@@ -134,8 +134,8 @@ describe("PropAssetCard", () => {
     });
 
     expect(screen.getByRole("button", { name: "编辑" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "生成参考图" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "删除" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "GerarDiagrama de referência" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remover" })).toBeInTheDocument();
   });
 
   it("opens a reference image preview from the card image", () => {
@@ -150,12 +150,12 @@ describe("PropAssetCard", () => {
       reference_url: "/static/u/p/assets/props/seven-star-sword/reference.png",
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "七星剑 参考图" }));
+    fireEvent.click(screen.getByRole("button", { name: "七星剑 Diagrama de referência" }));
 
     expect(
       screen.getByRole("link", { name: "Download image" }),
     ).toBeInTheDocument();
-    expect(screen.getAllByAltText("七星剑 参考图")).toHaveLength(2);
+    expect(screen.getAllByAltText("七星剑 Diagrama de referência")).toHaveLength(2);
   });
 
   it("shows the NiceGUI generating label for single prop reference generation", () => {
@@ -173,7 +173,7 @@ describe("PropAssetCard", () => {
       { generating: true },
     );
 
-    expect(screen.getByRole("button", { name: "生成中..." })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Gerar中..." })).toBeDisabled();
   });
 
   it("renders the NiceGUI empty description fallback", () => {

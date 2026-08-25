@@ -246,11 +246,11 @@ const VIDEO_EMPTY_STATE_CTA_META: Record<
   VideoEmptyStateCtaMode,
   { Icon: LucideIcon; label: string }
 > = {
-  allReference: { Icon: Sparkles, label: "全能参考" },
-  imageReference: { Icon: Images, label: "图片参考" },
-  firstFrame: { Icon: Film, label: "首帧生成视频" },
-  imageToVideo: { Icon: Film, label: "图生视频" },
-  firstLastFrame: { Icon: Layers, label: "首尾帧生成视频" },
+  allReference: { Icon: Sparkles, label: "Referência Todo-Poderosa" },
+  imageReference: { Icon: Images, label: "Referência de imagens" },
+  firstFrame: { Icon: Film, label: "Primeiro Frame de Vídeo Gerado" },
+  imageToVideo: { Icon: Film, label: "Vídeo de imagem" },
+  firstLastFrame: { Icon: Layers, label: "Vídeo de primeira e última geração de quadros" },
 };
 
 // 各 genMode 对上游引用数量的硬上限。UI 用这张表把后端字段约束（多图 / 多模态
@@ -393,12 +393,12 @@ function selectedVideoModelReferenceDisabledReason(
   }
   if (counts.videos > caps.video) {
     return caps.video === 0
-      ? "该模型不支持视频素材"
+      ? "O modelo não suporta ativos de vídeo"
       : `该模型最多支持 ${caps.video} 个视频素材`;
   }
   if (counts.audios > caps.audio) {
     return caps.audio === 0
-      ? "该模型不支持音频素材"
+      ? "O modelo não suporta recursos de áudio"
       : `该模型最多支持 ${caps.audio} 个音频素材`;
   }
   return null;
@@ -965,9 +965,9 @@ export const VideoNode = memo(
     useReferenceMentionSync(
       prompt,
       [
-        { prefix: "图片", ids: orderedImageIds },
-        { prefix: "视频", ids: orderedVideoIds },
-        { prefix: "音频", ids: orderedAudioIds },
+        { prefix: "Imagem", ids: orderedImageIds },
+        { prefix: "Vídeo", ids: orderedVideoIds },
+        { prefix: "Áudio", ids: orderedAudioIds },
       ],
       applyPromptRemap,
     );
@@ -1363,7 +1363,7 @@ export const VideoNode = memo(
             CANVAS_NODE_TYPES.imageGen,
             { x: baseX, y: baseY },
             {
-              displayName: mode === "firstFrame" ? "首帧" : "参考图",
+              displayName: mode === "firstFrame" ? "Primeiro quadro" : "Diagrama de referência",
             },
           );
           if (mode === "firstFrame") {
@@ -1373,12 +1373,12 @@ export const VideoNode = memo(
           }
           const groupLabel =
             mode === "imageReference"
-              ? "图片参考组"
+              ? "Grupo de Referência de Imagens"
               : mode === "firstFrame"
-                ? "首帧生成视频组"
+                ? "Grupo de vídeo de primeira geração de quadros"
                 : mode === "imageToVideo"
-                  ? "图生视频组"
-                : "全能参考组";
+                  ? "Tucson Video Group"
+                : "Grupo de Referência Universal";
           state.autoGroupSpawn(id, [newId], { label: groupLabel });
           // 上游图片直接作为素材喂给对应端点；模式切到用户点的那一个，不预填提示词
           // （尊重用户已写内容）。HappyHorse 下由统一状态机确认（imageToVideo /
@@ -1394,16 +1394,16 @@ export const VideoNode = memo(
         const firstId = addNode(
           CANVAS_NODE_TYPES.upload,
           { x: baseX, y: firstY },
-          { displayName: "首帧" },
+          { displayName: "Primeiro quadro" },
         );
         addEdgeWithData(firstId, id, { keyframeSlot: "first" });
         const lastId = addNode(
           CANVAS_NODE_TYPES.upload,
           { x: baseX, y: lastY },
-          { displayName: "尾帧" },
+          { displayName: "Quadro de fuga" },
         );
         addEdgeWithData(lastId, id, { keyframeSlot: "last" });
-        state.autoGroupSpawn(id, [firstId, lastId], { label: '首尾帧生成视频组' });
+        state.autoGroupSpawn(id, [firstId, lastId], { label: 'Grupos de vídeo de primeira e última geração de quadros' });
         updateNodeData(id, { genMode: "firstLastFrame" });
       },
       [addEdge, addEdgeWithData, addNode, id, updateNodeData],
@@ -1817,7 +1817,7 @@ export const VideoNode = memo(
             const newNodeId = addNode(CANVAS_NODE_TYPES.video, position, {
               videoUrl: result.url,
               durationMs: Math.round((sourceEnd - sourceStart) * 1000),
-              displayName: "剪辑",
+              displayName: "Clipe",
             });
             addEdge(id, newNodeId);
             updateNodeData(id, {
@@ -1827,7 +1827,7 @@ export const VideoNode = memo(
             });
           } else {
             console.warn("[video-node] compose completed without url", result);
-            setClipError("剪辑完成但未返回视频地址");
+            setClipError("Clipe concluído sem retornar o endereço do vídeo");
           }
         } catch (error) {
           console.error("[video-node] clip compose failed", error);
@@ -2280,8 +2280,8 @@ export const VideoNode = memo(
           if (!supportsAllReference) {
             void showErrorDialog(
               isHappyHorseModel
-                ? "HappyHorse 不支持全能参考模式，请切换为文生视频或图生视频。"
-                : "当前模型不支持全能参考，请切换模型或改用其它生成模式。",
+                ? "O HappyHorse não suporta o modo de referência geral, mude para o vídeo Vincent ou vídeo Tucson."
+                : "O modelo atual não suporta referência geral, alterne o modelo ou use outro modo de geração.",
               t("common.error"),
             );
             updateNodeData(id, {
@@ -2348,7 +2348,7 @@ export const VideoNode = memo(
                 references.push({
                   type: "audio",
                   url,
-                  role: "配乐参考",
+                  role: "Referência da Trilha Sonora",
                   label: rawLabel,
                 });
                 audioRefs.push({
@@ -2495,7 +2495,7 @@ export const VideoNode = memo(
                 updateNodeData(id, {
                   isGenerating: false,
                   generationStartedAt: null,
-                  generationError: "视频生成未返回结果",
+                  generationError: "A geração de vídeo não retornou resultados",
                   generationErrorDetails: null,
                   generationErrorRequestId: null,
                 });
@@ -2520,7 +2520,7 @@ export const VideoNode = memo(
             // 刷新页面时 resumeNodeGeneration 会重新接上并回填结果；这里写错误
             // 横幅只会把一个还活着的任务标成失败、并清掉可续接的句柄。
             if (isTaskPollTimeoutError(error)) return;
-            const resolved = resolveErrorContent(error, "视频生成失败");
+            const resolved = resolveErrorContent(error, "Falha na geração do vídeo");
             const displayErrorMessage = backendErrorToastMessage(error, t);
             const diagnostics = resolveGenerationErrorDiagnostics(error, resolved.details);
             // Persist the failure on the node so the 重新生成 entry survives after
@@ -2560,7 +2560,7 @@ export const VideoNode = memo(
             void refreshHistory();
             return;
           }
-          const resolved = resolveErrorContent(firstError, "视频生成失败");
+          const resolved = resolveErrorContent(firstError, "Falha na geração do vídeo");
           const displayErrorMessage = backendErrorToastMessage(firstError, t);
           const diagnostics = resolveGenerationErrorDiagnostics(firstError, resolved.details);
           const haystack = `${displayErrorMessage}\n${diagnostics.details ?? ""}`;
@@ -2571,8 +2571,8 @@ export const VideoNode = memo(
           ) {
             // 素材含真实人脸被拦截：引导用户开启「真人素材审核」后重试。
             void showErrorDialog(
-              "素材包含真实人脸，已被内容安全策略拦截。请在下方打开「真人素材审核」开关后重试（可能增加审核时间，不保证通过）。",
-              "素材被拦截",
+              "A filmagem contém rostos reais e foi bloqueada pela Política de Segurança de Conteúdo.Abra o botão \"Revisão de material ao vivo\" abaixo e tente novamente (pode aumentar o tempo de revisão e não há garantia de que passará).",
+              "Elemento bloqueado",
               diagnostics.details ?? undefined,
             );
           } else {
@@ -2759,7 +2759,7 @@ export const VideoNode = memo(
                   key={`album-deck-${index}`}
                   role="button"
                   tabIndex={-1}
-                  title="展开画册"
+                  title="Expandir galeria"
                   onClick={(event) => {
                     event.stopPropagation();
                     handleToggleAlbumExpanded();
@@ -2953,7 +2953,7 @@ export const VideoNode = memo(
               <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between gap-2 p-2">
                 <span className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-[11px] text-white/90 backdrop-blur">
                   <Loader2 className="h-3 w-3 animate-spin" />
-                  新视频生成中…
+                  A gerar novo vídeo...
                 </span>
                 <button
                   type="button"
@@ -2964,7 +2964,7 @@ export const VideoNode = memo(
                   }}
                 >
                   <XIcon className="h-3 w-3" />
-                  返回
+                  Voltar
                 </button>
               </div>
             </div>
@@ -2988,14 +2988,14 @@ export const VideoNode = memo(
             <div className="flex h-full w-full flex-col items-center justify-center gap-2 px-4 text-red-300">
               <AlertTriangle className="h-7 w-7 opacity-90" />
               <span className="text-center text-[12px] font-medium leading-5 text-red-200">
-                视频生成失败
+                Falha na geração do vídeo
               </span>
               <span className="max-h-[64px] overflow-y-auto break-words text-center text-[11px] leading-5 text-red-200/90 [overflow-wrap:anywhere]">
                 {generationError}
               </span>
               {generationErrorRequestId && (
                 <div className="flex w-full max-w-[240px] items-center gap-1 rounded bg-red-500/10 px-2 py-1">
-                  <span className="shrink-0 text-[10px] text-red-300/70">请求ID</span>
+                  <span className="shrink-0 text-[10px] text-red-300/70">ID da solicitação</span>
                   <code
                     className="min-w-0 flex-1 truncate font-mono text-[10px] text-red-200"
                     title={generationErrorRequestId}
@@ -3028,7 +3028,7 @@ export const VideoNode = memo(
               {/* 空态（无入边）才走到这里。CTA 完全按媒体模型目录的 supportedModes
                   决定；目录尚未加载时才使用模型族兜底，避免展示后端会拒绝的入口。 */}
               <div className="flex min-h-0 flex-col justify-center gap-2 py-4">
-                <div className="text-xs text-[var(--canvas-node-input-helper)]">试试：</div>
+                <div className="text-xs text-[var(--canvas-node-input-helper)]">Experimente:</div>
                 <div className="flex flex-col gap-0.5">
                   {videoEmptyStateCtaModes(selectedVideoModel).map((mode) => {
                     const { Icon, label } = VIDEO_EMPTY_STATE_CTA_META[mode];
@@ -3056,7 +3056,7 @@ export const VideoNode = memo(
           {videoSource && videoLoadError && !isGenerating && !isUploading && (
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 bg-bg-dark/70 px-4 text-center text-red-200">
               <AlertTriangle className="h-6 w-6 text-red-300" />
-              <span className="text-[12px] font-medium">视频加载失败</span>
+              <span className="text-[12px] font-medium">Falha ao carregar o vídeo</span>
             </div>
           )}
 
@@ -3138,7 +3138,7 @@ export const VideoNode = memo(
           >
             <div className="mb-2 flex items-center gap-1.5 px-1 text-[12px] font-medium text-white/60">
               <VideoIcon className="h-3.5 w-3.5 text-white/45" />
-              画册 · {albumTotalSlots} 条
+              Álbum · {albumTotalSlots} Tiras
             </div>
             <div className="grid grid-cols-2 gap-3">
               {albumUrls.map((url, index) => {
@@ -3148,7 +3148,7 @@ export const VideoNode = memo(
                     key={`album-cell-${index}`}
                     role="button"
                     tabIndex={-1}
-                    title="点击设为主视频"
+                    title="Clique em Definir como vídeo principal"
                     onClick={(event) => {
                       event.stopPropagation();
                       // 拖动画册（移动节点）后松手补发的 click 不算选主视频。
@@ -3188,11 +3188,11 @@ export const VideoNode = memo(
                         event.stopPropagation();
                         handleApplyAlbumVideoToCanvas(url);
                       }}
-                      title="把这条视频作为独立视频节点放到画布上"
+                      title="Coloque este vídeo na tela como um nó de vídeo independente"
                       className="nodrag absolute left-2 top-2 z-10 hidden h-7 items-center gap-1 rounded-md bg-black/70 px-2.5 text-[12px] font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/90 group-hover/albumcell:inline-flex"
                     >
                       <UploadIcon className="h-3.5 w-3.5" />
-                      应用到画布
+                      Aplicar à tela
                     </button>
                     <button
                       type="button"
@@ -3200,14 +3200,14 @@ export const VideoNode = memo(
                         event.stopPropagation();
                         void handleDownloadAlbumVideo(url, index);
                       }}
-                      title="下载这条视频"
+                      title="Baixe este vídeo"
                       className="nodrag absolute right-2 top-2 z-10 hidden h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-sm transition-colors hover:bg-black/90 group-hover/albumcell:inline-flex"
                     >
                       <Download className="h-3.5 w-3.5" />
                     </button>
                     {isMain && (
                       <span className="absolute bottom-2 left-2 z-10 rounded-md bg-black/65 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
-                        主视频
+                        Vídeo Principal
                       </span>
                     )}
                   </div>
@@ -3222,7 +3222,7 @@ export const VideoNode = memo(
                 >
                   <div className="flex flex-col items-center gap-2 text-text-muted/70">
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    <span className="text-[12px]">生成中…</span>
+                    <span className="text-[12px]">Gerando...</span>
                   </div>
                 </div>
               ))}
@@ -3253,7 +3253,7 @@ export const VideoNode = memo(
             />
             {clipError && (
               <div className="rounded-md bg-red-500/15 px-3 py-1.5 text-[11px] text-red-300 break-words [overflow-wrap:anywhere]">
-                剪辑失败：{clipError}
+                Falha no clipe:{clipError}
               </div>
             )}
           </div>
@@ -3497,8 +3497,8 @@ function VideoPlayerControls({
         className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-dark/90 transition-colors hover:bg-white/[0.12] hover:text-text-dark"
         title={
           isPlaying
-            ? t("node.videoNode.player.pause", { defaultValue: "暂停" })
-            : t("node.videoNode.player.play", { defaultValue: "播放" })
+            ? t("node.videoNode.player.pause", { defaultValue: "Pausar" })
+            : t("node.videoNode.player.play", { defaultValue: "Reproduzir" })
         }
       >
         {isPlaying ? (
@@ -3534,8 +3534,8 @@ function VideoPlayerControls({
         className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-dark/90 transition-colors hover:bg-white/[0.12] hover:text-text-dark"
         title={
           isMuted
-            ? t("node.videoNode.player.unmute", { defaultValue: "取消静音" })
-            : t("node.videoNode.player.mute", { defaultValue: "静音" })
+            ? t("node.videoNode.player.unmute", { defaultValue: "Desativar o som" })
+            : t("node.videoNode.player.mute", { defaultValue: "O som estará desativado" })
         }
       >
         {isMuted ? (

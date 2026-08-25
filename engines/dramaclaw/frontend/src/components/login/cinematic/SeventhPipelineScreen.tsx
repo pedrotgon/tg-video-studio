@@ -5,33 +5,33 @@ import styles from "./seventh-pipeline-screen.module.css";
 const steps = [
   {
     id: "01",
-    title: "设定输入",
-    body: "一句开场被拆成角色、场景和叙事约束。",
+    title: "Defina o entrada",
+    body: "Uma frase de abertura é desmembrada em personagem, cena e regra de história",
   },
   {
     id: "02",
-    title: "角色拆解",
-    body: "身份、动机和关系先被锁住，后续生成不再漂移。",
+    title: "Desmembrando os personagens",
+    body: "A identidade, o motivo e as relações são encaminhados e não mais flutuantes",
   },
   {
     id: "03",
-    title: "冲突生成",
-    body: "把事件推到必须选择的位置，让故事自己升温。",
+    title: "Geração de conflito",
+    body: "Empurra o evento para a posição necessária, deixe o storyline ascender",
   },
   {
     id: "04",
-    title: "镜头规划",
-    body: "视角、节奏和画面方向进入同一条可控轨道。",
+    title: "Planejamento da câmera",
+    body: "Ponto de vista, ritmo e direção da câmera entram em um trajeto controlo",
   },
   {
     id: "05",
-    title: "片段成型",
-    body: "单张灵感继续向前，长出场景、预告和连续片段。",
+    title: "Formação do fragmento",
+    body: "Uma ideia de uma foto continua avançando, fazendo cenas, avisos e fragmentos contínuos",
   },
   {
     id: "06",
-    title: "作品扩展",
-    body: "每个结果都能回到生产线，继续生成新的分支。",
+    title: "Expansão do trabalho",
+    body: "Cada resultado pode ser voltado para o processo de produção, gerando novos ramificações",
   },
 ];
 
@@ -75,9 +75,9 @@ export function SeventhPipelineScreen({
 
       <div className={styles.header}>
         <p>PIPELINE 07</p>
-        <h2>让短剧生成从抽卡走向流程</h2>
+        <h2>Travaje de shorts para expandir a imprevisibilidade da AI em vídeo</h2>
         <span>
-          DramaClaw 把 AI 视频创作中的不确定性拆解到文本、资产、镜头和任务流程中
+          DramaClaw torna a incerteza da criação de vídeo AI mais claro na texto, na propriedade, na câmera e no fluxo de trabalho
         </span>
       </div>
 

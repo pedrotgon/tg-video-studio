@@ -36,10 +36,10 @@ export function AssetLibraryNewFolderDialog({
   onClose,
   onSubmit,
   z = 320,
-  title = '新建文件夹',
+  title = 'Nova pasta',
   initialName = '',
-  fieldLabel = '文件夹名称',
-  placeholder = '请输入文件夹名称',
+  fieldLabel = 'Nome da pasta',
+  placeholder = 'Insira um nome de pasta',
   maxLength = FOLDER_NAME_MAX_LEN,
 }: AssetLibraryNewFolderDialogProps) {
   // 素材改名弹窗和文件夹弹窗可能同时挂在树上，写死 id 会重复。
@@ -91,7 +91,7 @@ export function AssetLibraryNewFolderDialog({
           <button
             type="button"
             onClick={onClose}
-            title="关闭"
+            title="Fechar"
             className="inline-flex h-7 w-7 items-center justify-center rounded-md text-text-muted/90 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
           >
             <X className="h-4 w-4" />
@@ -136,7 +136,7 @@ export function AssetLibraryNewFolderDialog({
             className="px-4 text-text-muted hover:text-text-dark"
             onClick={onClose}
           >
-            取消
+            Cancelar
           </Button>
           <Button
             size="sm"
@@ -145,7 +145,7 @@ export function AssetLibraryNewFolderDialog({
             onClick={() => void handleSubmit()}
           >
             {submitting && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
-            保存
+            Salvar
           </Button>
         </div>
       </div>

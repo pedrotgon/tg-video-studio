@@ -25,7 +25,7 @@ const SHARE_DIALOG_ZH: Record<string, string> = {
   "project.shareDialog.roleViewer": "只读查看",
   "project.shareDialog.roleEditor": "可编辑与运行任务",
   "project.shareDialog.roleAdmin": "可管理共享成员",
-  "common.close": "关闭",
+  "common.close": "Fechar",
 };
 
 vi.mock("react-i18next", () => ({

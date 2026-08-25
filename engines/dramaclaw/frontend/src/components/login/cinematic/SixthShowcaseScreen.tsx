@@ -30,9 +30,9 @@ function FilmShowcase({ sequenceProgress }: { sequenceProgress: number }) {
               href={`/watch/${COMMUNITY_WATCH_WORK}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="立即观看社区作品"
+              aria-label="Assista agora ao trabalho criativo da comunidade"
             >
-              <span>立即观看</span>
+              <span>Assista agora a um trabalho criativo</span>
             </a>
           </article>
         ))}
@@ -64,8 +64,8 @@ export function SixthShowcaseScreen({
     <section className={styles.layer} style={style}>
       <div className={styles.header}>
         <p>SHOWCASE 06</p>
-        <h2>按剧集推进到成片</h2>
-        <span>无限画布支持多参、多节点、多版本探索，并在确认后把结果写回主流程，保留自由创作空间</span>
+        <h2>Avance do episódio para o título</h2>
+        <span>A pista infinita suporta múltiplas ideias, nós e versões, explorando a liberdade criativa antes de escrever back</span>
       </div>
 
       <FilmShowcase sequenceProgress={sequenceProgress} />

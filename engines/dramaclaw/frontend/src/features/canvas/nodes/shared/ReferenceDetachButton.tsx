@@ -25,7 +25,7 @@ export function ReferenceDetachButton({ nodeId, onDetach, className }: Reference
     <span
       role="button"
       tabIndex={-1}
-      title="取消引用此素材"
+      title="Desfazer as citações deste material"
       className={
         className ??
         'nodrag absolute right-1 top-1 z-10 hidden h-4 w-4 items-center justify-center rounded-full bg-black/70 text-white shadow-sm ring-1 ring-white/15 transition-colors hover:bg-red-500 group-hover:flex'

@@ -75,7 +75,7 @@ type Tool = 'brush' | 'rect' | 'eraser';
 // 比例与分辨率档位来自后台「媒体模型」对选中模型的配置，这里只留下渲染用的
 // 中文别名（未命中时直接显示原值）。
 const ASPECT_RATIO_LABELS: Partial<Record<FreezoneRedrawAspectRatio, string>> = {
-  original: '原图',
+  original: 'Original',
 };
 
 const NUM_IMAGE_OPTIONS = [1, 2, 3, 4] as const;
@@ -214,7 +214,7 @@ export const EraseOverlay = memo(({ node, imageSource, onClose }: EraseOverlayPr
       sourceImgRef.current = img;
       setImageDims({ w, h });
     };
-    img.onerror = () => setError('无法加载源图');
+    img.onerror = () => setError('Não foi possível carregar o diagrama de origem');
   }, [imageSource]);
 
   // Esc 退出擦除。
@@ -457,7 +457,7 @@ export const EraseOverlay = memo(({ node, imageSource, onClose }: EraseOverlayPr
     (resultAspectRatio: string, position: { x: number; y: number }) => {
       const generationStartedAt = Date.now();
       const nextNodeId = addNode(CANVAS_NODE_TYPES.exportImage, position, {
-        displayName: '擦除',
+        displayName: 'Apagar',
         imageUrl: null,
         previewImageUrl: null,
         aspectRatio: resultAspectRatio,
@@ -543,11 +543,11 @@ export const EraseOverlay = memo(({ node, imageSource, onClose }: EraseOverlayPr
     if (submitting) return;
     const project = readUrl().project;
     if (!project) {
-      setError('当前 URL 没有 project，无法提交');
+      setError('O URL atual não tem um projeto e não pode ser enviado');
       return;
     }
     if (!hasMask) {
-      setError('请先在图上涂抹出要擦除的区域');
+      setError('Por favor, primeiro manche a área que deseja apagar no diagrama');
       return;
     }
     setError(null);
@@ -682,21 +682,21 @@ export const EraseOverlay = memo(({ node, imageSource, onClose }: EraseOverlayPr
               event.stopPropagation();
               onClose();
             }}
-            title="关闭擦除"
-            aria-label="关闭擦除"
+            title="Desativar a eliminação"
+            aria-label="Desativar a eliminação"
           >
             <X className="h-4 w-4" />
           </button>
 
           <ToolbarDivider />
 
-          <ToolBtn active={tool === 'brush'} onClick={() => setTool('brush')} title="画笔">
+          <ToolBtn active={tool === 'brush'} onClick={() => setTool('brush')} title="Escova">
             <Brush className="h-4 w-4" />
           </ToolBtn>
-          <ToolBtn active={tool === 'rect'} onClick={() => setTool('rect')} title="矩形">
+          <ToolBtn active={tool === 'rect'} onClick={() => setTool('rect')} title="Retângulo">
             <Square className="h-4 w-4" />
           </ToolBtn>
-          <ToolBtn active={tool === 'eraser'} onClick={() => setTool('eraser')} title="橡皮擦">
+          <ToolBtn active={tool === 'eraser'} onClick={() => setTool('eraser')} title="Borracha">
             <Eraser className="h-4 w-4" />
           </ToolBtn>
 
@@ -715,16 +715,16 @@ export const EraseOverlay = memo(({ node, imageSource, onClose }: EraseOverlayPr
               onMouseDown={(event) => event.stopPropagation()}
               className={ERASE_SLIDER_CLASS}
               style={brushSliderStyle}
-              title="画笔粗细"
+              title="Espessura da escova"
             />
           </div>
 
           <ToolbarDivider />
 
-          <IconBtn onClick={handleUndo} disabled={!canUndo} title="上一步">
+          <IconBtn onClick={handleUndo} disabled={!canUndo} title="Voltar">
             <Undo2 className="h-4 w-4" />
           </IconBtn>
-          <IconBtn onClick={handleRedo} disabled={!canRedo} title="下一步">
+          <IconBtn onClick={handleRedo} disabled={!canRedo} title="Próximo">
             <Redo2 className="h-4 w-4" />
           </IconBtn>
         </div>
@@ -744,21 +744,21 @@ export const EraseOverlay = memo(({ node, imageSource, onClose }: EraseOverlayPr
           onClick={(event) => event.stopPropagation()}
         >
           <EraseDropdown<FreezoneRedrawAspectRatio>
-            label="比例"
+            label="Proporção"
             value={effectiveAspectRatio}
             options={aspectRatioOptions}
             renderLabel={(v) => ASPECT_RATIO_LABELS[v] ?? v}
             onChange={setAspectRatio}
           />
           <EraseDropdown<string>
-            label="分辨率"
+            label="Resolução"
             value={effectiveImageSize}
             options={sizeOptions}
             renderLabel={(v) => v}
             onChange={setImageSize}
           />
           <EraseDropdown<number>
-            label="张数"
+            label="Número de folhas"
             value={numImages}
             options={NUM_IMAGE_OPTIONS}
             renderLabel={(v) => `${v}张`}
@@ -777,7 +777,7 @@ export const EraseOverlay = memo(({ node, imageSource, onClose }: EraseOverlayPr
             onClick={handleSubmit}
             disabled={submitting || !imageDims || billingRuleMissing}
             className={`ml-1 shrink-0 ${NODE_GENERATE_BUTTON_BASE_CLASS} ${NODE_GENERATE_BUTTON_ENABLED_CLASS} disabled:cursor-not-allowed disabled:opacity-50`}
-            title="提交擦除"
+            title="Enviar eliminação"
           >
             <ArrowUp className="h-4 w-4" />
           </button>

@@ -130,7 +130,7 @@ describe("StyleGalleryModal", () => {
       />,
     );
 
-    expect(screen.queryByRole("button", { name: "清除风格" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Limpeza de estilo" })).toBeNull();
 
     rerender(
       <StyleGalleryModal
@@ -142,7 +142,7 @@ describe("StyleGalleryModal", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "清除风格" }));
+    await user.click(screen.getByRole("button", { name: "Limpeza de estilo" }));
 
     expect(onSelect).toHaveBeenCalledWith(null);
   });
@@ -215,7 +215,7 @@ describe("StyleGalleryModal", () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "查看黄金时代详情" })).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "全部" }));
+    await user.click(screen.getByRole("button", { name: "Todos" }));
 
     expect(
       screen.getByRole("button", { name: "查看黄金时代详情" }),
@@ -234,7 +234,7 @@ describe("StyleGalleryModal", () => {
       />,
     );
 
-    expect(screen.getByText("加载中…")).toBeInTheDocument();
+    expect(screen.getByText("Carregando...")).toBeInTheDocument();
 
     rerender(
       <StyleGalleryModal
@@ -246,7 +246,7 @@ describe("StyleGalleryModal", () => {
       />,
     );
 
-    expect(screen.getByText("暂无风格模板")).toBeInTheDocument();
+    expect(screen.getByText("Ainda não há modelos de estilo")).toBeInTheDocument();
   });
 
   it("returns from the detail view to the gallery", async () => {
@@ -265,7 +265,7 @@ describe("StyleGalleryModal", () => {
     await user.click(screen.getByRole("button", { name: "查看黄金时代详情" }));
     expect(screen.queryByRole("button", { name: "查看武侠江湖详情" })).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "返回" }));
+    await user.click(screen.getByRole("button", { name: "Voltar" }));
 
     expect(
       screen.getByRole("button", { name: "查看武侠江湖详情" }),

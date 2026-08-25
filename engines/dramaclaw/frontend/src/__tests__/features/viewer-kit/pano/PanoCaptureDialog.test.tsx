@@ -92,7 +92,7 @@ describe("PanoCaptureDialog", () => {
     expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
     expect(surfaceProps.current?.onClose).toEqual(expect.any(Function));
 
-    await user.click(screen.getByRole("button", { name: "关闭" }));
+    await user.click(screen.getByRole("button", { name: "Fechar" }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

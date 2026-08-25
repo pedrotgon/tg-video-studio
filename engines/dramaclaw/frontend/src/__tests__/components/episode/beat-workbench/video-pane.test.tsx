@@ -26,20 +26,20 @@ beforeAll(async () => {
         translation: {
           common: {
             confirm: "确认",
-            cancel: "取消",
+            cancel: "Cancelar",
             download: "下载",
-            regenerate: "重新生成",
-            save: "保存",
-            close: "关闭",
+            regenerate: "Regenerar",
+            save: "Salvar",
+            close: "Fechar",
           },
           episode: {
             workbench: {
               video: {
                 started: "Beat #{{n}} 视频已启动",
                 regenFailed: "重生失败",
-                model: "模型",
+                model: "Modelo",
                 generating: "生成中...",
-                genFailed: "生成失败",
+                genFailed: "Falha na geração",
                 notGenerated: "尚未生成",
                 genTitle: "生成视频？",
                 genDesc: "已仔细检查参考图与提示词，将为 Beat #{{n}} 生成视频片段。",
@@ -51,7 +51,7 @@ beforeAll(async () => {
                 switchFailed: "切换失败",
                 seedance2Prompt: "Seedance2.0主体提示词",
                 seedance2Ready: "已配置",
-                seedance2Missing: "缺失",
+                seedance2Missing: "Ausente",
                 seedance2Saved: "Seedance2 配置已保存",
                 seedance2Inspector: "Seedance2 Inspector",
                 seedance2PreviewMode: "Seedance2 预览模式",
@@ -59,23 +59,23 @@ beforeAll(async () => {
                 promptStatus: "Prompt 状态",
                 videoVersions: "视频版本（{{count}}）",
                 renderReady: "Render",
-                audioReady: "音频",
-                videoReady: "视频",
+                audioReady: "Áudio",
+                videoReady: "Vídeo",
                 seedance2References: "参考素材",
-                seedance2Voice: "声线",
+                seedance2Voice: "Som",
                 seedance2ReferenceStats: "{{selected}} 已发送 / {{missing}} 缺失",
                 seedance2TextOverlay: "画面文字",
                 seedance2AtReferences: "@ 引用",
                 seedance2MentionCandidates: "引用候选",
                 seedance2ReferenceDetails: "参考素材详情",
                 seedance2ReferenceSent: "已发送",
-                seedance2ReferenceMissing: "缺失",
+                seedance2ReferenceMissing: "Ausente",
                 seedance2ReferenceFallback: "缺参考图",
-                seedance2ReferenceImage: "参考图",
+                seedance2ReferenceImage: "Diagrama de referência",
                 seedance2ReferenceEmpty: "暂无参考素材",
                 seedance2AssetUpload: "上传素材",
                 seedance2AssetUploaded: "Seedance2 参考素材已上传",
-                seedance2AssetDelete: "删除",
+                seedance2AssetDelete: "Remover",
                 seedance2AssetDeleted: "Seedance2 参考素材已删除",
                 seedance2AssetCrop: "裁剪",
                 seedance2AssetCropped: "Seedance2 参考图已裁剪",
@@ -84,7 +84,7 @@ beforeAll(async () => {
                 seedance2AssetAudioTrimTitle: "裁剪 Seedance2 参考音频",
                 seedance2AssetAudioTrimHint: "保留 3-5 秒清晰单人声。",
                 seedance2AssetAudioTrimStart: "起点",
-                seedance2AssetAudioTrimDuration: "时长",
+                seedance2AssetAudioTrimDuration: "Duração",
                 seedance2AssetAudioTrimApply: "裁剪到 3-5 秒",
                 seedance2AssetAudioTrimInvalid: "裁剪参数无效",
                 seedance2AssetAudioTrimmed: "Seedance2 参考音频已裁剪",
@@ -96,8 +96,8 @@ beforeAll(async () => {
                   multimodal_reference: "多参模式",
                 },
                 mode: "生成模式",
-                duration: "时长",
-                resolution: "分辨率",
+                duration: "Duração",
+                resolution: "Resolução",
                 ratio: "画幅",
                 generateAudio: "生成声音",
                 returnLastFrame: "返回尾帧",
@@ -106,9 +106,9 @@ beforeAll(async () => {
                 generateVideo: "生成视频",
                 preview: {
                   render: "Render",
-                  sketch: "草图",
-                  audio: "音频",
-                  video: "视频",
+                  sketch: "Esboço",
+                  audio: "Áudio",
+                  video: "Vídeo",
                 },
                 previewMissing: {
                   render: "暂无 Render 首帧",
@@ -118,10 +118,10 @@ beforeAll(async () => {
                 },
                 seedance2PromptGuidance: "自定义提示词",
                 seedance2GuidanceSubject: "主体",
-                seedance2GuidanceScene: "场景",
+                seedance2GuidanceScene: "Cenário",
                 seedance2GuidanceLighting: "光影",
-                seedance2GuidanceCamera: "镜头",
-                seedance2GuidanceStyle: "风格",
+                seedance2GuidanceCamera: "Tomada",
+                seedance2GuidanceStyle: "Estilo",
                 seedance2SceneOptimizeLabels: {
                   anime: "动漫",
                   realistic: "写实",
@@ -160,13 +160,13 @@ beforeAll(async () => {
                 seedance2OverlayContent: "文字内容",
                 seedance2OverlaySpeaker: "气泡说话者",
                 seedance2OverlaySpeakerNone: "不指定",
-                narratorVoice: "解说声线",
-                narratorVoiceReady: "解说声线",
+                narratorVoice: "Linhas Sonoras Interpretativas",
+                narratorVoiceReady: "Linhas Sonoras Interpretativas",
                 narratorVoiceMissing: "声线缺失",
-                narratorVoiceUpload: "上传",
+                narratorVoiceUpload: "Enviar",
                 narratorVoiceRecord: "录音",
                 narratorVoiceProjectAudio: "项目音频",
-                narratorVoiceDelete: "删除",
+                narratorVoiceDelete: "Remover",
               },
             },
           },
@@ -519,7 +519,7 @@ vi.mock("@/lib/queries/video", () => ({
               media_type: "image",
               selected: false,
               exists: true,
-              reference_label: "尾帧",
+              reference_label: "Quadro de fuga",
               note: "Seedance2 返回尾帧",
               path: "seedance2/beat_01_last_frame.png",
               url: "/static/demo/seedance2/beat_01_last_frame.png",
@@ -551,7 +551,7 @@ vi.mock("@/lib/queries/video", () => ({
               media_type: "image",
               selected: false,
               exists: false,
-              reference_label: "未发送",
+              reference_label: "Não enviado",
               note: "有图时作为角色身份图保持一致",
             },
           ]).filter(
@@ -862,7 +862,7 @@ describe("VideoPane Seedance2 inspector", () => {
       { defaultBackend: "newapi_seedance-1.0-pro-fast" },
     );
 
-    await user.click(screen.getByRole("button", { name: "重新生成" }));
+    await user.click(screen.getByRole("button", { name: "Regenerar" }));
 
     expect(toast.error).toHaveBeenCalledWith(
       "Beat #1 缺少视频提示词，请先点击“生成本 Beat 提示词”。",
@@ -886,7 +886,7 @@ describe("VideoPane Seedance2 inspector", () => {
       }),
     );
 
-    await user.click(screen.getAllByRole("button", { name: "重新生成" })[0]);
+    await user.click(screen.getAllByRole("button", { name: "Regenerar" })[0]);
 
     expect(toast.error).toHaveBeenCalledWith(
       "Beat #1 缺少 Seedance2.0主体提示词，请先填写或点击“AI 优化”。",
@@ -903,7 +903,7 @@ describe("VideoPane Seedance2 inspector", () => {
     });
     renderPane();
 
-    await user.click(screen.getAllByRole("button", { name: "重新生成" })[0]);
+    await user.click(screen.getAllByRole("button", { name: "Regenerar" })[0]);
     await user.click(screen.getByRole("button", { name: "确认" }));
 
     expect(toast.error).toHaveBeenCalledWith(
@@ -919,10 +919,10 @@ describe("VideoPane Seedance2 inspector", () => {
     fireEvent.change(screen.getByLabelText("Seedance2.0主体提示词"), {
       target: { value: "draft prompt used for generation" },
     });
-    fireEvent.change(screen.getByLabelText("时长"), {
+    fireEvent.change(screen.getByLabelText("Duração"), {
       target: { value: "8" },
     });
-    await user.click(screen.getAllByRole("button", { name: "重新生成" })[0]);
+    await user.click(screen.getAllByRole("button", { name: "Regenerar" })[0]);
     await user.click(screen.getByRole("button", { name: "确认" }));
 
     await waitFor(() => expect(updateBeatMock).toHaveBeenCalledTimes(1));
@@ -942,14 +942,14 @@ describe("VideoPane Seedance2 inspector", () => {
     const user = userEvent.setup();
     renderPane();
 
-    const durationInput = screen.getByLabelText("时长");
+    const durationInput = screen.getByLabelText("Duração");
     expect(durationInput).toHaveAttribute("min", "4");
     expect(durationInput).toHaveAttribute("max", "15");
 
     fireEvent.change(durationInput, {
       target: { value: "3" },
     });
-    await user.click(screen.getAllByRole("button", { name: "重新生成" })[0]);
+    await user.click(screen.getAllByRole("button", { name: "Regenerar" })[0]);
     await user.click(screen.getByRole("button", { name: "确认" }));
 
     await waitFor(() => expect(updateBeatMock).toHaveBeenCalledTimes(1));
@@ -998,9 +998,9 @@ describe("VideoPane Seedance2 inspector", () => {
     expect(screen.getByText("当前 render · Beat 1")).toBeInTheDocument();
     expect(screen.getByText("陆辰 · 青年时期")).toBeInTheDocument();
     expect(screen.getByText("有图时作为角色身份图保持一致")).toBeInTheDocument();
-    expect(screen.getByText("参考图")).toBeInTheDocument();
+    expect(screen.getByText("Diagrama de referência")).toBeInTheDocument();
     expect(screen.getByText("缺参考图")).toBeInTheDocument();
-    expect(screen.queryByText("未发送")).not.toBeInTheDocument();
+    expect(screen.queryByText("Não enviado")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "上传素材" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "插入引用" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "裁剪" }).length).toBeGreaterThan(0);
@@ -1010,7 +1010,7 @@ describe("VideoPane Seedance2 inspector", () => {
     expect(
       screen.queryByRole("group", { name: "Seedance2 预览模式" }),
     ).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "音频" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Áudio" })).not.toBeInTheDocument();
     expect(screen.getAllByText("Render").length).toBeGreaterThan(0);
     expect(screen.getAllByText("已配置").length).toBeGreaterThan(0);
   });
@@ -1046,7 +1046,7 @@ describe("VideoPane Seedance2 inspector", () => {
     renderPane(makeBeat(), { showAudioMediaStatus: false });
 
     expect(screen.getAllByText("Render").length).toBeGreaterThan(0);
-    expect(screen.queryByRole("button", { name: "音频" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Áudio" })).not.toBeInTheDocument();
   });
 
   it("shows readable backend labels on video version thumbnails", () => {
@@ -1062,7 +1062,7 @@ describe("VideoPane Seedance2 inspector", () => {
       defaultBackend: "newapi_seedance-2.0-value",
     });
 
-    expect(screen.getByRole("radiogroup", { name: "风格" })).toBeInTheDocument();
+    expect(screen.getByRole("radiogroup", { name: "Estilo" })).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "动漫" })).toHaveAttribute(
       "aria-checked",
       "true",
@@ -1082,7 +1082,7 @@ describe("VideoPane Seedance2 inspector", () => {
       defaultBackend: "newapi_seedance-2.0",
     });
 
-    await user.click(screen.getByRole("combobox", { name: "分辨率" }));
+    await user.click(screen.getByRole("combobox", { name: "Resolução" }));
     expect(await screen.findByRole("option", { name: "480p" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "720p" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "1080p" })).toBeInTheDocument();
@@ -1100,7 +1100,7 @@ describe("VideoPane Seedance2 inspector", () => {
         "true",
       ),
     );
-    await user.click(screen.getByLabelText("分辨率"));
+    await user.click(screen.getByLabelText("Resolução"));
     expect(await screen.findByRole("option", { name: "720p" })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: "480p" })).not.toBeInTheDocument();
     expect(screen.getByRole("option", { name: "1080p" })).toBeInTheDocument();
@@ -1151,7 +1151,7 @@ describe("VideoPane Seedance2 inspector", () => {
         />
       </I18nextProvider>,
     );
-    await user.click(screen.getAllByRole("button", { name: "重新生成" })[0]);
+    await user.click(screen.getAllByRole("button", { name: "Regenerar" })[0]);
     await user.click(screen.getByRole("button", { name: "确认" }));
 
     await waitFor(() => expect(regenerateMock).toHaveBeenCalledTimes(1));
@@ -1171,7 +1171,7 @@ describe("VideoPane Seedance2 inspector", () => {
   it("hides scene optimize styles for non-value Seedance2 models", () => {
     renderPane();
 
-    expect(screen.queryByRole("radiogroup", { name: "风格" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("radiogroup", { name: "Estilo" })).not.toBeInTheDocument();
   });
 
   it("does not expose raw Seedance2 mode names in the Seedance2 controls", () => {
@@ -1389,7 +1389,7 @@ describe("VideoPane Seedance2 inspector", () => {
     fireEvent.change(screen.getByLabelText("Seedance2.0主体提示词"), {
       target: { value: "new seedance2 prompt" },
     });
-    fireEvent.change(screen.getByLabelText("时长"), {
+    fireEvent.change(screen.getByLabelText("Duração"), {
       target: { value: "8" },
     });
     await waitForSeedance2Autosave();
@@ -1846,9 +1846,9 @@ describe("VideoPane Seedance2 inspector", () => {
             enabled: true,
             kind: "speech_bubble",
             content: "鹿镇北口",
-            placement: "画面下方居中",
-            timing: "全片持续",
-            style: "干净易读",
+            placement: "Centralizado na parte inferior da tela",
+            timing: "Contínuo em toda a cena",
+            style: "Limpo e legível",
             speaker: "陆辰_青年时期",
           },
         }),
@@ -1868,9 +1868,9 @@ describe("VideoPane Seedance2 inspector", () => {
       enabled: false,
       kind: "speech_bubble",
       content: "鹿镇北口",
-      placement: "画面下方居中",
-      timing: "全片持续",
-      style: "干净易读",
+      placement: "Centralizado na parte inferior da tela",
+      timing: "Contínuo em toda a cena",
+      style: "Limpo e legível",
       speaker: "陆辰_青年时期",
     });
   });
@@ -2031,11 +2031,11 @@ describe("VideoPane Seedance2 inspector", () => {
     const user = userEvent.setup();
     renderPane();
 
-    await user.click(screen.getByRole("button", { name: "镜头" }));
-    await user.click(screen.getByRole("button", { name: "镜头" }));
+    await user.click(screen.getByRole("button", { name: "Tomada" }));
+    await user.click(screen.getByRole("button", { name: "Tomada" }));
 
     const template =
-      "镜头：说明景别、视角、运镜速度和运动方向，保持镜头运动清晰可执行。";
+      "Enquadramento: especifique o plano, ângulo, velocidade de movimento da câmera e direção do movimento, mantenha o movimento da câmera claro e executável.";
     expect(screen.getByLabelText("自定义提示词")).toHaveValue(template);
     await waitForSeedance2Autosave();
     const payload = updateBeatMock.mock.calls[0][0];
@@ -2046,7 +2046,7 @@ describe("VideoPane Seedance2 inspector", () => {
   it("does not render project narrator voice management inside the video pane", () => {
     renderPane();
 
-    expect(screen.queryByText("解说声线")).not.toBeInTheDocument();
+    expect(screen.queryByText("Linhas Sonoras Interpretativas")).not.toBeInTheDocument();
     expect(screen.queryByText("第三人称项目解说声线")).not.toBeInTheDocument();
     expect(screen.queryByText("assets/narrator/voice.wav")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "项目音频" })).not.toBeInTheDocument();

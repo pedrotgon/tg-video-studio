@@ -77,7 +77,7 @@ const PRESET_CONFIGS: Record<Exclude<MultiAnglePresetKey, 'custom'>, MultiAngleP
     horizontalDeg: 0,
     verticalDeg: 30,
     zoom: 'extreme_close_up',
-    defaultOverride: '极度特写镜头，广角镜头，边缘带有鱼眼畸变效果。',
+    defaultOverride: 'Lente grande angular de close-up extremo com aberração olho de peixe nas bordas.',
   },
   tilted: {
     horizontalDeg: 45,

@@ -263,7 +263,7 @@ async function applyStoryboardTextOverlay(
 
   const context = canvas.getContext('2d');
   if (!context) {
-    throw new Error('导出画布初始化失败');
+    throw new Error('Falha na inicialização da tela de exportação');
   }
 
   context.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -423,7 +423,7 @@ const FrameCard = memo(
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[11px] text-text-muted">
-              空格
+              Espaço
             </div>
           )}
 
@@ -435,7 +435,7 @@ const FrameCard = memo(
               event.stopPropagation();
               onEditFrame(frame);
             }}
-            title="单独编辑此格"
+            title="Edite esta célula individualmente"
           >
             <SquareArrowOutUpRight className="h-3 w-3" />
           </button>
@@ -448,7 +448,7 @@ const FrameCard = memo(
               event.stopPropagation();
               onTogglePicker(frame.id, event.clientX, event.clientY);
             }}
-            title="从输入图片替换"
+            title="Substituir da imagem de entrada"
           >
             <ImagePlus className="h-3 w-3" />
           </button>
@@ -682,7 +682,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
       try {
         const sourceImage = frame.imageUrl ?? frame.previewImageUrl;
         if (!sourceImage) {
-          setExportError('该格没有可编辑图片');
+          setExportError('Esta célula não tem imagens editáveis');
           return;
         }
         const frameIndex = orderedFrames.findIndex((item) => item.id === frame.id);
@@ -714,7 +714,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
           addEdge(id, createdNodeId);
         }
       } catch (error) {
-        setExportError(error instanceof Error ? error.message : '创建编辑节点失败');
+        setExportError(error instanceof Error ? error.message : 'Falha ao criar nó de edição');
       }
     },
     [addDerivedExportNode, addEdge, id, orderedFrames]
@@ -744,7 +744,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
         (frame) => frame.imageUrl ?? frame.previewImageUrl ?? ''
       );
       if (frameSources.every((source) => !source)) {
-        throw new Error('没有可导出的图片');
+        throw new Error('Nenhuma imagem para exportar');
       }
       console.info(`${EXPORT_TRACE_PREFIX} frame-sources-ready`, {
         traceId,
@@ -901,7 +901,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
         elapsedMs: Math.round(performance.now() - traceStart),
         error,
       });
-      setExportError(error instanceof Error ? error.message : '导出失败');
+      setExportError(error instanceof Error ? error.message : 'Falha na exportação');
     } finally {
       setIsExporting(false);
     }
@@ -938,7 +938,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
         .filter((item) => item.source.length > 0);
 
       if (frameEntries.length === 0) {
-        throw new Error('该格没有可导出的图片');
+        throw new Error('Esta célula não tem imagens para exportar');
       }
 
       const rootDir = await resolvePackRootDir();
@@ -946,9 +946,9 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
         return;
       }
 
-      const normalizedProjectName = sanitizePathSegment(readUrl().project ?? '', '未命名项目');
+      const normalizedProjectName = sanitizePathSegment(readUrl().project ?? '', 'Item sem nome');
       const outputDir = [rootDir, normalizedProjectName].filter(Boolean).join('/');
-      const fileProjectName = sanitizeExportLabel(normalizedProjectName, 40) || '项目';
+      const fileProjectName = sanitizeExportLabel(normalizedProjectName, 40) || 'Item';
       for (const item of frameEntries) {
         const frameNo = String(item.index + 1).padStart(2, '0');
         const noteLabel = sanitizeExportLabel(item.note, 60);
@@ -959,7 +959,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
       }
 
     } catch (error) {
-      setExportError(error instanceof Error ? error.message : '打包下载失败');
+      setExportError(error instanceof Error ? error.message : 'Falha no download do pacote');
     } finally {
       setIsPackingSingleImages(false);
     }
@@ -1087,7 +1087,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
               </div>
             ) : (
               <div className="px-2 py-2 text-sm text-text-muted">
-                暂无输入图片
+                Nenhuma imagem inserida
               </div>
             )}
           </div>,
@@ -1109,7 +1109,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
                   checked={exportOptions.showFrameIndex}
                   onCheckedChange={(checked) => patchExportOptions({ showFrameIndex: checked })}
                 />
-                显示格序号
+                Exibir número da célula
               </label>
               <label className="flex items-center gap-2 whitespace-nowrap text-text-dark/90">
                 <UiCheckbox
@@ -1117,13 +1117,13 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
                   checked={exportOptions.showFrameNote}
                   onCheckedChange={(checked) => patchExportOptions({ showFrameNote: checked })}
                 />
-                显示格描述
+                Mostrar descrição da grade
               </label>
             </div>
 
             <div className="grid grid-cols-3 gap-2">
               <label className="grid min-w-0 gap-1">
-                <span className="truncate">图片填充</span>
+                <span className="truncate">Preenchimento de imagem</span>
                 <UiSelect
                   className={STORYBOARD_EXPORT_FIELD_CLASS}
                   value={exportOptions.imageFit}
@@ -1133,12 +1133,12 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
                     })
                   }
                 >
-                  <option value="cover">填充满格子</option>
-                  <option value="contain">完整显示</option>
+                  <option value="cover">Preencha a grade</option>
+                  <option value="contain">Exibição completa</option>
                 </UiSelect>
               </label>
               <label className="grid min-w-0 gap-1">
-                <span className="truncate">描述位置</span>
+                <span className="truncate">Descreva a localização</span>
                 <UiSelect
                   className={STORYBOARD_EXPORT_FIELD_CLASS}
                   value={exportOptions.notePlacement}
@@ -1148,12 +1148,12 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
                     })
                   }
                 >
-                  <option value="overlay">图上遮罩</option>
-                  <option value="bottom">图下文字</option>
+                  <option value="overlay">Máscara no diagrama</option>
+                  <option value="bottom">Texto Gráfico</option>
                 </UiSelect>
               </label>
               <label className="grid min-w-0 gap-1">
-                <span className="truncate">序号前缀</span>
+                <span className="truncate">Prefixo do número de sequência</span>
                 <UiInput
                   value={exportOptions.frameIndexPrefix}
                   maxLength={4}
@@ -1165,7 +1165,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
 
             <div className="grid grid-cols-4 gap-2">
               <label className="grid min-w-0 gap-1">
-                <span className="truncate">间距</span>
+                <span className="truncate">Espaçamento</span>
                 <UiInput
                   type="number"
                   min={0}
@@ -1178,7 +1178,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
                 />
               </label>
               <label className="grid min-w-0 gap-1">
-                <span className="truncate">字号(%)</span>
+                <span className="truncate">Tamanho da fonte (%)</span>
                 <UiInput
                   type="number"
                   min={1}
@@ -1191,7 +1191,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
                 />
               </label>
               <label className="grid min-w-0 gap-1">
-                <span className="truncate">背景</span>
+                <span className="truncate">Fundamentos</span>
                 <input
                   type="color"
                   value={exportOptions.backgroundColor}
@@ -1200,7 +1200,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
                 />
               </label>
               <label className="grid min-w-0 gap-1">
-                <span className="truncate">文字</span>
+                <span className="truncate">Texto</span>
                 <input
                   type="color"
                   value={exportOptions.textColor}
@@ -1229,12 +1229,12 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
               }}
             >
               <SlidersHorizontal className={`${NODE_CONTROL_ICON_CLASS} shrink-0`} />
-              <span>导出设置</span>
+              <span>Exportar configurações</span>
             </UiChipButton>
           </div>
 
           <div className="truncate text-[11px] text-text-muted/80">
-            {gridRows} x {gridCols} | {totalFrames} 格
+            {gridRows} x {gridCols} | {totalFrames} Grade
           </div>
         </div>
 
@@ -1250,7 +1250,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
             disabled={isAnyExporting}
           >
             <FolderOpen className={NODE_CONTROL_ICON_CLASS} />
-            {isPackingSingleImages ? '打包中...' : '打包下载'}
+            {isPackingSingleImages ? 'Empacotando...' : 'Pacote para download'}
           </UiButton>
           <UiButton
             size="sm"
@@ -1263,7 +1263,7 @@ export const StoryboardNode = memo(({ id, data, selected, width, height }: Story
             disabled={isAnyExporting}
           >
             <Download className={NODE_CONTROL_ICON_CLASS} />
-            {isExporting ? '导出中...' : '合并宫格'}
+            {isExporting ? 'Exportando...' : 'Mesclar Palácios'}
           </UiButton>
         </div>
       </div>

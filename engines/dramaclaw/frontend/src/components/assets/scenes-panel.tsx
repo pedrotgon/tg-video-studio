@@ -227,14 +227,14 @@ function SceneDialog({
     generatedPlateName && hasPlateSuffix
       ? generatedPlateName
       : t("assets.scenes.generatedPlateNamePlaceholder", {
-          defaultValue: "填写变体或时间后自动生成",
+          defaultValue: "Preencher Variação ou Gerar Automaticamente Após o Tempo",
         });
   const title = initial
     ? isPlateDialog
-      ? t("assets.scenes.editPlate", { defaultValue: "编辑场景变体" })
+      ? t("assets.scenes.editPlate", { defaultValue: "Editar Variação da Cena" })
       : t("assets.scenes.editScene")
     : isPlateDialog
-      ? t("assets.scenes.newPlate", { defaultValue: "添加场景变体" })
+      ? t("assets.scenes.newPlate", { defaultValue: "Adicionar Variação da Cena" })
       : t("assets.scenes.newScene");
   const SCENE_DIALOG_INPUT_CLASS =
     "h-11 rounded-[8px] border-white/12 bg-white/[0.04] px-3 text-sm placeholder:text-muted-foreground/70 focus-visible:border-white/25 focus-visible:ring-2 focus-visible:ring-white/8 dark:bg-white/[0.04]";
@@ -315,12 +315,12 @@ function SceneDialog({
               <div className="grid min-w-0 gap-2">
                 <Label className="text-sm">
                   {t("assets.scenes.generatedPlateName", {
-                    defaultValue: "资产名",
+                    defaultValue: "Nome do Ativo",
                   })}
                 </Label>
                 <div
                   aria-label={t("assets.scenes.generatedPlateName", {
-                    defaultValue: "资产名",
+                    defaultValue: "Nome do Ativo",
                   })}
                   className={SCENE_DIALOG_DISPLAY_CLASS}
                 >
@@ -339,12 +339,12 @@ function SceneDialog({
                 <div className="grid min-w-0 gap-2">
                   <Label className="text-sm">
                     {t("assets.scenes.fields.baseScene", {
-                      defaultValue: "基础场景",
+                      defaultValue: "Cena Base",
                     })}
                   </Label>
                   <Input
                     aria-label={t("assets.scenes.fields.baseScene", {
-                      defaultValue: "基础场景",
+                      defaultValue: "Cena Base",
                     })}
                     value={draft.base_scene_id ?? ""}
                     readOnly
@@ -353,11 +353,11 @@ function SceneDialog({
                 </div>
                 <div className="grid min-w-0 gap-2">
                   <Label className="text-sm">
-                    {t("assets.scenes.fields.variant", { defaultValue: "变体" })}
+                    {t("assets.scenes.fields.variant", { defaultValue: "Variante" })}
                   </Label>
                   <Input
                     aria-label={t("assets.scenes.fields.variant", {
-                      defaultValue: "变体",
+                      defaultValue: "Variante",
                     })}
                     value={draft.variant_id ?? ""}
                     onChange={(event) =>
@@ -367,14 +367,14 @@ function SceneDialog({
                       }))
                     }
                     placeholder={t("assets.scenes.fields.variantPlaceholder", {
-                      defaultValue: "漏水",
+                      defaultValue: "Vazamento",
                     })}
                     className={SCENE_DIALOG_INPUT_CLASS}
                   />
                 </div>
                 <div className="grid min-w-0 gap-2">
                   <Label className="text-sm">
-                    {t("assets.scenes.fields.timeOfDay", { defaultValue: "时间" })}
+                    {t("assets.scenes.fields.timeOfDay", { defaultValue: "Tempo" })}
                   </Label>
                   <Select
                     value={draft.time_of_day || "__NO_SCENE_TIME__"}
@@ -389,7 +389,7 @@ function SceneDialog({
                     <SelectTrigger
                       size="sm"
                       aria-label={t("assets.scenes.fields.timeOfDay", {
-                        defaultValue: "时间",
+                        defaultValue: "Tempo",
                       })}
                       className={SCENE_DIALOG_SELECT_TRIGGER_CLASS}
                     >
@@ -424,7 +424,7 @@ function SceneDialog({
               <p className="text-xs leading-5 text-muted-foreground">
                 {t("assets.scenes.fields.nameRule", {
                   defaultValue:
-                    "普通独立场景只填名称；不要在这里填写变体或时间。需要状态/时间版时，在场景详情里添加变体。",
+                    "Preencha apenas o nome da cena de cenário independente comum; não preencha variantes ou tempo aqui. Se precisar de uma versão com estado/tempo, adicione a variante nos detalhes da cena.",
                 })}
               </p>
             </div>
@@ -434,12 +434,12 @@ function SceneDialog({
             <div className="grid gap-2">
               <Label className="text-sm">
                 {t("assets.scenes.fields.variantPrompt", {
-                  defaultValue: "变体增量提示词",
+                  defaultValue: "Prompt de incremento de variante",
                 })}
               </Label>
               <Textarea
                 aria-label={t("assets.scenes.fields.variantPrompt", {
-                  defaultValue: "变体增量提示词",
+                  defaultValue: "Prompt de incremento de variante",
                 })}
                 rows={4}
                 value={draft.variant_prompt ?? ""}
@@ -451,7 +451,7 @@ function SceneDialog({
                 }
                 placeholder={t("assets.scenes.fields.variantPromptPlaceholder", {
                   defaultValue:
-                    "只写和基础场景不同的部分，例如积水反光、焦黑墙面、节日装饰。",
+                    "Escreva apenas as partes diferentes do cenário base, como reflexo da água, parede escura, decoração festiva.",
                 })}
                 className={SCENE_DIALOG_TEXTAREA_CLASS}
               />
@@ -1088,7 +1088,7 @@ function SceneGroupListItem({
       type="button"
       aria-label={t("assets.scenes.selectScene", {
         name: group.baseName,
-        defaultValue: "选择场景 {{name}}",
+        defaultValue: "Selecione o cenário {{name}}",
       })}
       aria-pressed={selected}
       onClick={onSelect}
@@ -1118,7 +1118,7 @@ function SceneGroupListItem({
             <span>
               {t("assets.scenes.variantCount", {
                 count: group.scenes.length,
-                defaultValue: "{{count}} 个变体",
+                defaultValue: "{{count}} variantes",
               })}
             </span>
           ) : null}
@@ -1126,7 +1126,7 @@ function SceneGroupListItem({
             <span>
               {t("assets.scenes.referenceCount", {
                 count: referenceCount,
-                defaultValue: "{{count}} 次使用",
+                defaultValue: "{{count}} usos",
               })}
             </span>
           ) : null}
@@ -1513,7 +1513,7 @@ export function ScenesPanel({
                             }}
                             title={t("assets.scenes.newPlateHint", {
                               defaultValue:
-                                "场景变体即「同一个地点的不同状态」",
+                                "Variante de cena é \"estados diferentes do mesmo local\"",
                             })}
                             className="h-8 gap-1 rounded-[8px] border-white/10 bg-transparent px-3 text-xs font-normal shadow-none hover:bg-white/[0.04] dark:bg-transparent"
                           />
@@ -1521,12 +1521,12 @@ export function ScenesPanel({
                       >
                         <Plus className="size-3.5" />
                         {t("assets.scenes.newPlate", {
-                          defaultValue: "添加场景变体",
+                          defaultValue: "Adicionar Variação da Cena",
                         })}
                       </TooltipTrigger>
                       <TooltipContent side="bottom">
                         {t("assets.scenes.newPlateHint", {
-                          defaultValue: "场景变体即「同一个地点的不同状态」",
+                          defaultValue: "Variante de cena é \"estados diferentes do mesmo local\"",
                         })}
                       </TooltipContent>
                     </Tooltip>

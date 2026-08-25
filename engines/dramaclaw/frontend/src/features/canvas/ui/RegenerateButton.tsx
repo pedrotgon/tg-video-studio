@@ -22,7 +22,7 @@ export function RegenerateButton({
   onClick,
   busy = false,
   disabled = false,
-  label = '重新生成',
+  label = 'Regenerar',
   title,
   className = '',
 }: RegenerateButtonProps) {

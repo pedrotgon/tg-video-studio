@@ -142,17 +142,17 @@ interface ScriptActionDef {
 const SCRIPT_ACTIONS: ScriptActionDef[] = [
   {
     key: 'fromScript',
-    label: '剧本生成分镜脚本',
+    label: 'Script Geração Split Script',
     Icon: AlignJustify,
   },
   {
     key: 'fromVideoRef',
-    label: '视频参考生成分镜脚本',
+    label: 'Script de divisão de geração de referência de vídeo',
     Icon: Video,
   },
   {
     key: 'fromCharacter',
-    label: '角色生成分镜脚本',
+    label: 'Roteiro de Preparação de Geração de Função',
     Icon: User,
   },
 ];
@@ -171,25 +171,25 @@ interface ScriptColumnDef {
 }
 
 const SCRIPT_COLUMNS: ScriptColumnDef[] = [
-  { key: 'shot_no', label: '镜号', widthPx: 60 },
-  { key: 'duration', label: '时长', widthPx: 80 },
-  { key: 'visual_description', label: '画面描述', widthPx: 200 },
-  { key: 'character_1', label: '角色1', widthPx: 120 },
-  { key: 'character_description_1', label: '角色描述1', widthPx: 180 },
-  { key: 'character_image_1', label: '角色图1', widthPx: 80, render: 'image' },
-  { key: 'character_2', label: '角色2', widthPx: 120 },
-  { key: 'character_description_2', label: '角色描述2', widthPx: 180 },
-  { key: 'character_image_2', label: '角色图2', widthPx: 80, render: 'image' },
-  { key: 'reference', label: '参考', widthPx: 80, render: 'image' },
-  { key: 'shot', label: '景别', widthPx: 120 },
-  { key: 'character_action', label: '角色动作', widthPx: 120 },
-  { key: 'emotion', label: '情绪', widthPx: 120 },
-  { key: 'scene_tags', label: '场景标签', widthPx: 120 },
-  { key: 'lighting_mood', label: '光影氛围', widthPx: 120 },
-  { key: 'sound', label: '音效', widthPx: 120 },
-  { key: 'dialogue', label: '对白', widthPx: 120 },
-  { key: 'shot_prompt', label: '分镜提示词', widthPx: 200 },
-  { key: 'video_motion_prompt', label: '视频运动提示词', widthPx: 200 },
+  { key: 'shot_no', label: 'Nº do espelho', widthPx: 60 },
+  { key: 'duration', label: 'Duração', widthPx: 80 },
+  { key: 'visual_description', label: 'Descrição visual', widthPx: 200 },
+  { key: 'character_1', label: 'Função 1', widthPx: 120 },
+  { key: 'character_description_1', label: 'Descrição da Função 1', widthPx: 180 },
+  { key: 'character_image_1', label: 'Diagrama de Funções 1', widthPx: 80, render: 'image' },
+  { key: 'character_2', label: 'Função 2', widthPx: 120 },
+  { key: 'character_description_2', label: 'Descrição da Função 2', widthPx: 180 },
+  { key: 'character_image_2', label: 'Diagrama de funções 2', widthPx: 80, render: 'image' },
+  { key: 'reference', label: 'Referência', widthPx: 80, render: 'image' },
+  { key: 'shot', label: 'Paisagem', widthPx: 120 },
+  { key: 'character_action', label: 'Ações da Função', widthPx: 120 },
+  { key: 'emotion', label: 'Emoções', widthPx: 120 },
+  { key: 'scene_tags', label: 'Rótulo de Cenário', widthPx: 120 },
+  { key: 'lighting_mood', label: 'Atmosfera de Luz e Sombra', widthPx: 120 },
+  { key: 'sound', label: 'Som', widthPx: 120 },
+  { key: 'dialogue', label: 'Diálogo', widthPx: 120 },
+  { key: 'shot_prompt', label: 'Prompt de escopo', widthPx: 200 },
+  { key: 'video_motion_prompt', label: 'Prompt de movimento de vídeo', widthPx: 200 },
 ];
 
 const SCRIPT_TABLE_MIN_WIDTH = SCRIPT_COLUMNS.reduce(
@@ -300,7 +300,7 @@ function useScriptStorySubmit(
     const project = readUrl().project;
     if (!project) {
       console.error('[script-node] submit: no project in URL');
-      updateNodeData(nodeId, { generationError: '缺少 project 参数' });
+      updateNodeData(nodeId, { generationError: 'Parâmetro de projeto ausente' });
       return;
     }
 
@@ -329,7 +329,7 @@ function useScriptStorySubmit(
     // steering prompt，不再被冒充成剧本正文。
     if (!hasMedia && sourceText.length === 0) {
       updateNodeData(nodeId, {
-        generationError: '请输入提示词描述剧情，或连接视频 / 角色图片节点',
+        generationError: 'Insira um prompt para descrever a história ou conecte o nó Imagem de vídeo/personagem',
       });
       return;
     }
@@ -577,7 +577,7 @@ export const ScriptNode = memo(({ id, data, selected, width, height }: ScriptNod
         // 上游 text 节点只用作内容输入：referenceOnly 关掉 mode 列表 / 模型 / 提交。
         const newId = spawn(CANVAS_NODE_TYPES.textAnnotation, SPAWN_TEXT_WIDTH, SPAWN_TEXT_HEIGHT, 0, {
           referenceOnly: true,
-          displayName: '剧本',
+          displayName: 'Roteiro',
         });
         state.autoGroupSpawn(id, [newId], { label: `${action.label}组` });
       } else if (action.key === 'fromVideoRef') {
@@ -592,7 +592,7 @@ export const ScriptNode = memo(({ id, data, selected, width, height }: ScriptNod
           CANVAS_NODE_TYPES.upload,
           SPAWN_UPLOAD_WIDTH,
           SPAWN_UPLOAD_HEIGHT,
-          [{ displayName: '角色 1' }, { displayName: '角色 2' }],
+          [{ displayName: 'Função 1' }, { displayName: 'Função 2' }],
         );
         state.autoGroupSpawn(id, newIds, { label: `${action.label}组` });
       }
@@ -662,7 +662,7 @@ export const ScriptNode = memo(({ id, data, selected, width, height }: ScriptNod
                 >
                   {data.generationError}
                 </span>
-                <RegenerateButton label="重试" onClick={() => void submit()} />
+                <RegenerateButton label="Tentar novamente" onClick={() => void submit()} />
               </div>
             )}
             <div className="flex-1 overflow-hidden p-2">
@@ -677,7 +677,7 @@ export const ScriptNode = memo(({ id, data, selected, width, height }: ScriptNod
             >
               {!hasUpstream && (
                 <>
-                  <div className="text-xs text-[var(--canvas-node-input-helper)]">试试：</div>
+                  <div className="text-xs text-[var(--canvas-node-input-helper)]">Experimente:</div>
                   <div className="flex flex-col gap-0.5">
                     {SCRIPT_ACTIONS.map((action) => {
                       const Icon = action.Icon;
@@ -706,7 +706,7 @@ export const ScriptNode = memo(({ id, data, selected, width, height }: ScriptNod
                     {data.generationError}
                   </span>
                   <RegenerateButton
-                    label="重试"
+                    label="Tentar novamente"
                     onClick={() => void submit()}
                     busy={isGenerating}
                   />
@@ -743,7 +743,7 @@ export const ScriptNode = memo(({ id, data, selected, width, height }: ScriptNod
                 {headerSubtitle && (
                   <span className="text-sm text-text-muted">{headerSubtitle}</span>
                 )}
-                <span className="text-sm text-text-muted">共 {rows.length} 个分镜</span>
+                <span className="text-sm text-text-muted">de {rows.length} Espelho Dividido</span>
               </div>
               <button
                 type="button"
@@ -751,7 +751,7 @@ export const ScriptNode = memo(({ id, data, selected, width, height }: ScriptNod
                 onClick={() => setIsFullscreen(false)}
               >
                 <X className="h-4 w-4" />
-                关闭
+                Fechar
               </button>
             </div>
             <div className="flex-1 overflow-hidden rounded-lg border border-[rgba(255,255,255,0.12)] bg-surface-dark/95">
@@ -780,7 +780,7 @@ function ScriptResultHeader({ title, onFullscreen }: ScriptResultHeaderProps) {
     <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.08)] px-3 py-2">
       <div className="flex min-w-0 items-center gap-2">
         <span className="truncate text-[13px] font-medium text-text-dark">
-          {title || '分镜脚本'}
+          {title || 'Scripts de Preparação'}
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -790,7 +790,7 @@ function ScriptResultHeader({ title, onFullscreen }: ScriptResultHeaderProps) {
           className="inline-flex h-6 items-center gap-1 rounded border border-[rgba(255,255,255,0.18)] bg-bg-dark/60 px-2 text-[11px] text-text-dark hover:border-[rgba(255,255,255,0.32)]"
           onClick={(event) => event.stopPropagation()}
         >
-          脚本视图
+          Visualização de script
           <ChevronDown className="h-3 w-3" />
         </button>
         <button
@@ -802,7 +802,7 @@ function ScriptResultHeader({ title, onFullscreen }: ScriptResultHeaderProps) {
           }}
         >
           <Expand className="h-3 w-3" />
-          全屏
+          Tela cheia
         </button>
       </div>
     </div>
@@ -945,7 +945,7 @@ function ScriptImageCell({ url, onCommit }: ScriptImageCellProps) {
       if (!file || !onCommit) return;
       const project = readUrl().project;
       if (!project) {
-        setUploadError('缺少 project 参数');
+        setUploadError('Parâmetro de projeto ausente');
         return;
       }
       setUploading(true);
@@ -955,7 +955,7 @@ function ScriptImageCell({ url, onCommit }: ScriptImageCellProps) {
         onCommit(result.url);
       } catch (error) {
         console.error('[script-node] cell image upload failed', error);
-        setUploadError(error instanceof Error ? error.message : '上传失败');
+        setUploadError(error instanceof Error ? error.message : 'Falha ao carregar');
       } finally {
         setUploading(false);
       }
@@ -992,7 +992,7 @@ function ScriptImageCell({ url, onCommit }: ScriptImageCellProps) {
           type="button"
           onClick={openPicker}
           disabled={uploading}
-          title="点击上传图片"
+          title="Clique para carregar a imagem"
           className="flex h-14 w-14 items-center justify-center rounded border border-dashed border-[rgba(255,255,255,0.14)] text-text-muted/50 transition-colors hover:border-[rgb(var(--accent-rgb)/0.6)] hover:text-text-dark/80 disabled:cursor-wait"
         >
           {uploading ? (
@@ -1025,7 +1025,7 @@ function ScriptImageCell({ url, onCommit }: ScriptImageCellProps) {
               type="button"
               onClick={openPicker}
               disabled={uploading}
-              title="替换图片"
+              title="Substituir imagem"
               className="rounded p-1 text-white/85 transition-colors hover:bg-white/15 hover:text-white disabled:cursor-wait"
             >
               {uploading ? (
@@ -1037,7 +1037,7 @@ function ScriptImageCell({ url, onCommit }: ScriptImageCellProps) {
             <button
               type="button"
               onClick={() => onCommit?.('')}
-              title="删除图片"
+              title="Excluir imagem"
               className="rounded p-1 text-white/85 transition-colors hover:bg-white/15 hover:text-white"
             >
               <X className="h-3.5 w-3.5" />
@@ -1065,7 +1065,7 @@ function ScriptImageCell({ url, onCommit }: ScriptImageCellProps) {
               <button
                 type="button"
                 onClick={() => setPreviewOpen(false)}
-                title="关闭预览"
+                title="Fechar pré-visualização"
                 className="absolute right-6 top-6 rounded p-2 text-white/80 transition-colors hover:bg-white/15 hover:text-white"
               >
                 <X className="h-5 w-5" />
@@ -1204,7 +1204,7 @@ function ScriptOperationsPanel({
         <textarea
           value={prompt}
           onChange={(event) => updateNodeData(nodeId, { prompt: event.target.value })}
-          placeholder="描述剧情或添加角色参考、视频参考等，为你生成分镜脚本"
+          placeholder="Gere um storyboard para você descrevendo o enredo ou adicionando referências de personagens, referências de vídeo, etc."
           rows={3}
           className={`nodrag nowheel ui-scrollbar w-full resize-none bg-transparent text-[14px] leading-[1.6] text-text-dark outline-none ${CANVAS_NODE_INPUT_PLACEHOLDER_CLASS} ${panelExpanded ? 'h-full' : 'min-h-[72px]'}`}
           disabled={isGenerating}
@@ -1218,7 +1218,7 @@ function ScriptOperationsPanel({
       <div className="flex shrink-0 items-center justify-end gap-2 px-3 pb-3 pt-1">
         <div className="flex shrink-0 items-center gap-2">
           <IconButton
-            title="翻译（中英文互译）"
+            title="Tradução (Chinês-Inglês)"
             onClick={handleTranslate}
             disabled={isGenerating || isTranslating || prompt.trim().length === 0}
             active={isTranslating}
@@ -1253,7 +1253,7 @@ function ScriptOperationsPanel({
           <button
             type="button"
             disabled={submitDisabled}
-            title="生成"
+            title="Gerar"
             onClick={() => void onSubmit()}
             className={`${NODE_GENERATE_BUTTON_BASE_CLASS} ${
               submitDisabled

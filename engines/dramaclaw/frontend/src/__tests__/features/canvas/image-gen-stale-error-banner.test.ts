@@ -206,7 +206,7 @@ function staleErrorOffenders(source: string): string[] {
 describe("stale generation-error banner", () => {
   it("removes the rendered failure banner when a history image is restored", () => {
     canvasStoreMock.reset({
-      displayName: "图片",
+      displayName: "Imagem",
       imageUrl: "https://example.test/failed.png",
       previewImageUrl: "https://example.test/failed.png",
       generationError: "provider failed",

@@ -52,15 +52,15 @@ function assetTabStorageKey(project: string): string {
 
 function audioPrereqTarget(error: string): VoiceConfigTarget | null {
   const message = String(error || "").trim();
-  if (!message.includes("解说声线缺失")) return null;
-  if (message.includes("解说主角") || message.includes("角色工作台")) return "characters";
+  if (!message.includes("Voz do narrador ausente")) return null;
+  if (message.includes("Legenda do protagonista") || message.includes("Estúdio de personagem")) return "characters";
   return "voices";
 }
 
 function audioPrereqMessage(error: string, t: (key: string) => string): string {
   const message = String(error || "").trim();
-  if (!message.includes("解说声线缺失")) return message;
-  if (message.includes("解说主角") || message.includes("角色工作台")) {
+  if (!message.includes("Voz do narrador ausente")) return message;
+  if (message.includes("Legenda do protagonista") || message.includes("Estúdio de personagem")) {
     return `${message}${t("episode.workbench.audio.prereqHintCharacters")}`;
   }
   return `${message}${t("episode.workbench.audio.prereqHintVoices")}`;

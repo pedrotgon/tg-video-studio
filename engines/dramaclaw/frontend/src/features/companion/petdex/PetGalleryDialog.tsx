@@ -281,7 +281,7 @@ function CompanionCard({
                 onDelete();
               }}
               className="flex h-7 w-7 items-center justify-center rounded-full text-text-muted opacity-0 transition-colors hover:bg-white/[0.08] hover:text-rose-300 group-hover:opacity-100"
-              title="删除"
+              title="Remover"
             >
               <Trash2 className="size-3.5" />
             </button>

@@ -18,19 +18,19 @@ beforeAll(async () => {
     resources: {
       zh: {
         translation: {
-          common: { cancel: "取消", error: "错误" },
+          common: { cancel: "Cancelar", error: "Erro" },
           episode: {
             workbench: {
               video: {
                 seedance2Ready: "已配置",
-                narratorVoice: "解说声线",
+                narratorVoice: "Linhas Sonoras Interpretativas",
                 narratorVoiceMissing: "声线缺失",
                 narratorVoiceMissingDetail: "第三人称项目解说声线未配置",
-                narratorVoiceUpload: "上传",
+                narratorVoiceUpload: "Enviar",
                 narratorVoiceRecord: "录音",
                 narratorVoiceProjectAudio: "项目音频",
                 narratorVoiceTrim: "裁剪",
-                narratorVoiceDelete: "删除",
+                narratorVoiceDelete: "Remover",
                 narratorVoiceTrimTitle: "裁剪解说声线",
                 narratorVoiceTrimHint: "Seedance 2.0 建议参考声线保留清晰单人声 3-5 秒。",
                 narratorVoiceTrimStart: "起始秒",
@@ -106,7 +106,7 @@ describe("NarratorVoicePanel", () => {
   it("hides project narrator upload actions for first-person projects by default", () => {
     renderPanel(false);
 
-    expect(screen.queryByRole("button", { name: "上传" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Enviar" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "录音" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "项目音频" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "裁剪" })).not.toBeInTheDocument();
@@ -115,7 +115,7 @@ describe("NarratorVoicePanel", () => {
   it("allows project narrator upload actions when first-person project voice is explicitly enabled", () => {
     renderPanel(true);
 
-    expect(screen.getByRole("button", { name: "上传" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Enviar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "录音" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "项目音频" })).toBeInTheDocument();
   });

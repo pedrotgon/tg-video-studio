@@ -29,7 +29,11 @@ from novelvideo.api.schemas import (
     ProjectUpdate,
 )
 from novelvideo.config import ensure_project_dirs_at_paths
-from novelvideo.commercial_br import build_commercial_creatives
+from novelvideo.commercial_br import (
+    COMMERCIAL_PLAN_VERSION,
+    build_commercial_creatives,
+    commercial_plan_fingerprint,
+)
 from novelvideo.embedding_models import (
     PROJECT_EMBEDDING_DIMENSION_KEY,
     PROJECT_EMBEDDING_MODEL_KEY,
@@ -71,7 +75,9 @@ logger = logging.getLogger("novelvideo.api.projects")
 
 router = APIRouter()
 VOICE_SOURCE_ROOTS = ("audio", "seedance2_uploads", "assets", "uploads")
-NARRATOR_VOICE_MODE_EXPLANATION = "第一人称解说使用解说主角声线；第三人称解说使用项目解说声线。"
+NARRATOR_VOICE_MODE_EXPLANATION = (
+    "第一人称解说使用解说主角声线；第三人称解说使用项目解说声线。"
+)
 SUPPORTED_VOICE_SAMPLE_COPY = "仅支持 mp3 / wav / m4a / aac / ogg"
 
 
@@ -88,19 +94,27 @@ async def _ensure_commercial_plan(
         return config
     campaign = config.get("campaign")
     output = config.get("output")
-    existing = config.get("creatives")
     if not isinstance(campaign, dict) or not isinstance(output, dict):
         return config
+    expected_fingerprint = commercial_plan_fingerprint(campaign, output)
+    existing = config.get("creatives")
     plan_is_current = (
-        isinstance(existing, list)
+        config.get("commercial_plan_version") == COMMERCIAL_PLAN_VERSION
+        and config.get("commercial_plan_fingerprint") == expected_fingerprint
+        and isinstance(existing, list)
         and len(existing) == max(1, min(10, int(output.get("variants", 5))))
-        and all(isinstance(item, dict) and item.get("script") and item.get("scenes") for item in existing)
+        and all(
+            isinstance(item, dict) and item.get("script") and item.get("scenes")
+            for item in existing
+        )
     )
     updated = config
     if not plan_is_current:
         creatives = build_commercial_creatives(campaign, output)
         updated = dict(config)
         updated["creatives"] = creatives
+        updated["commercial_plan_version"] = COMMERCIAL_PLAN_VERSION
+        updated["commercial_plan_fingerprint"] = expected_fingerprint
         save_project_config_in_state_dir(state_dir, config=updated)
     creatives = updated.get("creatives") or []
 
@@ -112,24 +126,25 @@ async def _ensure_commercial_plan(
     )
     try:
         await store.initialize()
-        existing_episodes = await store.list_episodes()
-        existing_numbers = {int(episode.number) for episode in existing_episodes}
-        missing_episodes = [
-                NovelEpisode(
-                    number=int(item["number"]),
-                    title=str(item["title"]),
-                    adapted_content=str(item["script"]),
-                    beat_source_text=str(item["script"]),
-                    content_summary=str(item["promise"]),
-                    main_conflict=str(item["approach"]),
-                    cliffhanger=str(item["hook"]),
-                    key_events=[str(scene["visual"]) for scene in item["scenes"]],
-                )
-                for item in creatives
-                if int(item["number"]) not in existing_numbers
-            ]
-        if missing_episodes:
-            await store.add_episodes(missing_episodes)
+        existing_numbers = {
+            int(episode.number) for episode in await store.list_episodes()
+        }
+        episodes = [
+            NovelEpisode(
+                number=int(item["number"]),
+                title=str(item["title"]),
+                adapted_content=str(item["script"]),
+                beat_source_text=str(item["script"]),
+                content_summary=str(item["promise"]),
+                main_conflict=str(item["approach"]),
+                cliffhanger=str(item["hook"]),
+                key_events=[str(scene["visual"]) for scene in item["scenes"]],
+            )
+            for item in creatives
+            if not plan_is_current or int(item["number"]) not in existing_numbers
+        ]
+        if episodes:
+            await store.add_episodes(episodes)
     finally:
         await store.close()
     return updated
@@ -158,7 +173,9 @@ def _project_updated_at(paths) -> str | None:
     return datetime.fromtimestamp(latest, tz=timezone.utc).isoformat()
 
 
-def _project_counts(username: str, project: str, status: str) -> tuple[int | None, int | None]:
+def _project_counts(
+    username: str, project: str, status: str
+) -> tuple[int | None, int | None]:
     if status == "deleted":
         return None, None
     db_path = get_project_paths(username, project).data_db
@@ -205,14 +222,22 @@ async def _summary_for_record(
     paths._state_dir_override = Path(record.state_dir)
     paths._runtime_dir_override = Path(record.runtime_dir)
     config = load_project_config_file_from_state_dir(record.state_dir)
-    campaign = config.get("campaign") if isinstance(config.get("campaign"), dict) else None
-    creatives = config.get("creatives") if isinstance(config.get("creatives"), list) else []
+    campaign = (
+        config.get("campaign") if isinstance(config.get("campaign"), dict) else None
+    )
+    creatives = (
+        config.get("creatives") if isinstance(config.get("creatives"), list) else []
+    )
     status = record.status or "active"
-    episode_count, beat_count = _project_counts(record.owner_username, record.name, status)
+    episode_count, beat_count = _project_counts(
+        record.owner_username, record.name, status
+    )
     return ProjectSummary(
         id=record.id,
         name=record.name,
-        display_name=str(campaign.get("name")) if campaign and campaign.get("name") else None,
+        display_name=str(campaign.get("name"))
+        if campaign and campaign.get("name")
+        else None,
         content_profile=config.get("content_profile"),
         market=config.get("market"),
         campaign=campaign,
@@ -242,7 +267,11 @@ def _narrator_voice_sample_path(project_dir: str | Path, filename: str) -> Path:
 
 
 def _cleanup_uncommitted_project_dirs(record: ProjectRecord) -> None:
-    for path in (Path(record.output_dir), Path(record.state_dir), Path(record.runtime_dir)):
+    for path in (
+        Path(record.output_dir),
+        Path(record.state_dir),
+        Path(record.runtime_dir),
+    ):
         if path.exists():
             shutil.rmtree(path)
 
@@ -282,7 +311,10 @@ def _narrator_voice_display_lines(
 
 
 def _effective_narrator_voice_style(username: str, project: str) -> str:
-    return load_effective_narration_style_for_voice(username, project) or DEFAULT_NARRATION_STYLE
+    return (
+        load_effective_narration_style_for_voice(username, project)
+        or DEFAULT_NARRATION_STYLE
+    )
 
 
 def _narrator_voice_payload(ctx: ProjectContext, store) -> dict:
@@ -296,16 +328,18 @@ def _narrator_voice_payload(ctx: ProjectContext, store) -> dict:
     project_dir = Path(ctx.output_dir)
     display = _narrator_voice_display_lines(style, resolution, project_dir)
     rel_path = (
-        _project_relative_path(project_dir, resolution.audio_path) if resolution.audio_path else ""
+        _project_relative_path(project_dir, resolution.audio_path)
+        if resolution.audio_path
+        else ""
     )
     reference_sha256 = resolution.sha256
     if resolution.source == "project_narrator":
         reference_sha256 = reference_sha256 or stored.get("sha256", "")
     return {
         "narration_style": style,
-        "style_label": NARRATION_STYLES.get(style, NARRATION_STYLES[DEFAULT_NARRATION_STYLE])[
-            "label"
-        ],
+        "style_label": NARRATION_STYLES.get(
+            style, NARRATION_STYLES[DEFAULT_NARRATION_STYLE]
+        )["label"],
         "source": resolution.source or "",
         "reference_path": rel_path,
         "reference_url": (
@@ -341,7 +375,9 @@ def _persist_narrator_voice_content(
     content: bytes,
 ) -> Path:
     if not is_supported_voice_sample(filename):
-        raise ValueError(f"{SUPPORTED_VOICE_SAMPLE_COPY}（收到：{filename or '未知文件'}）")
+        raise ValueError(
+            f"{SUPPORTED_VOICE_SAMPLE_COPY}（收到：{filename or '未知文件'}）"
+        )
     if not content:
         raise ValueError("音频内容为空")
 
@@ -351,7 +387,9 @@ def _persist_narrator_voice_content(
         existing = target.with_suffix(ext)
         if existing.exists():
             existing.replace(
-                existing.with_name(f"{existing.stem}_{int(time.time())}{existing.suffix}")
+                existing.with_name(
+                    f"{existing.stem}_{int(time.time())}{existing.suffix}"
+                )
             )
     target.write_bytes(content)
     set_narrator_reference_audio(
@@ -400,7 +438,9 @@ def _trim_narrator_voice_content(
     for ext in VOICE_SAMPLE_EXTENSIONS:
         sibling = target.with_suffix(ext)
         if sibling.exists():
-            sibling.replace(sibling.with_name(f"{sibling.stem}_{int(time.time())}{sibling.suffix}"))
+            sibling.replace(
+                sibling.with_name(f"{sibling.stem}_{int(time.time())}{sibling.suffix}")
+            )
     target.write_bytes(content)
     set_narrator_reference_audio(
         username,
@@ -452,10 +492,13 @@ async def list_projects(user: dict = Depends(get_api_user)):
     access = get_project_access()
     registry = get_project_registry()
     principals = await access.resolve_requester_principals(user_id)
-    records = await registry.list_accessible_projects([(p.type, p.id) for p in principals])
+    records = await registry.list_accessible_projects(
+        [(p.type, p.id) for p in principals]
+    )
     records = [record for record in records if not record.purged_at]
     roles = {
-        record.id: await access.effective_project_role(record, principals) for record in records
+        record.id: await access.effective_project_role(record, principals)
+        for record in records
     }
     return {
         "ok": True,
@@ -485,7 +528,9 @@ async def list_project_summaries(
     access = get_project_access()
     registry = get_project_registry()
     principals = await access.resolve_requester_principals(user_id)
-    records = await registry.list_accessible_projects([(p.type, p.id) for p in principals])
+    records = await registry.list_accessible_projects(
+        [(p.type, p.id) for p in principals]
+    )
     records = [record for record in records if not record.purged_at]
     summaries = []
     for record in records:
@@ -549,8 +594,12 @@ async def create_project(
                     "spine_template": body.spine_template or "narrated",
                     "visual_style": body.visual_style or "tg_ugc_natural_br",
                     "narration_style": body.narration_style or "third_person",
-                    "ethnicity": "Brazilian" if body.content_profile == "commercial_br" else "Chinese",
-                    "add_subtitles": body.add_subtitles if body.add_subtitles is not None else True,
+                    "ethnicity": "Brazilian"
+                    if body.content_profile == "commercial_br"
+                    else "Chinese",
+                    "add_subtitles": body.add_subtitles
+                    if body.add_subtitles is not None
+                    else True,
                 }
             )
             if body.aspect_ratio:
@@ -561,7 +610,11 @@ async def create_project(
                 project_config["output"] = body.output
             if body.brand is not None:
                 project_config["brand"] = body.brand
-            if body.content_profile == "commercial_br" and body.campaign and body.output:
+            if (
+                body.content_profile == "commercial_br"
+                and body.campaign
+                and body.output
+            ):
                 creatives = build_commercial_creatives(body.campaign, body.output)
                 project_config["creatives"] = creatives
         save_project_config_in_state_dir(record.state_dir, config=project_config)
@@ -577,11 +630,15 @@ async def create_project(
         try:
             await registry.delete_uncommitted_project(record.id)
         except Exception:
-            logger.warning("failed to compensate uncommitted project registry row", exc_info=True)
+            logger.warning(
+                "failed to compensate uncommitted project registry row", exc_info=True
+            )
         try:
             _cleanup_uncommitted_project_dirs(record)
         except Exception:
-            logger.warning("failed to cleanup uncommitted project directories", exc_info=True)
+            logger.warning(
+                "failed to cleanup uncommitted project directories", exc_info=True
+            )
         raise
     return {
         "ok": True,
@@ -589,7 +646,9 @@ async def create_project(
             "id": record.id,
             "project_id": record.id,
             "name": body.name,
-            "display_name": (body.campaign or {}).get("name") if body.campaign else None,
+            "display_name": (body.campaign or {}).get("name")
+            if body.campaign
+            else None,
         },
     }
 
@@ -597,7 +656,9 @@ async def create_project(
 @router.get("/projects/{project}")
 async def get_project(project: str, user: dict = Depends(get_api_user)):
     """获取项目配置。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="viewer")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="viewer"
+    )
     require_project_home_node(ctx, operation="read project config")
     config = load_project_config_from_state_dir(
         ctx.state_dir,
@@ -628,7 +689,9 @@ async def get_project(project: str, user: dict = Depends(get_api_user)):
 
 
 @router.get("/projects/{project}/static-auth", include_in_schema=False)
-async def authorize_project_static_media(project: str, user: dict = Depends(get_api_user)):
+async def authorize_project_static_media(
+    project: str, user: dict = Depends(get_api_user)
+):
     await resolve_project_context(user=user, project_id=project, required_role="viewer")
     return Response(status_code=204)
 
@@ -640,8 +703,14 @@ async def update_project(
     user: dict = Depends(require_scope("projects:write")),
 ):
     """更新项目配置。"""
-    logger.info("[%s] update_project: %s", project, list(body.model_dump(exclude_none=True).keys()))
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="editor")
+    logger.info(
+        "[%s] update_project: %s",
+        project,
+        list(body.model_dump(exclude_none=True).keys()),
+    )
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="editor"
+    )
     require_project_home_node(ctx, operation="update project config")
     updates = body.model_dump(exclude_none=True)
     current_config = load_project_config_from_state_dir(
@@ -669,13 +738,17 @@ async def update_project(
                 },
             )
         if body.aspect_ratio is None:
-            updates["aspect_ratio"] = default_aspect_ratio_for_spine_template(body.spine_template)
+            updates["aspect_ratio"] = default_aspect_ratio_for_spine_template(
+                body.spine_template
+            )
 
     # 校验 visual_style 合法性
     if body.visual_style is not None:
         from novelvideo.services.style_service import StyleService
 
-        valid = StyleService.get_style_labels(username=ctx.owner_username, project=ctx.project_name)
+        valid = StyleService.get_style_labels(
+            username=ctx.owner_username, project=ctx.project_name
+        )
         if body.visual_style not in valid:
             return JSONResponse(
                 status_code=400,
@@ -704,7 +777,9 @@ async def get_narrator_voice(
     user: dict = Depends(get_api_user),
 ):
     """获取项目解说声线状态。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="viewer")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="viewer"
+    )
     store = await make_sqlite_store_for_context(ctx)
     return {
         "ok": True,
@@ -715,9 +790,14 @@ async def get_narrator_voice(
 @router.get("/projects/{project}/narrator-voice/sources")
 async def list_narrator_voice_sources(project: str, user: dict = Depends(get_api_user)):
     """列出项目内可复制为解说声线的音频。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="viewer")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="viewer"
+    )
     require_project_home_node(ctx, operation="list project voice files")
-    return {"ok": True, "data": {"options": _project_voice_source_options(ctx.output_dir)}}
+    return {
+        "ok": True,
+        "data": {"options": _project_voice_source_options(ctx.output_dir)},
+    }
 
 
 @router.post("/projects/{project}/narrator-voice/upload")
@@ -727,7 +807,9 @@ async def upload_narrator_voice(
     user: dict = Depends(get_api_user),
 ):
     """上传第三人称项目解说声线。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="editor")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="editor"
+    )
     store = await make_sqlite_store_for_context(ctx)
     try:
         _ensure_third_person_narrator(ctx.owner_username, ctx.project_name)
@@ -754,7 +836,9 @@ async def record_narrator_voice(
     user: dict = Depends(get_api_user),
 ):
     """保存浏览器录音为第三人称项目解说声线。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="editor")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="editor"
+    )
     store = await make_sqlite_store_for_context(ctx)
     try:
         _ensure_third_person_narrator(ctx.owner_username, ctx.project_name)
@@ -781,7 +865,9 @@ async def copy_project_audio_as_narrator_voice(
     user: dict = Depends(get_api_user),
 ):
     """从项目内已有音频复制为第三人称项目解说声线。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="editor")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="editor"
+    )
     store = await make_sqlite_store_for_context(ctx)
     try:
         _ensure_third_person_narrator(ctx.owner_username, ctx.project_name)
@@ -789,7 +875,10 @@ async def copy_project_audio_as_narrator_voice(
         source_path = raw_path if raw_path.is_absolute() else ctx.output_dir / raw_path
         source_path = source_path.resolve()
         source_path.relative_to(ctx.output_dir.resolve())
-        if not source_path.exists() or source_path.suffix.lower() not in VOICE_SAMPLE_EXTENSIONS:
+        if (
+            not source_path.exists()
+            or source_path.suffix.lower() not in VOICE_SAMPLE_EXTENSIONS
+        ):
             return {"ok": False, "error": "请选择项目内有效的音频文件"}
         _persist_narrator_voice_content(
             username=ctx.owner_username,
@@ -813,7 +902,9 @@ async def trim_narrator_voice(
     user: dict = Depends(get_api_user),
 ):
     """裁剪第三人称项目解说声线并写回项目声线槽位。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="editor")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="editor"
+    )
     store = await make_sqlite_store_for_context(ctx)
     try:
         _ensure_third_person_narrator(ctx.owner_username, ctx.project_name)
@@ -838,7 +929,9 @@ async def delete_narrator_voice(
     user: dict = Depends(get_api_user),
 ):
     """移除第三人称项目解说声线。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="editor")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="editor"
+    )
     store = await make_sqlite_store_for_context(ctx)
     stored = load_narrator_reference_audio(ctx.owner_username, ctx.project_name)
     target = Path(stored.get("path", ""))
@@ -846,8 +939,12 @@ async def delete_narrator_voice(
         if not target.is_absolute():
             target = ctx.output_dir / target
         if target.exists():
-            target.replace(target.with_name(f"{target.stem}_{int(time.time())}{target.suffix}"))
-    set_narrator_reference_audio(ctx.owner_username, ctx.project_name, relative_path="", sha256="")
+            target.replace(
+                target.with_name(f"{target.stem}_{int(time.time())}{target.suffix}")
+            )
+    set_narrator_reference_audio(
+        ctx.owner_username, ctx.project_name, relative_path="", sha256=""
+    )
     return {
         "ok": True,
         "data": _narrator_voice_payload(ctx, store),
@@ -866,7 +963,9 @@ async def _set_project_status(
     registry = get_project_registry()
     existing = await registry.get_project(ctx.project_id)
     if existing is not None and existing.purged_at:
-        raise HTTPException(status_code=400, detail="Purged projects cannot change status.")
+        raise HTTPException(
+            status_code=400, detail="Purged projects cannot change status."
+        )
     updates = {}
     if archived_at is not None:
         updates["archived_at"] = archived_at
@@ -879,7 +978,9 @@ async def _set_project_status(
     if record is None:
         existing = await registry.get_project(ctx.project_id)
         if existing is not None and existing.purged_at:
-            raise HTTPException(status_code=400, detail="Purged projects cannot change status.")
+            raise HTTPException(
+                status_code=400, detail="Purged projects cannot change status."
+            )
         raise HTTPException(status_code=404, detail="Project not found.")
     if updates:
         save_project_config_in_state_dir(ctx.state_dir, config=updates)
@@ -898,7 +999,9 @@ async def archive_project(
     project: str,
     user: dict = Depends(require_scope("projects:write")),
 ):
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="owner")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="owner"
+    )
     return await _set_project_status(
         ctx,
         "archived",
@@ -913,7 +1016,9 @@ async def unarchive_project(
     project: str,
     user: dict = Depends(require_scope("projects:write")),
 ):
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="owner")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="owner"
+    )
     return await _set_project_status(ctx, "active", audit_action="project.unarchive")
 
 
@@ -922,7 +1027,9 @@ async def soft_delete_project(
     project: str,
     user: dict = Depends(require_scope("projects:write")),
 ):
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="owner")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="owner"
+    )
     return await _set_project_status(
         ctx,
         "deleted",
@@ -937,10 +1044,14 @@ async def restore_project(
     project: str,
     user: dict = Depends(require_scope("projects:write")),
 ):
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="owner")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="owner"
+    )
     record = await get_project_registry().get_project(ctx.project_id)
     if record is not None and record.purged_at:
-        raise HTTPException(status_code=400, detail="Purged projects cannot be restored.")
+        raise HTTPException(
+            status_code=400, detail="Purged projects cannot be restored."
+        )
     return await _set_project_status(ctx, "active", audit_action="project.restore")
 
 
@@ -950,7 +1061,9 @@ async def purge_project(
     user: dict = Depends(require_scope("projects:write")),
 ):
     """永久删除项目目录；只允许对已进入回收站的项目执行。"""
-    ctx = await resolve_project_context(user=user, project_id=project, required_role="owner")
+    ctx = await resolve_project_context(
+        user=user, project_id=project, required_role="owner"
+    )
     require_project_home_node(ctx, operation="purge project files")
     from novelvideo.utils.project_paths import ProjectPaths
 
@@ -966,12 +1079,16 @@ async def purge_project(
         raise HTTPException(status_code=400, detail="Project has already been purged.")
     record = await registry.mark_project_purged(ctx.project_id)
     if record is None:
-        raise HTTPException(status_code=400, detail="Project could not be marked purged.")
+        raise HTTPException(
+            status_code=400, detail="Project could not be marked purged."
+        )
     for path in (paths.output_dir, paths.state_dir, paths.runtime_dir):
         if path.exists():
             shutil.rmtree(path)
     await registry.delete_project_home(ctx.project_id)
-    await emit_project_audit(action="project.purge", ctx=ctx, metadata={"status": "deleted"})
+    await emit_project_audit(
+        action="project.purge", ctx=ctx, metadata={"status": "deleted"}
+    )
     return {
         "ok": True,
         "data": {

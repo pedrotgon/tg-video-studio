@@ -61,10 +61,9 @@ export function FifthScreenVideo({
       />
       <div className={styles.scrim} aria-hidden="true" />
       <div className={styles.copy}>
-        <h2>把万千灵感沉淀为资产</h2>
+        <h2>Concentre milhões de ideias em recursos</h2>
         <p className={styles.body}>
-          DramaClaw 把它们整理成项目资产库，
-          让后续镜头生成可以持续引用、统一维护、必要时回滚版本。
+          DramaClaw organiza-os como recursos de projeto, permitindo que as cenas de geração sejam consistentes, mantidas e possam ser revertidas se necessário.
         </p>
       </div>
     </section>

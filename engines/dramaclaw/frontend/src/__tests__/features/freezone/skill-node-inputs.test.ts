@@ -326,7 +326,7 @@ describe("resolveInputsForSkill", () => {
     const standaloneContext = {
       schema: "beat_context.v1",
       source: "standalone",
-      title: "自定义镜头上下文",
+      title: "Contexto Personalizado da Lente",
       ...common,
     };
     const nodes = new Map([
@@ -440,7 +440,7 @@ describe("resolveInputsForSkill", () => {
             beat_context: {
               schema: "beat_context.v1",
               source: "standalone",
-              title: "自定义镜头上下文",
+              title: "Contexto Personalizado da Lente",
               visual_description: "",
               narration_segment: "",
               detected_identities: [],

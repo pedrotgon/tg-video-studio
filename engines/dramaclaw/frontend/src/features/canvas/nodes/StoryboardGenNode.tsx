@@ -106,7 +106,7 @@ interface PickerAnchor {
 
 const AUTO_ASPECT_RATIO_OPTION: AspectRatioChoice = {
   value: AUTO_REQUEST_ASPECT_RATIO,
-  label: '自动',
+  label: 'Automático',
 };
 const PICKER_FALLBACK_ANCHOR: PickerAnchor = { left: 8, top: 8 };
 
@@ -979,10 +979,10 @@ export const StoryboardGenNode = memo(({ id, data, selected, width, height }: St
       `生成一张${gridRows}×${gridCols}的${gridRows * gridCols}宫格多版本候选图，每一格是独立候选画面`,
     ];
     if (storyboardGenKeepStyleConsistent) {
-      promptDirectives.push('图片风格与参考图保持一致');
+      promptDirectives.push('O estilo da imagem é consistente com a imagem de referência');
     }
     if (storyboardGenDisableTextInImage) {
-      promptDirectives.push('禁止添加描述文本');
+      promptDirectives.push('Não adicionar texto de descrição');
     }
     parts.push(`${promptDirectives.join('，')}。`);
 
@@ -1094,17 +1094,17 @@ export const StoryboardGenNode = memo(({ id, data, selected, width, height }: St
     // 后台一个图片模型都没配时不放行（上面的网格预览是纯本地渲染，不受影响）：
     // selectedModel 此时是占位定义，提交出去后端 `_resolve_catalog_request` 直接 409。
     if (imageModelsEmpty) {
-      const errorMessage = '管理员尚未配置任何图片模型，暂时无法生成';
+      const errorMessage = 'O administrador ainda não configurou nenhum modelo de imagem e ainda não pode gerá-los';
       setError(errorMessage);
-      void showErrorDialog(errorMessage, '错误');
+      void showErrorDialog(errorMessage, 'Erro');
       return;
     }
 
     const prompt = buildPrompt();
     if (!prompt) {
-      const errorMessage = '请填写至少一个宫格候选描述';
+      const errorMessage = 'Por favor, preencha pelo menos uma descrição do candidato da grade';
       setError(errorMessage);
-      void showErrorDialog(errorMessage, '错误');
+      void showErrorDialog(errorMessage, 'Erro');
       return;
     }
 
@@ -1216,7 +1216,7 @@ export const StoryboardGenNode = memo(({ id, data, selected, width, height }: St
         ...generationTaskDescriptor(ref),
       });
     } catch (generationError) {
-      const resolvedError = resolveErrorContent(generationError, '生成失败');
+      const resolvedError = resolveErrorContent(generationError, 'Falha na geração');
       const displayErrorMessage = backendErrorToastMessage(generationError, t);
       const diagnostics = resolveGenerationErrorDiagnostics(
         generationError,

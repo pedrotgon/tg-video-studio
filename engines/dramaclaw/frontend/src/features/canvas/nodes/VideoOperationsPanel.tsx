@@ -521,7 +521,7 @@ export function VideoOperationsPanel({
           addEdge(newId, id);
           newIds.push(newId);
         });
-        state.autoGroupSpawn(id, newIds, { label: '资产参考组' });
+        state.autoGroupSpawn(id, newIds, { label: 'Grupo de Referência de Ativos' });
       },
       [addEdge, addNode, data.aspectRatio, id],
     );
@@ -706,7 +706,7 @@ export function VideoOperationsPanel({
                 candidates={mentionCandidates}
                 placeholder={
                   upstreamTextJoined.length > 0
-                    ? "上游内容已自动接入，可继续补充提示词…"
+                    ? "O conteúdo upstream foi acessado automaticamente, você pode continuar a adicionar prompts..."
                     : t("node.videoNode.placeholder")
                 }
                 className={`nodrag nowheel min-h-0 w-full flex-1 overflow-y-auto whitespace-pre-wrap break-words border-none bg-transparent px-3 py-2 text-sm leading-6 text-text-dark outline-none ${CANVAS_NODE_INPUT_PLACEHOLDER_CLASS}`}
@@ -785,7 +785,7 @@ export function VideoOperationsPanel({
                       type="button"
                       role="switch"
                       aria-checked={humanReview}
-                      title="素材含真实人脸时开启，可能增加审核时间，不保证通过。"
+                      title="Quando houver fotos de pessoas reais, é possível que o processo de avaliação leve mais tempo. Não há garantia de aprovação."
                       onClick={(event) => {
                         event.stopPropagation();
                         updateNodeData(id, { humanReview: !humanReview });
@@ -796,7 +796,7 @@ export function VideoOperationsPanel({
                           : "text-text-dark/72 hover:text-text-dark"
                       }`}
                     >
-                      <span>真人验证</span>
+                      <span>Verificação de pessoas reais</span>
                       <span
                         className={`relative inline-flex h-3.5 w-6 shrink-0 items-center rounded-full transition-colors ${
                           humanReview
@@ -820,7 +820,7 @@ export function VideoOperationsPanel({
                   />
                   <button
                     type="button"
-                    title="翻译提示词（中英文互译）"
+                    title="Prompts de tradução (tradução chinês-inglês)"
                     disabled={
                       isTranslatingPrompt ||
                       isGenerating ||
@@ -918,34 +918,34 @@ export function videoModeDisabledReason(
     const { images, videos } = upstreamCounts;
     switch (mode) {
       case "textToVideo":
-        if (videos > 0) return "已连接视频节点，请使用「视频编辑」";
-        if (images > 0) return "已连接图片节点，请选择「首帧」「图生视频」或「图片参考」";
+        if (videos > 0) return " já está conectado ao nó de vídeo, por favor use «editar vídeo»";
+        if (images > 0) return " já está conectado ao nó de imagem, por favor selecione «primeiro frame» «video generation» ou «image reference»";
         return null;
       case "imageToVideo":
       case "firstFrame":
         if (videos > 0) {
           return mode === "firstFrame"
-            ? "已连接视频节点，「首帧」不可用"
-            : "已连接视频节点，「图生视频」不可用";
+            ? " já está conectado ao nó de vídeo, «primeiro frame» não é disponível"
+            : " já está conectado ao nó de vídeo, «video generation» não é disponível";
         }
-        if (images === 0) return "需要连接图片节点（1个）";
+        if (images === 0) return "Conecte um nó de imagem";
         if (images > 1) {
           return mode === "firstFrame"
-            ? "「首帧」仅支持单张图片"
-            : "「图生视频」仅支持单张图片，请用「图片参考」";
+            ? " «primeiro frame» só suporta uma foto de uma única imagem"
+            : " «video generation» só suporta uma foto de uma única imagem. Por favor use «image reference»";
         }
         return null;
       case "imageReference": // 图片参考 (r2v)
-        if (videos > 0) return "已连接视频节点，「图片参考」不可用";
-        if (images === 0) return "需要连接图片节点（1~9个）";
-        if (images > 9) return "「图片参考」最多支持 9 张图片";
+        if (videos > 0) return " já está conectado ao nó de vídeo, «image reference» não é disponível";
+        if (images === 0) return "Conecte de 1 a 9 nós de imagem";
+        if (images > 9) return "A referência aceita no máximo 9 imagens";
         return null;
       case "videoEdit":
-        if (videos === 0) return "需要连接视频节点（1个）";
-        if (videos > 1) return "「视频编辑」仅支持连接 1 个视频节点";
+        if (videos === 0) return " é necessário conectar um nó de vídeo (1)";
+        if (videos > 1) return " «editar vídeo» só suporta um nó de vídeo";
         return null;
       default:
-        return "HappyHorse 不支持该模式";
+        return " HappyHorse não suporta esse modelo";
     }
   }
   // 「视频编辑」以上游视频**为输入**，不能被下面那条「有视频就只剩全能参考」连坐。
@@ -960,27 +960,27 @@ export function videoModeDisabledReason(
     : modelId;
   const supportsVideoEdit = isVideoModeSupportedByModel("videoEdit", model);
   if (mode === "videoEdit") {
-    if (!supportsVideoEdit) return "该模型不支持「视频编辑」";
-    if (upstreamCounts.videos === 0) return "需要连接视频节点（1个）";
-    if (upstreamCounts.videos > 1) return "「视频编辑」仅支持连接 1 个视频节点";
+    if (!supportsVideoEdit) return " este modelo não suporta «editar vídeo»";
+    if (upstreamCounts.videos === 0) return " é necessário conectar um nó de vídeo (1)";
+    if (upstreamCounts.videos > 1) return " «editar vídeo» só suporta um nó de vídeo";
     return null;
   }
   if (upstreamCounts.videos > 0 && mode !== "allReference") {
     return supportsVideoEdit
-      ? "上游含视频素材时只能用「全能参考」或「视频编辑」"
-      : "上游含视频素材时只能用「全能参考」";
+      ? " quando houver vídeo na frente, apenas é possível usar «full reference» ou «editar vídeo»"
+      : " quando houver vídeo na frente";
   }
   if (
     mode === "textToVideo" &&
     (upstreamCounts.images > 0 || upstreamCounts.audios > 0)
   ) {
-    return "已引用图片/音频素材时不可用";
+    return "Não disponível quando a imagem/áudio é referenciada";
   }
   if ((mode === "firstFrame" || mode === "imageToVideo") && upstreamCounts.images > 1) {
-    return mode === "firstFrame" ? "「首帧」仅支持单张图片" : "「图生视频」仅支持单张图片";
+    return mode === "firstFrame" ? " «primeiro frame» só suporta uma foto de uma única imagem" : "O Tucson Video suporta apenas uma única imagem";
   }
   if (mode === "firstLastFrame" && upstreamCounts.images > 2) {
-    return "上游图片超过 2 张时不可用";
+    return "Indisponível quando há mais de 2 imagens upstream";
   }
   return null;
 }
@@ -1513,7 +1513,7 @@ function CameraMovementChip({
   }, [isOpen]);
 
   const selectedPreset = findCameraMovementPreset(templates, selectedId);
-  const label = selectedPreset?.label ?? "运镜";
+  const label = selectedPreset?.label ?? "Espelho Corrente";
   const isActive = Boolean(selectedPreset);
 
   return (
@@ -1572,7 +1572,7 @@ function CharacterLibraryChip({ onOpen }: CharacterLibraryChipProps) {
       className={`${NODE_TEXT_CONTROL_TRIGGER_CLASS} group/asset px-1.5`}
     >
       <Library className={`${NODE_TEXT_CONTROL_ICON_CLASS} group-hover/asset:text-text-dark`} />
-      <span>资产库</span>
+      <span>Biblioteca de Ativos</span>
     </button>
   );
 }
@@ -1592,7 +1592,7 @@ function ExternalAssetChip({ onOpen }: ExternalAssetChipProps) {
       className={`${NODE_TEXT_CONTROL_TRIGGER_CLASS} group/external px-1.5`}
     >
       <Plus className={`${NODE_TEXT_CONTROL_ICON_CLASS} group-hover/external:text-text-dark`} />
-      <span>外部素材</span>
+      <span>Material externo</span>
     </button>
   );
 }
@@ -1736,23 +1736,23 @@ function ReferenceMediaRow({
         const modeCap = caps?.[item.kind] ?? 0;
         const modeLabel =
           {
-            textToVideo: "文生视频",
-            firstFrame: "首帧",
-            imageToVideo: "图生视频",
-            imageReference: "多图参考",
-            firstLastFrame: "首尾帧",
-            videoEdit: "视频编辑",
-            allReference: "全能参考",
-          }[genMode] ?? "当前模式";
+            textToVideo: "Vídeo de cultura",
+            firstFrame: "Primeiro quadro",
+            imageToVideo: "Vídeo de imagem",
+            imageReference: "Referência multigráfica",
+            firstLastFrame: "Primeiros e últimos quadros",
+            videoEdit: "Edição de vídeo",
+            allReference: "Referência Todo-Poderosa",
+          }[genMode] ?? "Modo atual";
         const overCapTitle = overCap
           ? `${
               item.kind === "image"
-                ? "图片"
+                ? "Imagem"
                 : item.kind === "video"
-                  ? "视频"
-                  : "音频"
+                  ? "Vídeo"
+                  : "Áudio"
             }引用超出${modeLabel}上限（${modeCap}${
-              item.kind === "image" ? "张" : "段"
+              item.kind === "image" ? "Zhang" : "Segmento"
             }），本次生成不会使用该素材`
           : undefined;
         // 首尾帧模式下，前两张图片打 首帧/尾帧 角标；超出 cap 的图片就回退到
@@ -1763,9 +1763,9 @@ function ReferenceMediaRow({
           item.kind === "image" &&
           withinCap
             ? typeIndex === 1
-              ? "首帧"
+              ? "Primeiro quadro"
               : typeIndex === 2
-                ? "尾帧"
+                ? "Quadro de fuga"
                 : undefined
             : undefined;
         let chip: ReactNode;

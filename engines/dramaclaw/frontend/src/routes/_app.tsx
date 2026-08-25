@@ -269,7 +269,7 @@ function AppLayout() {
                       retry={() => void productSurfaces.refetch()}
                     />
                   ) : requiredSurfaceCode && !requiredSurface ? (
-                    <ProductSurfaceUnavailable message="功能开放配置不完整，请联系管理员。" />
+                    <ProductSurfaceUnavailable message="Função não aberta configurada." />
                   ) : requiredSurface && !requiredSurface.available ? (
                     <ProductSurfaceUnavailable
                       message={

@@ -156,12 +156,12 @@ export function CameraPickerPopover({
       onClick={(event) => event.stopPropagation()}
     >
       <div className="flex h-11 items-center justify-between px-4">
-        <span className="text-sm font-medium text-text-dark">摄像机</span>
+        <span className="text-sm font-medium text-text-dark">Filmadora</span>
         <button
           type="button"
           onClick={onClose}
           className="flex size-6 items-center justify-center rounded-md text-text-muted/90 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
-          aria-label="关闭"
+          aria-label="Fechar"
         >
           <X className="size-3.5" />
         </button>
@@ -169,7 +169,7 @@ export function CameraPickerPopover({
 
       <div className="flex items-start justify-center gap-5 px-6 pb-4 pt-3">
         <Column
-          label="相机"
+          label="Câmera"
           captionLabel={selectedCameraLabel}
           items={cameraBodies.map((item) => ({
             key: item.id,
@@ -183,7 +183,7 @@ export function CameraPickerPopover({
           isLoading={isLoading}
         />
         <Column
-          label="镜头"
+          label="Tomada"
           captionLabel={selectedLensLabel}
           items={lenses.map((item) => ({
             key: item.id,
@@ -197,7 +197,7 @@ export function CameraPickerPopover({
           isLoading={isLoading}
         />
         <Column
-          label="焦距"
+          label="Distância focal"
           captionLabel="mm"
           items={focalLengths.map((value) => ({
             key: String(value),
@@ -210,7 +210,7 @@ export function CameraPickerPopover({
           isLoading={isLoading}
         />
         <Column
-          label="光圈"
+          label="Abertura"
           captionLabel={draftAperture ?? ''}
           items={apertures.map((value) => ({
             key: value,
@@ -231,7 +231,7 @@ export function CameraPickerPopover({
           onClick={() => onConfirm(null)}
           className="h-8 rounded-md px-3 text-[12px] font-medium text-text-dark/78 transition-colors hover:bg-white/[0.08] hover:text-text-dark"
         >
-          清除
+          Limpar
         </button>
         <button
           type="button"
@@ -239,7 +239,7 @@ export function CameraPickerPopover({
           disabled={!options}
           className="h-8 min-w-[50px] rounded-md bg-primary px-3 text-[13px] text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-text-muted"
         >
-          使用
+          Uso
         </button>
       </div>
     </div>
@@ -287,7 +287,7 @@ function Column({
           disabled={!canPrev}
           onClick={() => canPrev && onSelect(selectedIndex - 1)}
           className={CAMERA_PICKER_ARROW_CLASS}
-          aria-label="上一项"
+          aria-label="Anterior"
         >
           <ChevronDown className="size-3.5 rotate-180" />
         </button>
@@ -345,7 +345,7 @@ function Column({
 
         {isLoading && items.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center text-[11px] text-text-muted">
-            加载中…
+            Carregando...
           </div>
         )}
       </div>
@@ -356,7 +356,7 @@ function Column({
           disabled={!canNext}
           onClick={() => canNext && onSelect(selectedIndex + 1)}
           className={CAMERA_PICKER_ARROW_CLASS}
-          aria-label="下一项"
+          aria-label="Próximo"
         >
           <ChevronDown className="size-3.5" />
         </button>

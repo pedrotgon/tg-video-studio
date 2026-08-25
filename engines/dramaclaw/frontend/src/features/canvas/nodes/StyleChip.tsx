@@ -19,15 +19,15 @@ const STYLE_TRIGGER_CHIP_TEXT: Record<
   StyleTriggerChipState,
   { label: string; title: string }
 > = {
-  none: { label: '风格', title: '风格' },
-  loading: { label: '风格 · 加载中', title: '风格清单加载中' },
+  none: { label: 'Estilo', title: 'Estilo' },
+  loading: { label: 'Estilo · Carregando', title: 'Carregamento de manifesto de estilos' },
   failed: {
-    label: '风格 · 加载失败',
-    title: '风格清单没拉到,点一下重试;已选的风格仍会随生成提交',
+    label: 'Estilo · Falha no carregamento',
+    title: 'A lista de estilos não é puxada, clique para tentar novamente; o estilo selecionado ainda será enviado com a geração',
   },
   missing: {
-    label: '风格 · 已失效',
-    title: '这个风格已经下线了,点一下重新选一个',
+    label: 'Estilo · Expirado',
+    title: 'Este estilo foi colocado offline. Toque para re-selecionar um',
   },
 };
 
@@ -106,8 +106,8 @@ export function StyleThumbnail({
         />
         <button
           type="button"
-          aria-label="清除风格"
-          title="清除风格"
+          aria-label="Limpeza de estilo"
+          title="Limpeza de estilo"
           className={NODE_REFERENCE_MEDIA_DETACH_CLASS}
           onMouseDown={(event) => event.stopPropagation()}
           onClick={(event) => {

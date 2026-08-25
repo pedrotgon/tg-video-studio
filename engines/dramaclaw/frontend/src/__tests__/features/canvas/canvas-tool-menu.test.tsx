@@ -8,7 +8,7 @@ import { CanvasQuickActionBar } from "@/features/canvas/ui/CanvasQuickActionBar"
 import { useCanvasToolStore } from "@/features/canvas/ui/canvasToolStore";
 
 const translations: Record<string, string> = {
-  "canvas.quickbar.addNode": "添加节点",
+  "canvas.quickbar.addNode": "Adicionar nó",
   "canvas.quickbar.history": "历史资产",
   "canvas.quickbar.shortcuts": "快捷键",
   "canvas.quickbar.help": "帮助",

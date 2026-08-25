@@ -118,17 +118,17 @@ export function BatchCommitDialog({
         <header className="flex items-center justify-between px-5 py-4 border-b border-border-default">
           <div>
             <div className="text-base font-semibold text-text">
-              📤 批量提交到主线资产
+              📤 Enviar múltiplas propriedades para o fluxo principal
             </div>
             <div className="text-xs text-text-muted mt-0.5">
-              项目: {project} · {items.length} 张图（可推 {sendable.length} 张 / 跳过 {items.length - sendable.length} 张）
+              Projeto: {project} · {items.length} Figuras (pushable {sendable.length} Zhang/Skip {items.length - sendable.length} Zhang)
             </div>
           </div>
           <button
             type="button"
             onClick={handleClose}
             className="text-text-muted hover:text-text transition text-sm"
-            aria-label="关闭"
+            aria-label="Fechar"
           >
             ✕
           </button>
@@ -136,7 +136,7 @@ export function BatchCommitDialog({
 
         <div className="flex-1 overflow-y-auto px-5 py-4">
           <div className="text-xs text-text-muted/80 mb-3 leading-relaxed">
-            每张图自动提交回它的来源资产槽位（来自主流程导入的图按原槽位写回；上传 / 生成 / 编辑产出的图没有来源信息会跳过 — 用单图提交选择目标）。
+            Cada diagrama é enviado automaticamente de volta para seu slot de recurso de origem (diagramas importados do mainstream são gravados de volta para o slot original; diagramas carregados/gerados/editados sem informações de origem são ignorados — selecione o destino com envio de diagrama único).
           </div>
           <ul className="space-y-1.5">
             {items.map((it) => {
@@ -159,7 +159,7 @@ export function BatchCommitDialog({
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-text truncate">{it.label}</div>
                     <div className="text-xs text-text-muted truncate">
-                      {it.target ? renderTargetLabel(it.target) : "无来源信息（跳过）"}
+                      {it.target ? renderTargetLabel(it.target) : "Nenhuma informação de origem (ignorada)"}
                     </div>
                   </div>
                   <StatusBadge state={state} />
@@ -182,7 +182,7 @@ export function BatchCommitDialog({
               className="px-3 py-1.5 rounded-lg text-text-muted hover:text-text text-sm transition"
               disabled={submitting}
             >
-              {done ? "完成" : "取消"}
+              {done ? "Concluído" : "Cancelar"}
             </button>
             {!done && (
               <button
@@ -201,7 +201,7 @@ export function BatchCommitDialog({
                 disabled={submitting}
                 className="px-4 py-1.5 rounded-lg bg-yellow-600/90 hover:bg-yellow-500 text-white text-sm transition"
               >
-                重试失败 {failed} 张
+                Falha ao tentar novamente {failed} Zhang
               </button>
             )}
           </div>
@@ -213,19 +213,19 @@ export function BatchCommitDialog({
 
 function StatusBadge({ state }: { state: RowState }) {
   if (state.status === "pending")
-    return <span className="text-xs text-text-muted shrink-0">待提交</span>;
+    return <span className="text-xs text-text-muted shrink-0">A ser enviado</span>;
   if (state.status === "running")
-    return <span className="text-xs text-accent shrink-0">提交中...</span>;
+    return <span className="text-xs text-accent shrink-0">Enviando...</span>;
   if (state.status === "ok")
-    return <span className="text-xs text-emerald-400 shrink-0">✓ 完成</span>;
+    return <span className="text-xs text-emerald-400 shrink-0">✓ Concluído</span>;
   if (state.status === "skipped")
-    return <span className="text-xs text-text-muted/70 shrink-0">跳过</span>;
+    return <span className="text-xs text-text-muted/70 shrink-0">Pular</span>;
   return (
     <span
       className="text-xs text-red-400 shrink-0 cursor-help"
       title={state.error ?? ""}
     >
-      ✗ 失败
+      ✗ Reprovado
     </span>
   );
 }

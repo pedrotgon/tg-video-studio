@@ -28,11 +28,11 @@ interface SlotMapping {
   promotedNode: string;
 }
 const SLOT_MAPPING_BY_WORKFLOW: Record<string, SlotMapping> = {
-  beat_to_sketch: { candidate: '草图', promotedNode: 'current_sketch' },
-  selected_background_to_sketch: { candidate: '草图', promotedNode: 'current_sketch' },
-  director_combined_to_sketch: { candidate: '草图', promotedNode: 'current_sketch' },
-  sketch_to_frame: { candidate: '分镜', promotedNode: 'current_frame' },
-  background_sketch_to_frame: { candidate: '分镜', promotedNode: 'current_frame' },
+  beat_to_sketch: { candidate: 'Esboço', promotedNode: 'current_sketch' },
+  selected_background_to_sketch: { candidate: 'Esboço', promotedNode: 'current_sketch' },
+  director_combined_to_sketch: { candidate: 'Esboço', promotedNode: 'current_sketch' },
+  sketch_to_frame: { candidate: 'Tiro Dividido', promotedNode: 'current_frame' },
+  background_sketch_to_frame: { candidate: 'Tiro Dividido', promotedNode: 'current_frame' },
 };
 
 function deriveSlotMapping(workflowDefaultId?: string): SlotMapping | null {
@@ -82,7 +82,7 @@ export function CommitTargetHint({
     }
     return {
       variant: 'free' as const,
-      text: '自由候选 · 生成后落本节点,commit 时需手动选择目标资产',
+      text: 'Candidato gratuito · Depois de gerar este nó, você precisa selecionar manualmente o ativo de destino ao confirmar',
     };
   }, [mainlineContexts, workflowDefaultId]);
 
@@ -96,7 +96,7 @@ export function CommitTargetHint({
   return (
     <div
       className={`shrink-0 rounded-md border px-2 py-1 text-[10px] leading-tight ${variantClass} ${className ?? ''}`}
-      title="生成后的产物在 commit 时如何写回主线槽位"
+      title="Como o produto gerado é gravado de volta no slot da linha principal no commit"
     >
       {hint.text}
     </div>

@@ -74,7 +74,7 @@ export function MaskEditor({
       ctx?.drawImage(img, 0, 0);
       setImageReady(true);
     };
-    img.onerror = () => setError("无法加载基底图（cookie 可能过期）");
+    img.onerror = () => setError("Não é possível carregar a base (Cookie possivelmente expirado)");
   }, [baseUrl]);
 
   // 2. Painting handlers
@@ -186,29 +186,29 @@ export function MaskEditor({
 
   const handleSubmit = async () => {
     if (!prompt.trim()) {
-      setError("写一句 prompt 描述要把蒙版区域改成什么");
+      setError("Escreva um prompt para descrever como deseja mudar o área de cobertura");
       return;
     }
     if (!hasPaint()) {
-      setError("先涂个区域吧（红色画笔涂哪改哪）");
+      setError("Preencha uma região com um cor vermelha (Qual região será mudada e qual cor)");
       return;
     }
     setError(null);
     setSubmitting(true);
     try {
-      setProgressMsg("生成 mask 文件...");
+      setProgressMsg("Geralmente carrega o arquivo de mask...");
       const maskBlob = await buildMaskBlob();
       const maskFile = new File([maskBlob], "mask.png", { type: "image/png" });
-      setProgressMsg("上传 mask...");
+      setProgressMsg("Carregue o arquivo de mask...");
       const uploaded = await uploadFreezoneImage(project, maskFile);
 
-      setProgressMsg("提交局部重绘...");
+      setProgressMsg("Enviar solicitação de retrato local...");
       const ref = await submitFreezoneRedraw(project, {
         sourceUrl: baseUrl,
         maskUrl: uploaded.url.split("?")[0],
         prompt,
       });
-      setProgressMsg("处理中（30-60s）...");
+      setProgressMsg("Processando... (30-60s...)");
       const completed = await awaitTaskCompletion(ref.task_key, project, { taskType: ref.task_type });
       const directUrl =
         (completed.result?.["output_url"] as string | undefined) || undefined;
@@ -216,7 +216,7 @@ export function MaskEditor({
         directUrl ??
         (await fetchFreezoneJobResult(project, ref.task_type, ref.job_id))
           .url;
-      setProgressMsg("完成");
+      setProgressMsg("Concluído");
       onResult(url);
       onClose();
     } catch (err) {
@@ -232,7 +232,7 @@ export function MaskEditor({
       <div className="bg-surface border border-border-default rounded-2xl w-[90vw] max-w-[1200px] h-[85vh] flex flex-col overflow-hidden">
         <header className="flex items-center justify-between px-5 py-3 border-b border-border-default">
           <div>
-            <div className="text-sm font-semibold text-text">✏️ Mask 蒙版编辑</div>
+            <div className="text-sm font-semibold text-text">Mask Editing de Cobertura</div>
             <div className="text-xs text-text-muted mt-0.5 truncate max-w-md">
               {baseLabel || baseUrl}
             </div>
@@ -242,7 +242,7 @@ export function MaskEditor({
             onClick={onClose}
             disabled={submitting}
             className="text-text-muted hover:text-text text-sm disabled:opacity-30"
-            aria-label="关闭"
+            aria-label="Fechar"
           >
             ✕
           </button>
@@ -252,18 +252,18 @@ export function MaskEditor({
         <div className="px-5 py-2 border-b border-border-default flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-1.5">
             <ToolBtn active={tool === "brush"} onClick={() => setTool("brush")}>
-              🖌 笔刷
+              Brush
             </ToolBtn>
             <ToolBtn
               active={tool === "eraser"}
               onClick={() => setTool("eraser")}
             >
-              🧽 橡皮
+              🧽 Árvore de jóia
             </ToolBtn>
           </div>
           <div className="text-xs text-text-muted">|</div>
           <div className="flex items-center gap-1">
-            <span className="text-xs text-text-muted">大小</span>
+            <span className="text-xs text-text-muted">Tamanho</span>
             {BRUSH_SIZES.map((s) => (
               <button
                 key={s}
@@ -284,16 +284,16 @@ export function MaskEditor({
             type="button"
             onClick={clearMask}
             className="ml-auto px-2.5 py-1 rounded text-xs text-text-muted hover:text-red-400 transition"
-            title="清空蒙版"
+            title="Máscara transparente"
           >
-            清空
+            Limpar
           </button>
         </div>
 
         {/* Canvas */}
         <div className="flex-1 relative bg-bg-dark overflow-hidden flex items-center justify-center p-4">
           {!imageReady && (
-            <div className="text-text-muted text-sm">加载基底图...</div>
+            <div className="text-text-muted text-sm">Carregando imagem de fundo...</div>
           )}
           <div
             className={
@@ -325,7 +325,7 @@ export function MaskEditor({
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="蒙版区域改成什么？例：改成蓝色长发 / 加一束阳光 / 移除背景路人..."
+            placeholder="Qual é a região de sombras? Exemplo: tornar azul longo / adicionar um buraco solar / remover pessoas de fundo..."
             rows={2}
             disabled={submitting}
             className="w-full px-3 py-2 rounded-lg bg-bg-dark border border-border-default text-text text-sm focus:outline-none focus:border-accent transition resize-none"
@@ -337,7 +337,7 @@ export function MaskEditor({
               ) : error ? (
                 <span className="text-red-400">{error}</span>
               ) : (
-                <>红色 = 待编辑区域 · LingShan-G2 · 可能 30-60 秒</>
+                <>Vermelho = Área para editar · LingShan-G2 · Possivelmente 30-60 segundos</>
               )}
             </div>
             <div className="flex gap-2">
@@ -347,7 +347,7 @@ export function MaskEditor({
                 disabled={submitting}
                 className="px-3 py-1.5 rounded-lg text-text-muted hover:text-text text-sm transition disabled:opacity-30"
               >
-                取消
+                Cancelar
               </button>
               <button
                 type="button"
@@ -355,7 +355,7 @@ export function MaskEditor({
                 disabled={submitting || !imageReady}
                 className="px-4 py-1.5 rounded-lg bg-accent/90 hover:bg-accent text-white text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? "处理中..." : "Apply"}
+                {submitting ? "Processando..." : "Apply"}
               </button>
             </div>
           </div>

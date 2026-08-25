@@ -96,7 +96,7 @@ export function ImportPanel({ project, onClose, onImport }: ImportPanelProps) {
       })
       .catch((err) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : "加载失败");
+        setError(err instanceof Error ? err.message : "Falha no carregamento");
         setLoading(false);
       });
     return () => {
@@ -158,10 +158,10 @@ export function ImportPanel({ project, onClose, onImport }: ImportPanelProps) {
   const footer = (
     <>
       <div className="mr-auto text-xs text-text-muted self-center">
-        将导入 <span className="text-text-dark font-semibold">{previewAssets.length}</span> 张图
+        Import <span className="text-text-dark font-semibold">{previewAssets.length}</span> Capture
       </div>
       <UiButton variant="ghost" size="sm" onClick={onClose}>
-        取消
+        Cancelar
       </UiButton>
       <UiButton
         variant="primary"
@@ -169,7 +169,7 @@ export function ImportPanel({ project, onClose, onImport }: ImportPanelProps) {
         onClick={handleSubmit}
         disabled={previewAssets.length === 0 || submitting}
       >
-        {submitting ? "导入中..." : "导入"}
+        {submitting ? "Importing..." : "Import"}
       </UiButton>
     </>
   );
@@ -177,52 +177,52 @@ export function ImportPanel({ project, onClose, onImport }: ImportPanelProps) {
   return (
     <UiModal
       isOpen
-      title="导入资产到画布"
+      title="Import assets to canvas"
       onClose={onClose}
       footer={footer}
       widthClassName="w-[640px]"
     >
-      <div className="text-xs text-text-muted -mt-1 mb-3">项目: {project}</div>
+      <div className="text-xs text-text-muted -mt-1 mb-3">Projeto: {project}</div>
 
       <div className="ui-scrollbar max-h-[60vh] overflow-y-auto space-y-5 -mx-1 px-1">
         {loading ? (
-          <div className="text-sm text-text-muted py-8 text-center">加载中...</div>
+          <div className="text-sm text-text-muted py-8 text-center">Carregando...</div>
         ) : error ? (
           <div className="text-sm text-red-400 py-8 text-center">{error}</div>
         ) : (
           <>
-            <Section title="资产类型">
+            <Section title="Asset type">
               <KindToggleRow
-                label="🎭 Identity (角色身份图)"
+                label="Identidade (Personagem)"
                 checked={kinds.identity}
                 onChange={(v) => setKinds({ ...kinds, identity: v })}
               />
               <KindToggleRow
-                label="🖼 Portrait (角色肖像)"
+                label="Retrato (Carregando...)"
                 checked={kinds.portrait}
                 onChange={(v) => setKinds({ ...kinds, portrait: v })}
               />
               <KindToggleRow
-                label="🎬 Frame (beat 首帧)"
+                label="Frame (Primeira quadra)"
                 checked={kinds.frame}
                 onChange={(v) => setKinds({ ...kinds, frame: v })}
               />
               <KindToggleRow
-                label="✏️ Sketch (草图)"
+                label="Sketch (Draque)"
                 checked={kinds.sketch}
                 onChange={(v) => setKinds({ ...kinds, sketch: v })}
               />
               <KindToggleRow
-                label="📐 导演合成资产"
+                label="Assets (Arquivos de direção)"
                 checked={kinds.director_render}
                 onChange={(v) => setKinds({ ...kinds, director_render: v })}
               />
             </Section>
 
             {(kinds.identity || kinds.portrait) && (
-              <Section title="角色">
+              <Section title="Função">
                 {characters.length === 0 ? (
-                  <div className="text-xs text-text-muted">该项目没有角色</div>
+                  <div className="text-xs text-text-muted">Nenhum personagem</div>
                 ) : (
                   <CharactersList
                     characters={characters}
@@ -239,7 +239,7 @@ export function ImportPanel({ project, onClose, onImport }: ImportPanelProps) {
             )}
 
             {(kinds.frame || kinds.sketch || kinds.director_render) && (
-              <Section title="集 / Beat">
+              <Section title="Coluna / Frame">
                 <EpisodePicker
                   episodes={episodes}
                   selectedEpisode={selectedEpisode}
@@ -342,7 +342,7 @@ function EpisodePicker({
 }) {
   return (
     <div className="flex items-center gap-2 text-sm text-text-dark">
-      <span className="text-text-muted text-xs shrink-0">集:</span>
+      <span className="text-text-muted text-xs shrink-0">Coluna:</span>
       <div className="flex-1">
         <UiSelect
           value={selectedEpisode ?? ""}
@@ -386,7 +386,7 @@ function BeatRange({
           onClick={setAll}
           disabled={allSelected}
         >
-          全选
+          Selecionar tudo
         </UiButton>
         <UiButton
           variant="ghost"
@@ -395,7 +395,7 @@ function BeatRange({
           onClick={setNone}
           disabled={noneSelected}
         >
-          全不选
+          Selecionar nada
         </UiButton>
       </div>
       <div className="ui-scrollbar grid grid-cols-8 gap-1 max-h-32 overflow-y-auto pr-1">
@@ -450,7 +450,7 @@ function collectAssets(args: CollectArgs): ImportableAsset[] {
           id: `identity:${args.project}:${c.name}:${idKey}`,
           kind: "identity",
           url,
-          label: `${c.display_name || c.name} · ${idKey || "身份图"}`,
+          label: `${c.display_name || c.name} · ${idKey || "Identidade"}`,
           meta: {
             project: args.project,
             character: c.name,

@@ -171,17 +171,17 @@ describe("canvasStore projection groups", () => {
         width: 320,
         height: 220,
         style: { width: 320, height: 220 },
-        data: { label: "导演世界" },
+        data: { label: "Mundo do diretor" },
       },
     ], []);
 
     const groupId = useCanvasStore.getState().addPanoCaptureGroup(
       source,
       [
-        { dataUrl: "data:image/png;base64,a", width: 1600, height: 900, label: "导演合成图" },
-        { dataUrl: "data:image/png;base64,b", width: 1600, height: 900, label: "纯背景图" },
+        { dataUrl: "data:image/png;base64,a", width: 1600, height: 900, label: "Diagrama de Composição do Diretor" },
+        { dataUrl: "data:image/png;base64,b", width: 1600, height: 900, label: "Imagem de fundo pura" },
       ],
-      { cols: 2, groupName: "导演世界输出" }
+      { cols: 2, groupName: "Saída Mundial do Diretor" }
     );
 
     expect(groupId).not.toBeNull();
@@ -585,7 +585,7 @@ describe("canvasStore projection groups", () => {
       {
         edgeKind: "role_binding",
         role: "current_frame_candidate",
-        label: "分镜候选",
+        label: "Candidato a tiro",
         propagates: false,
       },
       {

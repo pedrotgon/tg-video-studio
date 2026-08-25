@@ -85,12 +85,12 @@ export function AssetCommitHandle({ node }: { node: CanvasNode }) {
       <button
         type="button"
         onPointerDown={handlePointerDown}
-        title="按住拖到左侧素材库,替换同类型素材"
+        title="Pressione e arraste para o lado esquerdo da biblioteca de elementos, substitua o mesmo tipo de elemento"
         className={`${NODE_SIDE_ACTION_BUTTON_CLASS} active:cursor-grabbing`}
         style={{ cursor: 'grab' }}
       >
         <Replace className={NODE_SIDE_ACTION_ICON_CLASS} />
-        替换素材
+        Substitua o material
       </button>
     </NodeSideActionRail>
   );

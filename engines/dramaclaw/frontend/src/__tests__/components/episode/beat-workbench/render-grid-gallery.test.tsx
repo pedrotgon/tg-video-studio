@@ -20,10 +20,10 @@ beforeAll(async () => {
       zh: {
         translation: {
           common: {
-            regenerate: "重新生成",
+            regenerate: "Regenerar",
             download: "下载",
             stop: "停止",
-            upload: "上传",
+            upload: "Enviar",
             copy: "复制",
             billingRuleNotConfiguredShort: "需配置",
           },
@@ -431,7 +431,7 @@ describe("RenderGridGallery", () => {
     );
 
     expect(screen.getByText("8")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "重新生成" }));
+    await user.click(screen.getByRole("button", { name: "Regenerar" }));
     expect(regenerateGridMock).toHaveBeenCalledWith({
       gridIndex: 2,
       sceneGrouping: true,

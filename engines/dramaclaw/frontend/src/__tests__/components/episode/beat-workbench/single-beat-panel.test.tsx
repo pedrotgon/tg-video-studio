@@ -21,10 +21,10 @@ beforeAll(async () => {
           episode: {
             beat: {
               sectionText: "文案",
-              sectionSketch: "草图",
+              sectionSketch: "Esboço",
               sectionRender: "渲染图",
-              sectionAudio: "音频",
-              sectionVideo: "视频",
+              sectionAudio: "Áudio",
+              sectionVideo: "Vídeo",
               edited: "已编辑",
               notEdited: "未编辑",
               selected: "已选择",
@@ -144,7 +144,7 @@ describe("SingleBeatPanel", () => {
   it("shows the audio pane for 解说剧 (narrated) projects", () => {
     renderPanel({ isSeedance2Backend: true, spineTemplate: "narrated" });
 
-    expect(screen.getByText("音频")).toBeInTheDocument();
+    expect(screen.getByText("Áudio")).toBeInTheDocument();
     expect(screen.getByText("AudioPane")).toBeInTheDocument();
     expect(screen.getByText("VideoPane")).toBeInTheDocument();
   });
@@ -152,7 +152,7 @@ describe("SingleBeatPanel", () => {
   it("hides the audio pane for 精品剧 (drama) projects", () => {
     renderPanel({ isSeedance2Backend: true, spineTemplate: "drama" });
 
-    expect(screen.queryByText("音频")).not.toBeInTheDocument();
+    expect(screen.queryByText("Áudio")).not.toBeInTheDocument();
     expect(screen.queryByText("AudioPane")).not.toBeInTheDocument();
     expect(screen.getByText("VideoPane")).toBeInTheDocument();
   });

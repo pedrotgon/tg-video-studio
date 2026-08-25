@@ -20,7 +20,7 @@ vi.mock("react-i18next", () => ({
         "errorDialog.technicalDetails": "技术详情",
         "errorDialog.stillRunningTitle": "仍在生成中",
         "errorDialog.stillRunningMessage": "页面已停止等待，任务仍在后台继续。",
-        "common.close": "关闭",
+        "common.close": "Fechar",
       })[key] ?? key,
   }),
 }));
@@ -68,7 +68,7 @@ describe("GlobalErrorDialog pending 变体", () => {
       <GlobalErrorDialog
         isOpen
         variant="error"
-        title="生成失败"
+        title="Falha na geração"
         message="上游返回 500"
         details="request_id=abc"
         onClose={() => {}}

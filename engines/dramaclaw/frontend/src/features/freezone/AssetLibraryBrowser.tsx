@@ -108,9 +108,9 @@ export function AssetLibraryBrowser({
     async (entry: LibraryItem) => {
       if (!entry.id) return;
       const confirmed = await confirmDialog({
-        title: "删除素材",
+        title: "Excluir elemento",
         description: `确定要删除「${entry.name || entry.id}」？删了找不回来。`,
-        confirmText: "删除",
+        confirmText: "Remover",
         confirmVariant: "destructive",
       });
       if (!confirmed) return;
@@ -118,7 +118,7 @@ export function AssetLibraryBrowser({
       try {
         await deleteFreezoneVideoCharacterLibraryItem(project, entry.id);
         refreshLibrary();
-        toast.success(`已删除：${entry.name || "素材"}`);
+        toast.success(`已删除：${entry.name || "Materiais"}`);
       } catch (err) {
         toast.error(
           `删除失败：${err instanceof Error ? err.message : String(err)}`,
@@ -144,7 +144,7 @@ export function AssetLibraryBrowser({
     return (
       <div className="ui-scrollbar min-h-0 flex-1 overflow-y-auto px-3 py-2.5">
         <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2 text-xs text-red-400">
-          资产库加载失败：
+          Falha ao carregar a biblioteca de ativos:
           {libraryQuery.error instanceof Error
             ? libraryQuery.error.message
             : String(libraryQuery.error)}
@@ -156,7 +156,7 @@ export function AssetLibraryBrowser({
   if (libraryQuery.isPending) {
     return (
       <div className="min-h-0 flex-1 px-3 py-6 text-center text-xs text-white/25">
-        加载中…
+        Carregando...
       </div>
     );
   }
@@ -165,7 +165,7 @@ export function AssetLibraryBrowser({
   if (items.length === 0 && (foldersQuery.data?.length ?? 0) === 0) {
     return (
       <div className="min-h-0 flex-1 px-4 py-6 text-center text-[11px] leading-relaxed text-white/25">
-        资产库还是空的。上传素材或从主线同步，请在节点上打开「资产库」。
+        A biblioteca de ativos ainda está vazia.Para carregar elementos ou sincronizar a partir da linha principal, abra a Biblioteca de Ativos no nó.
       </div>
     );
   }
@@ -178,11 +178,11 @@ export function AssetLibraryBrowser({
           <button
             type="button"
             onClick={() => setOpenKey(null)}
-            aria-label="返回资产库根目录"
+            aria-label="Voltar à raiz da biblioteca de ativos"
             className="inline-flex items-center gap-0.5 rounded px-1 py-0.5 transition-colors hover:bg-white/[0.06] hover:text-white/70"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
-            资产库
+            Biblioteca de Ativos
           </button>
           <span className="text-white/20">/</span>
           <span className="truncate px-0.5 text-white/80">
@@ -233,7 +233,7 @@ export function AssetLibraryBrowser({
         {/* ── 文件夹内：条目列表 ── */}
         {openFolder && openFolder.items.length === 0 ? (
           <div className="px-2 py-6 text-center text-[11px] text-white/25">
-            「{openFolder.label}」暂无素材。
+            「{openFolder.label}"Nenhum ativo ainda.
           </div>
         ) : null}
 
@@ -243,7 +243,7 @@ export function AssetLibraryBrowser({
             className={`group flex w-full items-center gap-2.5 rounded-lg px-1.5 py-1.5 transition-colors hover:bg-white/[0.06] ${
               busyId && entry.id === busyId ? "opacity-40" : ""
             }`}
-            title={entry.name || "(未命名)"}
+            title={entry.name || "(sem nome)"}
           >
             <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[4px] bg-white/[0.06]">
               {entry.media === "image" ? (
@@ -275,7 +275,7 @@ export function AssetLibraryBrowser({
               )}
             </span>
             <span className="min-w-0 flex-1 truncate text-xs text-white/85">
-              {entry.name || "(未命名)"}
+              {entry.name || "(sem nome)"}
             </span>
             <AssetItemMenu
               entry={entry}
@@ -292,9 +292,9 @@ export function AssetLibraryBrowser({
 
       <AssetLibraryNewFolderDialog
         open={Boolean(renameEntry)}
-        title="重命名"
-        fieldLabel="资产名称"
-        placeholder="请输入资产名称"
+        title="Renomear"
+        fieldLabel="Nome do Ativo"
+        placeholder="Insira um nome de ativo"
         maxLength={LIBRARY_ITEM_NAME_MAX_LEN}
         initialName={renameEntry?.name ?? ""}
         onClose={() => setRenameEntry(null)}
@@ -344,7 +344,7 @@ function AssetItemMenu({
         render={
           <button
             type="button"
-            aria-label={`${entry.name || "素材"} 更多操作`}
+            aria-label={`${entry.name || "Materiais"} 更多操作`}
             // 平时藏起来，hover 或键盘聚焦才出现；自己的菜单开着时常驻，
             // 否则鼠标一移到菜单上按钮就消失了。
             className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/45 transition-colors hover:bg-white/[0.10] hover:text-white focus-visible:opacity-100 ${
@@ -361,12 +361,12 @@ function AssetItemMenu({
         {onSendToCanvas ? (
           <DropdownMenuItem className={MENU_ITEM_CLASS} onClick={onSendToCanvas}>
             <SendHorizontal className="h-3.5 w-3.5" />
-            <span>发送到画布</span>
+            <span>Enviar para o Canvas</span>
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuItem className={MENU_ITEM_CLASS} onClick={onDownload}>
           <Download className="h-3.5 w-3.5" />
-          <span>下载</span>
+          <span>Download</span>
         </DropdownMenuItem>
         {writable ? (
           <>
@@ -377,7 +377,7 @@ function AssetItemMenu({
               }}
             >
               <Pencil className="h-3.5 w-3.5" />
-              <span>重命名</span>
+              <span>Renomear</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               variant="destructive"
@@ -387,7 +387,7 @@ function AssetItemMenu({
               }}
             >
               <Trash2 className="h-3.5 w-3.5" />
-              <span>删除</span>
+              <span>Remover</span>
             </DropdownMenuItem>
           </>
         ) : null}

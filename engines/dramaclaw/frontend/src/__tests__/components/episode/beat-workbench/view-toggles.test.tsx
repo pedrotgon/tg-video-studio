@@ -20,7 +20,7 @@ beforeAll(async () => {
         translation: {
           episode: {
             beat: {
-              sectionSketch: "草图",
+              sectionSketch: "Esboço",
               sectionRender: "渲染",
             },
             workbench: {

@@ -44,25 +44,25 @@ export function TwelfthFinalScreen({
           draggable={false}
           aria-hidden="true"
         />
-        <h2>把一句设定推进成可看的宇宙</h2>
-        <p>输入角色冲突或世界观 让 DramaClaw 拆成镜头节点并持续延展</p>
+        <h2>Traga um enredo em uma visualização para criar um mundo vivo.</h2>
+        <p>Digite conflitos de personagem ou visão do mundo para que DramaClaw divida em fragmentos de câmera e os expande continuamente.</p>
         <div className={styles.actions}>
           <button type="button" className={styles.primary} onClick={onStart}>
-            开启无限创作
+            Abre a criação infinita
           </button>
           <div className={styles.business}>
             <button type="button" className={styles.secondary}>
-              快速申请账号
+              Crie rapidamente uma conta
             </button>
             <div
               className={styles.businessPopover}
               role="dialog"
-              aria-label="商务联系"
+              aria-label="Contato comercial"
             >
               <div className={styles.businessPanel}>
                 <img
                   src={businessWechatQrUrl}
-                  alt="商务微信二维码"
+                  alt="Código de dois dimensões do WeChat para comércio"
                   draggable={false}
                 />
               </div>

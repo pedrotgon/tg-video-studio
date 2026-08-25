@@ -17,10 +17,10 @@ import {
 } from '@/features/canvas/ui/canvas-node-menu-shared';
 
 const skillProviderLabels: Record<SkillProvider, string> = {
-  freezone_mainline: '主线技能',
-  agent: 'Agent 技能',
-  tool: '工具技能',
-  workflow: '工作流技能',
+  freezone_mainline: 'Habilidades da linha principal',
+  agent: 'Habilidades do agente',
+  tool: 'Habilidades com ferramentas',
+  workflow: 'Habilidades de fluxo de trabalho',
 };
 
 const skillProviderOrder: SkillProvider[] = ['freezone_mainline', 'agent', 'tool', 'workflow'];
@@ -178,7 +178,7 @@ export function CanvasAddNodePanel({
                           {skillProviderLabels[group.provider]}
                         </div>
                         <div className="text-[11px] leading-4 text-white/35">
-                          {group.items.length} 个技能
+                          {group.items.length} Habilidades
                         </div>
                       </div>
                       <ChevronRight

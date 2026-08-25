@@ -358,7 +358,7 @@ function BeatsTabContent() {
     if (dispatchableItems.length === 0) {
       toast.warning(
         t("episode.workbench.batch.sketchGroupRunning", {
-          defaultValue: "相同草图组正在运行中",
+          defaultValue: "Mesma composição está em execução",
         }),
       );
       return;
@@ -834,7 +834,7 @@ function BeatsTabContent() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t("episode.sketchPlan.subtitle", {
-                defaultValue: "系统已根据场景自动分组。确认后会直接发配草图任务。",
+                defaultValue: "O sistema agrupou automaticamente por cena. Confirme para enviar diretamente as tarefas de esboço.",
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -872,7 +872,7 @@ function BeatsTabContent() {
                   <div className="truncate text-[10px] text-muted-foreground">
                     {lockedSketchItemIds.has(item.id)
                       ? t("episode.workbench.batch.sketchGroupRunning", {
-                          defaultValue: "相同草图组正在运行中",
+                          defaultValue: "Mesma composição está em execução",
                         })
                       : item.modeLabel}
                   </div>

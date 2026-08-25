@@ -1109,7 +1109,7 @@ export const NodeActionToolbar = memo(
                 key="mainline-lock-pill"
                 className="rounded-full bg-amber-500/15 px-3 py-1.5 text-sm text-amber-100"
               >
-                主线投影 · 锁定
+                Projeção da linha principal · Bloqueada
               </span>
             )}
             {isPresetLocked && workbenchTarget && (
@@ -1123,18 +1123,18 @@ export const NodeActionToolbar = memo(
                 }}
               >
                 <FolderOpen className="h-3.5 w-3.5" />
-                {openingWorkbench ? "打开中..." : "打开工作台"}
+                {openingWorkbench ? "Abrindo..." : "Bancada aberta"}
               </UiChipButton>
             )}
             {extractableBeatContext && node.type !== CANVAS_NODE_TYPES.beatContext && (
               <UiChipButton
                 key="extract-beat-context"
                 className={TOOLBAR_TEXT_BUTTON_CLASS}
-                title="创建或定位这个素材对应的镜头上下文节点；不会自动连线"
+                title="Criar ou posicionar o nó de contexto da lente correspondente a esta filmagem; não será conectado automaticamente"
                 onClick={handleEnsureBeatContextNode}
               >
                 <Link2 className="h-3.5 w-3.5" />
-                镜头上下文
+                Contexto da lente
               </UiChipButton>
             )}
             {/* AI 改图按钮暂时隐藏（保留代码，等需求恢复时取消注释）
@@ -2346,7 +2346,7 @@ export const NodeActionToolbar = memo(
                       <UiChipButton
                         key="group-color"
                         className={TOOLBAR_TEXT_BUTTON_CLASS}
-                        title="组背景色"
+                        title="Cor de fundo do grupo"
                         onClick={(event) => event.stopPropagation()}
                       >
                         {groupColor ? (
@@ -2357,7 +2357,7 @@ export const NodeActionToolbar = memo(
                         ) : (
                           <Palette className="h-3.5 w-3.5" />
                         )}
-                        背景色
+                        Cor de fundo
                         <ChevronDown className="h-3 w-3" />
                       </UiChipButton>
                     </DropdownMenuTrigger>
@@ -2370,7 +2370,7 @@ export const NodeActionToolbar = memo(
                       <div className="grid grid-cols-5 gap-1.5 p-1.5">
                         <button
                           type="button"
-                          title="无"
+                          title="Nenhum"
                           onClick={() => updateNodeData(nodeId, { backgroundColor: null })}
                           className={`relative flex h-6 w-6 items-center justify-center rounded-full border bg-transparent transition-transform hover:scale-110 ${
                             groupColor ? 'border-white/25' : 'border-white ring-1 ring-white/60'
@@ -2402,11 +2402,11 @@ export const NodeActionToolbar = memo(
                       <UiChipButton
                         key="group-arrange"
                         className={TOOLBAR_TEXT_BUTTON_CLASS}
-                        title="排列方式"
+                        title="Organizar por"
                         onClick={(event) => event.stopPropagation()}
                       >
                         <LayoutGrid className="h-3.5 w-3.5" />
-                        排列
+                        Arranjo
                         <ChevronDown className="h-3 w-3" />
                       </UiChipButton>
                     </DropdownMenuTrigger>
@@ -2420,19 +2420,19 @@ export const NodeActionToolbar = memo(
                         className={TOOLBAR_MENU_ITEM_CLASS}
                         onSelect={() => arrangeGroupChildren(nodeId, 'grid')}
                       >
-                        网格
+                        Grade
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className={TOOLBAR_MENU_ITEM_CLASS}
                         onSelect={() => arrangeGroupChildren(nodeId, 'horizontal')}
                       >
-                        横向排列
+                        Alinhamento horizontal
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className={TOOLBAR_MENU_ITEM_CLASS}
                         onSelect={() => arrangeGroupChildren(nodeId, 'vertical')}
                       >
-                        纵向排列
+                        Alinhamento vertical
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -2513,10 +2513,10 @@ export const NodeActionToolbar = memo(
                     nodeId: node.id,
                   });
                 }}
-                title="把当前节点的内容写回主流程资产"
+                title="Escreva o conteúdo do nó atual de volta para o ativo de fluxo"
               >
                 <Send className="h-3.5 w-3.5" />
-                提交
+                Enviar
               </UiChipButton>
             )}
           </UiPanel>

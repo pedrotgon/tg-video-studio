@@ -118,32 +118,32 @@ const SEEDANCE2_PROMPT_GUIDANCE_TEMPLATES = [
   {
     key: "subject",
     labelKey: "seedance2GuidanceSubject",
-    text: "主体：明确画面核心人物或物体、当前动作和状态，避免多个主体争抢焦点。",
+    text: "Personagem: personagem ou objeto principal da cena, ação e estado atuais, evite que vários personagens disputem o foco.",
   },
   {
     key: "scene",
     labelKey: "seedance2GuidanceScene",
-    text: "场景：补充空间背景、地点关系、关键道具和环境材质，保持与参考图一致。",
+    text: "Cena: complemente o fundo espacial, relação do local, objetos-chave e materiais ambientais, mantenha consistente com a imagem de referência.",
   },
   {
     key: "lighting",
     labelKey: "seedance2GuidanceLighting",
-    text: "光影：描述主光源、明暗层次、色温和氛围，避免忽明忽暗。",
+    text: "Iluminação: descreva a fonte de luz principal, camadas de claro/escuro, temperatura de cor e atmosfera, evite brilho/escuridão repentinos.",
   },
   {
     key: "camera",
     labelKey: "seedance2GuidanceCamera",
-    text: "镜头：说明景别、视角、运镜速度和运动方向，保持镜头运动清晰可执行。",
+    text: "Enquadramento: especifique o plano, ângulo, velocidade de movimento da câmera e direção do movimento, mantenha o movimento da câmera claro e executável.",
   },
   {
     key: "style",
     labelKey: "seedance2GuidanceStyle",
-    text: "风格：限定画面质感、时代感、色彩倾向和真实度，避免风格漂移。",
+    text: "Estilo: limite a textura da imagem, senso de época, tendência de cores e realismo, evite desvio de estilo.",
   },
   {
     key: "no_subtitle",
     labelKey: "seedance2GuidanceNoSubtitle",
-    text: "无字幕：避免生成任何文字或字幕，保持画面纯净。",
+    text: "Sem legendas: evite gerar qualquer texto ou legenda, mantenha a imagem pura.",
   },
 ] as const;
 const VIDEO_GRID_CLASS =
@@ -507,7 +507,7 @@ export function VideoPane({
       modelReferenceAssetItems.filter(
         (asset) =>
           asset.reference_label &&
-          asset.reference_label !== "未发送" &&
+          asset.reference_label !== "Não enviado" &&
           asset.exists !== false,
     ),
     [modelReferenceAssetItems],
@@ -1965,7 +1965,7 @@ export function VideoPane({
                   <div className="grid grid-cols-[repeat(auto-fill,minmax(6.75rem,6.75rem))] gap-2">
                     {modelReferenceAssetItems.map((asset) => {
                       const referenceLabel =
-                        asset.reference_label && asset.reference_label !== "未发送"
+                        asset.reference_label && asset.reference_label !== "Não enviado"
                           ? asset.reference_label
                           : "";
                       const canInsertReference =
@@ -3187,9 +3187,9 @@ function defaultSeedance2Config(
       enabled: textOverlay.enabled === true,
       kind: normalizeSeedance2TextOverlayKind(textOverlay.kind),
       content: String(textOverlay.content ?? ""),
-      placement: String(textOverlay.placement ?? "画面下方居中"),
-      timing: String(textOverlay.timing ?? "全片持续"),
-      style: String(textOverlay.style ?? "干净易读"),
+      placement: String(textOverlay.placement ?? "Centralizado na parte inferior da tela"),
+      timing: String(textOverlay.timing ?? "Contínuo em toda a cena"),
+      style: String(textOverlay.style ?? "Limpo e legível"),
       speaker: String(textOverlay.speaker ?? ""),
     },
   };

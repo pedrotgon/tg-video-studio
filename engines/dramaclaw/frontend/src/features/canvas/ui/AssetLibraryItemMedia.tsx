@@ -206,7 +206,7 @@ function AudioThumb({ src }: { src: string }) {
       <button
         type="button"
         onClick={toggle}
-        aria-label={playing ? '暂停' : '播放'}
+        aria-label={playing ? 'Pausar' : 'Reproduzir'}
         className="flex h-10 w-10 items-center justify-center rounded-full bg-white/92 text-[#15161b] shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition hover:scale-105 hover:bg-white"
       >
         {playing ? (
@@ -219,7 +219,7 @@ function AudioThumb({ src }: { src: string }) {
       {/* 波形即进度条：播过的柱子亮起来，点哪跳哪。 */}
       <div
         role="slider"
-        aria-label="播放进度"
+        aria-label="Progresso da reprodução"
         aria-valuemin={0}
         aria-valuemax={Math.round(duration)}
         aria-valuenow={Math.round(time)}

@@ -19,9 +19,9 @@ const translations: Record<string, string> = {
   "viewer.threeD.skillDefinitions.freezone_sketch_from_context.description": "从镜头上下文和当前背景生成主线草图候选。",
   "viewer.threeD.skillDefinitions.freezone_frame_from_context.name": "从镜头上下文生成分镜",
   "viewer.threeD.skillDefinitions.freezone_frame_from_context.description": "从镜头上下文、草图和参考图生成主线分镜候选。",
-  "viewer.threeD.skillInputLabels.beat_context": "镜头上下文",
-  "viewer.threeD.skillOutputLabels.current_frame_candidate": "分镜候选",
-  "viewer.threeD.skillParameterLabels.freezone_sketch_from_context.aspect_ratio": "比例",
+  "viewer.threeD.skillInputLabels.beat_context": "Contexto da lente",
+  "viewer.threeD.skillOutputLabels.current_frame_candidate": "Candidato a tiro",
+  "viewer.threeD.skillParameterLabels.freezone_sketch_from_context.aspect_ratio": "Proporção",
   "viewer.threeD.skillParameterOptions.freezone_sketch_from_context.aspect_ratio.2_3": "竖幅 2:3",
   "viewer.threeD.skillParameterOptions.freezone_sketch_from_context.aspect_ratio.16_9": "横幅 16:9",
   "viewer.threeD.skillParameterLabels.freezone_frame_from_context.background_reference_mode": "背景参考模式",
@@ -48,8 +48,8 @@ describe("mainline skill i18n", () => {
   });
 
   it("keeps skill node input/output labels in Chinese", () => {
-    expect(translateSkillInputLabel("beat_context", "Beat context", t)).toBe("镜头上下文");
-    expect(translateSkillOutputLabel("current_frame_candidate", "Current frame candidate", t)).toBe("分镜候选");
+    expect(translateSkillInputLabel("beat_context", "Beat context", t)).toBe("Contexto da lente");
+    expect(translateSkillOutputLabel("current_frame_candidate", "Current frame candidate", t)).toBe("Candidato a tiro");
   });
 
   it("translates skill parameter labels and option values", () => {
@@ -60,7 +60,7 @@ describe("mainline skill i18n", () => {
         "Aspect ratio",
         t,
       ),
-    ).toBe("比例");
+    ).toBe("Proporção");
     expect(
       translateSkillParameterOption(
         "freezone.sketch_from_context",

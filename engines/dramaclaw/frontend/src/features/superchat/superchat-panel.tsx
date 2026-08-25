@@ -355,7 +355,7 @@ function ChatAvatarFrame({
 }) {
   const isAssistant = role === "assistant";
   const isTool = role === "tool";
-  const initial = label?.trim().charAt(0).toUpperCase() || (isAssistant ? "虾" : isTool ? "" : "U");
+  const initial = label?.trim().charAt(0).toUpperCase() || (isAssistant ? "Nenhuma informação" : isTool ? "" : "U");
   // Shared, fetch-once avatar source (see ai-avatar.ts) — null until ready so we
   // don't kick off a raw-path request from every avatar before the blob lands.
   const avatarUrl = useAiAvatarUrl();
@@ -2171,7 +2171,7 @@ function buildReingestConfirmationContext(
     `filename: ${pending.filename}`,
     pending.stage === "choose_overwrite"
       ? "The current project has already ingested a script. Do not call ingest/start yet. Tell the user the current project is not empty and ask only whether they want to overwrite this project. Do not recommend creating a new project, and do not offer to create another project from the current project flow."
-      : "The user chose overwrite. Do not call ingest/start yet. Ask the second confirmation and warn that overwrite/rebuild will clear existing characters, episodes, scripts, sketches, audio, videos, and other pipeline outputs. Only an exact user reply of 确定 or 继续 may proceed.",
+      : "O usuário escolheu sobrescrever. Não chame o ingest/iniciar. Peça para a segunda confirmação e alerta que a sobrescrevimento/reconstrução vai borrar os personagens, episódios, scripts, sketches, áudio, vídeos e outros resultados do pipeline. Somente uma resposta exata de Sim ou Continua pode continuar.",
     "[/DRAMACLAW_REINGEST_CONFIRMATION]",
   ].join("\n");
 }
@@ -2523,7 +2523,7 @@ export function SuperChatPanel({
       const text =
         event.type === "task_complete"
           ? `✅ ${label}已完成。你可以让我查看结果，或继续下一步。`
-          : `${label}失败：${event.task.error || event.task.current_task || "未提供具体错误原因"}\n请根据错误处理前置条件后再继续。`;
+          : `${label}失败：${event.task.error || event.task.current_task || "Não fornece um erro específico"}\n请根据错误处理前置条件后再继续。`;
       void chat.appendNotification(text);
     });
   }, [chat.appendNotification, params.project, t, taskEventBus]);
@@ -3295,8 +3295,8 @@ export function SuperChatPanel({
                 "absolute bottom-4 left-1/2 z-30 h-9 w-9 -translate-x-1/2 rounded-full border border-white/12 bg-background/88 text-foreground shadow-lg backdrop-blur transition hover:bg-background",
                 isFreezoneLayout && "bottom-3",
               )}
-              title="回到底部"
-              aria-label="回到底部"
+              title="Volte ao topo"
+              aria-label="Volte ao topo"
               onClick={() => scrollToChatBottom("auto")}
             >
               <ArrowDown className="h-4 w-4" />

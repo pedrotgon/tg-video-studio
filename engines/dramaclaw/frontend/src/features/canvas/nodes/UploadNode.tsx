@@ -134,9 +134,9 @@ function blobToDataUrl(blob: Blob): Promise<string> {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') resolve(reader.result);
-      else reject(new Error('无法读取导演世界截图'));
+      else reject(new Error('Não foi possível ler a captura de tela do Mundo do Diretor'));
     };
-    reader.onerror = () => reject(reader.error ?? new Error('无法读取导演世界截图'));
+    reader.onerror = () => reject(reader.error ?? new Error('Não foi possível ler a captura de tela do Mundo do Diretor'));
     reader.readAsDataURL(blob);
   });
 }
@@ -145,7 +145,7 @@ function imageSize(dataUrl: string): Promise<{ width: number; height: number }> 
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve({ width: image.naturalWidth || 1, height: image.naturalHeight || 1 });
-    image.onerror = () => reject(new Error('无法解析导演世界截图尺寸'));
+    image.onerror = () => reject(new Error('Não foi possível analisar o tamanho da captura de tela do diretor mundial'));
     image.src = dataUrl;
   });
 }
@@ -189,7 +189,7 @@ function snapshotMarkerFromDirectorLayerItem(item: unknown): ThreeDSceneSnapshot
       };
   const position = placement.space === 'world' ? placement.position : [0, 0, 0] as [number, number, number];
   return {
-    label: typeof data.label === 'string' ? data.label : '导演元素',
+    label: typeof data.label === 'string' ? data.label : 'Elementos de Diretor',
     color: typeof data.color === 'string' ? data.color : '#38bdf8',
     placement,
     position,
@@ -308,7 +308,7 @@ export const UploadNode = memo(({ id, data, selected, width, height }: UploadNod
     }
 
     if (imageOnly && isNodeUsingDefaultDisplayName(CANVAS_NODE_TYPES.upload, data)) {
-      return '上传图片';
+      return 'Enviar imagem';
     }
     return resolveNodeDisplayName(CANVAS_NODE_TYPES.upload, data);
   }, [data, imageOnly, useUploadFilenameAsNodeTitle]);
@@ -660,14 +660,14 @@ export const UploadNode = memo(({ id, data, selected, width, height }: UploadNod
     async (_blob: Blob, meta: ThreeDDirectorCaptureMeta) => {
       const projectId = readUrl().project;
       if (!meta.captureBundle) {
-        throw new Error('导演合成图缺少 combined/env_only/frame_meta');
+        throw new Error('Falta o diagrama de composição do diretor combinado/env_only/frame_meta');
       }
       if (!projectId) {
-        throw new Error('缺少项目，无法保存画布导演合成图');
+        throw new Error('Projeto ausente para salvar o diagrama composto do Canvas Director');
       }
       const bundle = await uploadDirectorCaptureBundle(projectId, id, meta.captureBundle);
       const imageUrl = bundle.urls?.combined ?? '';
-      if (!imageUrl) throw new Error('画布导演合成图缺少图片地址');
+      if (!imageUrl) throw new Error('Endereço de imagem ausente da imagem composta do diretor de tela');
       updateNodeData(id, {
         imageUrl,
         previewImageUrl: withImageCacheBust(imageUrl, Date.now()),
@@ -713,7 +713,7 @@ export const UploadNode = memo(({ id, data, selected, width, height }: UploadNod
                 uploadedUrl: bundle.urls?.combined ?? '',
                 width: combinedSize.width,
                 height: combinedSize.height,
-                label: '导演合成图',
+                label: 'Diagrama de Composição do Diretor',
                 metadata: {
                   ...baseMetadata,
                   render_mode: 'combined',
@@ -724,17 +724,17 @@ export const UploadNode = memo(({ id, data, selected, width, height }: UploadNod
                 uploadedUrl: bundle.urls?.env_only ?? '',
                 width: envOnlySize.width,
                 height: envOnlySize.height,
-                label: '纯背景图',
+                label: 'Imagem de fundo pura',
                 metadata: {
                   ...baseMetadata,
                   render_mode: 'env_only',
                 },
               },
             ],
-            { cols: 2, groupName: '导演世界输出' },
+            { cols: 2, groupName: 'Saída Mundial do Diretor' },
           );
           updateNodeData(id, {
-            uploadError: groupId ? null : '导演世界截图输出到画布失败',
+            uploadError: groupId ? null : 'Falha na saída da captura de tela do diretor mundial para o Canvas',
           });
           if (groupId) {
             toast.success(t('viewer.threeD.outputToCanvasNodeSuccess'));
@@ -753,7 +753,7 @@ export const UploadNode = memo(({ id, data, selected, width, height }: UploadNod
             uploadedUrl,
             width: size.width,
             height: size.height,
-            label: '导演世界导出',
+            label: 'Exportação Mundial do Diretor',
             metadata: {
               viewer: 'director_world',
               render_mode: meta.kind,
@@ -763,7 +763,7 @@ export const UploadNode = memo(({ id, data, selected, width, height }: UploadNod
           },
         ]);
         updateNodeData(id, {
-          uploadError: groupId ? null : '导演世界截图输出到画布失败',
+          uploadError: groupId ? null : 'Falha na saída da captura de tela do diretor mundial para o Canvas',
         });
         if (groupId) {
           toast.success(t('viewer.threeD.outputToCanvasNodeSuccess'));
@@ -919,7 +919,7 @@ export const UploadNode = memo(({ id, data, selected, width, height }: UploadNod
               handlePickFile();
             }}
             onPointerDown={(event) => event.stopPropagation()}
-            title={imageOnly ? '上传图片' : (t('node.upload.hint') ?? '上传资源')}
+            title={imageOnly ? 'Enviar imagem' : (t('node.upload.hint') ?? 'Carregar recursos')}
             className={NODE_SIDE_ACTION_BUTTON_CLASS}
           >
             {data.isUploading ? (
@@ -927,7 +927,7 @@ export const UploadNode = memo(({ id, data, selected, width, height }: UploadNod
             ) : (
               <Upload className={NODE_SIDE_ACTION_ICON_CLASS} />
             )}
-            <span>{data.isUploading ? '上传中' : imageOnly ? '上传图片' : '上传资源'}</span>
+            <span>{data.isUploading ? 'Carregando' : imageOnly ? 'Enviar imagem' : 'Carregar recursos'}</span>
           </button>
         </NodeSideActionRail>
       )}

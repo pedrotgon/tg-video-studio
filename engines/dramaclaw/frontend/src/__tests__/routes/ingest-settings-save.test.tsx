@@ -941,7 +941,7 @@ describe("IngestPage settings save", () => {
     );
 
     expect(screen.getByTestId("chapter-body")).toHaveTextContent(
-      "第一集 待修复 这段原文没有可识别的场景头。",
+      "第一集 待修复 这段原文没有可识别的Cenário头。",
     );
   });
 
@@ -1256,7 +1256,7 @@ describe("IngestPage settings save", () => {
     await user.click(screen.getByRole("button", { name: /start import/i }));
 
     expect(
-      await screen.findByText("知识图谱构建失败: provider error"),
+      await screen.findByText("知识图谱构建Falha: provider error"),
     ).toBeInTheDocument();
     expect(mocks.toastError).toHaveBeenCalledWith("知识图谱构建失败: provider error");
   });

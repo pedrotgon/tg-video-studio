@@ -22,7 +22,7 @@ beforeAll(async () => {
           common: {
             copy: "复制",
             download: "下载",
-            regenerate: "重新生成",
+            regenerate: "Regenerar",
             stop: "停止",
             billingRuleNotConfiguredShort: "需配置",
           },
