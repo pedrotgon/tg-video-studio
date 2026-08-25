@@ -407,7 +407,7 @@ describe("RenderSection", () => {
     );
 
     expect(screen.getByText("Relight 到 白天")).toBeInTheDocument();
-    expect(screen.getByTitle("Relight：按 beat Tempo重新打光，不改变Cenário结构。")).toBeInTheDocument();
+    expect(screen.getByTitle("Relight：按 beat 时间重新打光，不改变场景结构。")).toBeInTheDocument();
     expect(screen.queryByText(/Seedance2/)).not.toBeInTheDocument();
   });
 
@@ -621,37 +621,37 @@ describe("RenderSection", () => {
       </I18nextProvider>,
     );
 
-    expect(screen.getByText("Render FundamentosReferência")).toBeInTheDocument();
+    expect(screen.getByText("Render 背景参考")).toBeInTheDocument();
     expect(screen.getByAltText("Beat 5 render").parentElement).toHaveStyle({
       aspectRatio: "2 / 3",
     });
-    expect(screen.getByText("当前：CenárioFrente")).toBeInTheDocument();
+    expect(screen.getByText("当前：场景正面")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "无 360" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Mundo do diretorCenárioToma uma foto" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "CenárioFrente" })).toHaveClass("bg-primary/[0.075]");
-    expect(screen.getByRole("button", { name: "CenárioFrente" })).toHaveClass("border-primary/45");
-    const reverseButton = screen.getByRole("button", { name: "CenárioVerso" });
-    const uploadButton = screen.getByRole("button", { name: "Enviar外部Referência" });
+    expect(screen.getByRole("button", { name: "导演世界场景截图" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "场景正面" })).toHaveClass("bg-primary/[0.075]");
+    expect(screen.getByRole("button", { name: "场景正面" })).toHaveClass("border-primary/45");
+    const reverseButton = screen.getByRole("button", { name: "场景背面" });
+    const uploadButton = screen.getByRole("button", { name: "上传外部参考" });
     const anchorRow = reverseButton.parentElement?.parentElement;
     expect(anchorRow).toContainElement(uploadButton);
     expect(
       reverseButton.compareDocumentPosition(uploadButton) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    expect(screen.queryByRole("button", { name: "Toma uma foto/Enviar" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "打开Mundo do diretor" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "截图/上传" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "打开导演世界" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "打开Mundo do diretor" }));
+    await user.click(screen.getByRole("button", { name: "打开导演世界" }));
     expect(screen.getByTestId("render-director-world-dialog")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "CenárioVerso" }));
+    await user.click(screen.getByRole("button", { name: "场景背面" }));
     expect(updateBackgroundAnchorMock).toHaveBeenCalledWith({ anchorId: "reverse" });
 
-    await user.click(screen.getByRole("button", { name: "Toma uma foto CenárioFrente" }));
-    expect(screen.getByRole("heading", { name: "CenárioFrente 裁剪Toma uma foto" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "截图 场景正面" }));
+    expect(screen.getByRole("heading", { name: "场景正面 裁剪截图" })).toBeInTheDocument();
     expect(screen.getByText("裁剪 2:3")).toBeInTheDocument();
     expect(cropBackgroundAnchorMock).not.toHaveBeenCalled();
 
-    const cropImage = screen.getByAltText("CenárioFrente 裁剪Toma uma foto");
+    const cropImage = screen.getByAltText("场景正面 裁剪截图");
     Object.defineProperty(cropImage, "naturalWidth", {
       configurable: true,
       value: 1200,
@@ -681,13 +681,13 @@ describe("RenderSection", () => {
     fireEvent.pointerMove(cropBox, { pointerId: 1, clientX: 660, clientY: 450 });
     fireEvent.pointerUp(cropBox, { pointerId: 1 });
 
-    await user.click(screen.getByRole("button", { name: "Salvar captura de tela" }));
+    await user.click(screen.getByRole("button", { name: "保存截图" }));
     expect(cropBackgroundAnchorMock).toHaveBeenCalledWith({
       anchorId: "master",
       crop: { x: 360, y: 0, width: 600, height: 900 },
     });
 
-    expect(screen.queryByRole("button", { name: "Render Esboço atual" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Render 当前草图" })).not.toBeInTheDocument();
     expect(regenerateMock).not.toHaveBeenCalled();
     expect(taskStartMock).not.toHaveBeenCalled();
   });
@@ -708,7 +708,7 @@ describe("RenderSection", () => {
       </I18nextProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Toma uma foto CenárioFrente" }));
+    await user.click(screen.getByRole("button", { name: "截图 场景正面" }));
 
     expect(screen.getByText("裁剪 16:9")).toBeInTheDocument();
   });
@@ -779,10 +779,10 @@ describe("RenderSection", () => {
       </I18nextProvider>,
     );
 
-    expect(screen.getByText("当前：CenárioFrente")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "CenárioFrente" })).toHaveClass("bg-primary/[0.075]");
-    expect(screen.getByRole("button", { name: "CenárioFrente" })).toHaveClass("border-primary/45");
-    expect(screen.queryByRole("button", { name: "Toma uma foto/Enviar" })).not.toBeInTheDocument();
+    expect(screen.getByText("当前：场景正面")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "场景正面" })).toHaveClass("bg-primary/[0.075]");
+    expect(screen.getByRole("button", { name: "场景正面" })).toHaveClass("border-primary/45");
+    expect(screen.queryByRole("button", { name: "截图/上传" })).not.toBeInTheDocument();
   });
 
   it("refreshes the shared director control frame query after committing from render", async () => {
@@ -800,7 +800,7 @@ describe("RenderSection", () => {
       </I18nextProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "打开Mundo do diretor" }));
+    await user.click(screen.getByRole("button", { name: "打开导演世界" }));
     await user.click(screen.getByRole("button", { name: "mock submit director combined" }));
 
     await waitFor(() => {

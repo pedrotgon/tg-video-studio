@@ -106,10 +106,10 @@ describe("AssetLibraryModal 类目与文件夹", () => {
 
     expect(await screen.findByRole("button", { name: "文件夹 主线" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "文件夹 待分类资产" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "文件夹 Estilo" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "文件夹 风格" })).toBeInTheDocument();
     // 顶层看不到条目本身，得点进文件夹。
     expect(screen.queryByText("厨房")).toBeNull();
-    expect(screen.queryByText("Diagrama de referênciaA")).toBeNull();
+    expect(screen.queryByText("参考图A")).toBeNull();
     // 写操作统一收在右上角，网格里不再有上传卡片。
     expect(screen.getByRole("button", { name: "Ações em massa" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Novo" })).toBeInTheDocument();
@@ -120,7 +120,7 @@ describe("AssetLibraryModal 类目与文件夹", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "文件夹 主线" }));
     expect(await screen.findByText("厨房")).toBeInTheDocument();
-    expect(screen.queryByText("Diagrama de referênciaA")).toBeNull();
+    expect(screen.queryByText("参考图A")).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "Voltar para todos" }));
     expect(await screen.findByRole("button", { name: "文件夹 待分类资产" })).toBeInTheDocument();
@@ -131,7 +131,7 @@ describe("AssetLibraryModal 类目与文件夹", () => {
     renderModal();
 
     fireEvent.click(await screen.findByRole("button", { name: "文件夹 待分类资产" }));
-    expect(await screen.findByText("Diagrama de referênciaA")).toBeInTheDocument();
+    expect(await screen.findByText("参考图A")).toBeInTheDocument();
     expect(screen.queryByText("赛博霓虹")).toBeNull();
   });
 
@@ -139,9 +139,9 @@ describe("AssetLibraryModal 类目与文件夹", () => {
     renderModal();
 
     await screen.findByRole("button", { name: "文件夹 主线" });
-    fireEvent.click(screen.getByRole("button", { name: "Estilo" }));
+    fireEvent.click(screen.getByRole("button", { name: "风格" }));
     expect(await screen.findByText("赛博霓虹")).toBeInTheDocument();
-    expect(screen.queryByText("Diagrama de referênciaA")).toBeNull();
+    expect(screen.queryByText("参考图A")).toBeNull();
     expect(screen.queryByRole("button", { name: "文件夹 待分类资产" })).toBeNull();
   });
 
@@ -149,10 +149,10 @@ describe("AssetLibraryModal 类目与文件夹", () => {
     renderModal({ allowedMedia: ["image"] });
 
     await screen.findByRole("button", { name: "文件夹 主线" });
-    expect(screen.queryByRole("button", { name: "Som" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "音效" })).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "文件夹 待分类资产" }));
-    expect(await screen.findByText("Diagrama de referênciaA")).toBeInTheDocument();
+    expect(await screen.findByText("参考图A")).toBeInTheDocument();
     expect(screen.queryByText("脚步声")).toBeNull();
   });
 });
@@ -190,7 +190,7 @@ describe("AssetLibraryModal 新建", () => {
       ),
     );
     // 建完直接进新文件夹：面包屑上是它，且里面还没有素材。
-    expect(await screen.findByText("第一集Materiais")).toBeInTheDocument();
+    expect(await screen.findByText("第一集素材")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Voltar para todos" })).toBeInTheDocument();
   });
 
@@ -209,7 +209,7 @@ describe("AssetLibraryModal 新建", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Selecionar local de gravação" }));
     expect(screen.getByRole("button", { name: "待分类资产" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "第一集Materiais" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "第一集素材" })).toBeInTheDocument();
     // 主线是同步产物，不能当上传目标。
     expect(screen.queryByRole("button", { name: "主线" })).toBeNull();
   });
@@ -239,28 +239,28 @@ describe("AssetLibraryModal 底部分页", () => {
     expect(screen.getByRole("button", { name: "Número de barras por página" })).toHaveTextContent(
       "20条/页",
     );
-    expect(screen.queryByRole("button", { name: "确定" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
   });
 
   it("挑素材给节点用时「确定」还在", async () => {
     renderModal({ onConfirm: vi.fn() });
 
-    expect(await screen.findByRole("button", { name: "确定" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "OK" })).toBeInTheDocument();
   });
 
   it("默认每页 20 条，翻页看后面的", async () => {
     renderModal();
 
     fireEvent.click(await screen.findByRole("button", { name: "文件夹 待分类资产" }));
-    expect(await screen.findByText("Materiais1")).toBeInTheDocument();
-    expect(screen.getByText("Materiais20")).toBeInTheDocument();
-    expect(screen.queryByText("Materiais21")).toBeNull();
+    expect(await screen.findByText("素材1")).toBeInTheDocument();
+    expect(screen.getByText("素材20")).toBeInTheDocument();
+    expect(screen.queryByText("素材21")).toBeNull();
     // 26 条 → 2 页。
     expect(screen.queryByRole("button", { name: "第 3 页" })).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "Próximo" }));
-    expect(await screen.findByText("Materiais21")).toBeInTheDocument();
-    expect(screen.queryByText("Materiais1")).toBeNull();
+    expect(await screen.findByText("素材21")).toBeInTheDocument();
+    expect(screen.queryByText("素材1")).toBeNull();
   });
 
   it("改每页条数后回到第一页并一次列全", async () => {
@@ -268,13 +268,13 @@ describe("AssetLibraryModal 底部分页", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "文件夹 待分类资产" }));
     fireEvent.click(screen.getByRole("button", { name: "Próximo" }));
-    expect(await screen.findByText("Materiais21")).toBeInTheDocument();
+    expect(await screen.findByText("素材21")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Número de barras por página" }));
     fireEvent.click(screen.getByRole("button", { name: "40条/页" }));
 
-    expect(await screen.findByText("Materiais1")).toBeInTheDocument();
-    expect(screen.getByText("Materiais26")).toBeInTheDocument();
+    expect(await screen.findByText("素材1")).toBeInTheDocument();
+    expect(screen.getByText("素材26")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "第 2 页" })).toBeNull();
   });
 });
@@ -311,7 +311,7 @@ describe("AssetLibraryModal 文件夹操作", () => {
     renderModal();
 
     expect(
-      await screen.findByRole("button", { name: "第一集Materiais 更多操作" }),
+      await screen.findByRole("button", { name: "第一集素材 更多操作" }),
     ).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "主线 更多操作" })).toBeNull();
     // 名字挪到卡片下边，条数不再显示，建夹日期显示在名字下面一行。
@@ -328,13 +328,13 @@ describe("AssetLibraryModal 文件夹操作", () => {
     renderModal({ onSendFolderToCanvas, onClose });
 
     // 每个非空文件夹上都有一个，按卡片圈定再点。
-    const card = await screen.findByRole("button", { name: "文件夹 第一集Materiais" });
+    const card = await screen.findByRole("button", { name: "文件夹 第一集素材" });
     fireEvent.click(within(card).getByRole("button", { name: "Enviar para o Canvas" }));
 
     expect(onSendFolderToCanvas).toHaveBeenCalledTimes(1);
     expect(onSendFolderToCanvas.mock.calls[0][0]).toMatchObject({
       key: "fld-1",
-      label: "第一集Materiais",
+      label: "第一集素材",
     });
     expect(onClose).toHaveBeenCalled();
   });
@@ -343,7 +343,7 @@ describe("AssetLibraryModal 文件夹操作", () => {
     renderModal();
 
     fireEvent.click(
-      await screen.findByRole("button", { name: "第一集Materiais 更多操作" }),
+      await screen.findByRole("button", { name: "第一集素材 更多操作" }),
     );
     fireEvent.click(screen.getByRole("button", { name: "Renomear" }));
 
@@ -365,13 +365,13 @@ describe("AssetLibraryModal 文件夹操作", () => {
     renderModal();
 
     fireEvent.click(
-      await screen.findByRole("button", { name: "第一集Materiais 更多操作" }),
+      await screen.findByRole("button", { name: "第一集素材 更多操作" }),
     );
     fireEvent.click(screen.getByRole("button", { name: "Modificar capa" }));
 
     // 只列这个文件夹自己的图片，别的文件夹的不出现。
-    expect(screen.queryByRole("button", { name: "Selecionar封面 Diagrama de referênciaA" })).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Selecionar封面 女主定妆" }));
+    expect(screen.queryByRole("button", { name: "选择封面 参考图A" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "选择封面 女主定妆" }));
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
 
     await waitFor(() =>
@@ -388,13 +388,13 @@ describe("AssetLibraryModal 文件夹操作", () => {
     renderModal();
 
     fireEvent.click(
-      await screen.findByRole("button", { name: "第一集Materiais 更多操作" }),
+      await screen.findByRole("button", { name: "第一集素材 更多操作" }),
     );
     fireEvent.click(screen.getByRole("button", { name: "Remover" }));
 
     // 确认文案要写明里面的素材也会没。
     const dialog = await screen.findByRole("alertdialog");
-    expect(dialog.textContent).toContain("1 项Materiais会一起删掉");
+    expect(dialog.textContent).toContain("1 项素材会一起删掉");
     // 走原生 confirm 的话这个对话框根本不会出现。
     expect(nativeConfirm).not.toHaveBeenCalled();
     fireEvent.click(within(dialog).getByRole("button", { name: "Remover" }));
@@ -426,12 +426,12 @@ describe("AssetLibraryModal 文件夹操作", () => {
     renderModal({ allowedMedia: ["image"] });
 
     fireEvent.click(
-      await screen.findByRole("button", { name: "第一集Materiais 更多操作" }),
+      await screen.findByRole("button", { name: "第一集素材 更多操作" }),
     );
     fireEvent.click(screen.getByRole("button", { name: "Remover" }));
 
     const dialog = await screen.findByRole("alertdialog");
-    expect(dialog.textContent).toContain("2 项Materiais会一起删掉");
+    expect(dialog.textContent).toContain("2 项素材会一起删掉");
     // 一定要答完：confirmDialog 的 pending 挂在模块级 store 上，卸载组件也清不掉，
     // 漏一个没关的确认框，下一个用例一渲染就被它罩住整页。
     await dismissConfirm(dialog);
@@ -457,7 +457,7 @@ describe("AssetLibraryModal 批量操作", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Verificado para exclusão" }));
     expect(screen.getByText("1")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Remover所选" }));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir selecionados" }));
     await acceptDeleteConfirm();
     await waitFor(() =>
       expect(deleteFreezoneVideoCharacterLibraryItem).toHaveBeenCalledWith(
@@ -503,7 +503,7 @@ describe("AssetLibraryModal 批量操作", () => {
       (await screen.findAllByRole("button", { name: "Verificado para exclusão" }))[0],
     );
     fireEvent.click(screen.getByRole("button", { name: "Verificado para exclusão" }));
-    fireEvent.click(screen.getByRole("button", { name: "Remover所选" }));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir selecionados" }));
     await acceptDeleteConfirm();
 
     await waitFor(() =>

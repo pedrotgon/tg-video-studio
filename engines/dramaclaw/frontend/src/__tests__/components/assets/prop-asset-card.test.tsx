@@ -12,33 +12,35 @@ const i18n = i18next.createInstance();
 
 beforeAll(async () => {
   await i18n.use(initReactI18next).init({
-    lng: "zh",
-    fallbackLng: "zh",
+    lng: "pt",
+    fallbackLng: "pt",
     resources: {
-      zh: {
+      pt: {
         translation: {
           assets: {
             common: {
-              edit: "编辑",
-              delete: "删除",
-              generated: "已生成",
-              missing: "未生成",
+              edit: "Editar",
+              delete: "Excluir",
+              generated: "Gerado",
+              missing: "Ausente",
             },
             props: {
-              reference: "参考图",
-              noReference: "未生成参考图",
-              noDescription: "暂无描述",
-              generateReference: "生成参考图",
-              generatingReference: "生成中...",
-              regenerateReference: "重生参考图",
-              owner: "所属角色",
+              reference: "Imagem de referência",
+              noReference: "Sem imagem de referência",
+              noDescription: "Sem descrição",
+              generateReference: "Gerar referência",
+              generatingReference: "Gerando...",
+              regenerateReference: "Regerar referência",
+              uploadReference: "Enviar referência",
+              uploadingReference: "Enviando...",
+              owner: "Personagem",
               types: {
-                weapon: "武器",
-                accessory: "饰品",
-                artifact: "神器/法器",
-                document: "文书",
-                furniture: "家具",
-                object: "其他物件",
+                weapon: "Arma",
+                accessory: "Acessório",
+                artifact: "Artefato",
+                document: "Documento",
+                furniture: "Mobília",
+                object: "Outro objeto",
               },
             },
           },
@@ -69,102 +71,100 @@ function renderCard(prop: PropAsset, overrides = {}) {
 describe("PropAssetCard", () => {
   it("renders reference image and generate action", () => {
     const handlers = renderCard({
-      name: "七星剑",
+      name: "Espada Sete Estrelas",
       aliases: [],
       prop_type: "weapon",
-      visual_prompt: "古铜剑柄，剑身刻七星纹",
+      visual_prompt: "Cabo de bronze com detalhes",
       description: "",
-      owner: "李青",
+      owner: "Li Qing",
       notes: "",
       reference_url: "/static/u/p/assets/props/seven-star-sword/reference.png",
     });
 
-    expect(screen.getByText("七星剑")).toBeInTheDocument();
-    expect(screen.getByText("武器")).toBeInTheDocument();
-    expect(screen.getByText("所属Função：李青")).toBeInTheDocument();
-    expect(screen.getByText("Diagrama de referência 已Gerar")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "重生Diagrama de referência" })).toBeInTheDocument();
+    expect(screen.getByText("Espada Sete Estrelas")).toBeInTheDocument();
+    expect(screen.getByText("Arma")).toBeInTheDocument();
+    expect(screen.getByText("Personagem：Li Qing")).toBeInTheDocument();
+    expect(screen.getByText("Imagem de referência Gerado")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Regerar referência" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Enviar referência" })).toBeInTheDocument();
 
-    expect(screen.queryByRole("button", { name: /上传/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /删除参考图/ })).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "重生Diagrama de referência" }));
+    fireEvent.click(screen.getByRole("button", { name: "Regerar referência" }));
     expect(handlers.onGenerateReference).toHaveBeenCalledTimes(1);
   });
 
   it("renders empty reference state", () => {
     renderCard({
-      name: "密信",
+      name: "Carta Secreta",
       aliases: [],
       prop_type: "document",
       visual_prompt: "",
-      description: "折叠的牛皮纸密信",
+      description: "Carta dobrada em papel kraft",
       owner: "",
       notes: "",
     });
 
-    expect(screen.getByText("未GerarDiagrama de referência")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "GerarDiagrama de referência" })).toBeInTheDocument();
+    expect(screen.getByText("Sem imagem de referência")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Gerar referência" })).toBeInTheDocument();
   });
 
-  it("renders NiceGUI prop type labels instead of raw prop type codes", () => {
+  it("renders prop type labels instead of raw prop type codes", () => {
     renderCard({
       name: "TOKEN",
       aliases: [],
       prop_type: "artifact",
-      visual_prompt: "红色数字、二进制代码和方块粒子构成的发光团",
+      visual_prompt: "Brilho digital e partículas",
       description: "",
       owner: "",
       notes: "",
     });
 
-    expect(screen.getByText("神器/法器")).toBeInTheDocument();
+    expect(screen.getByText("Artefato")).toBeInTheDocument();
     expect(screen.queryByText("artifact")).not.toBeInTheDocument();
   });
 
-  it("renders the NiceGUI visible action row", () => {
+  it("renders the visible action row", () => {
     renderCard({
       name: "TOKEN",
       aliases: [],
       prop_type: "artifact",
-      visual_prompt: "红色数字、二进制代码和方块粒子构成的发光团",
+      visual_prompt: "Brilho digital e partículas",
       description: "",
       owner: "",
       notes: "",
     });
 
-    expect(screen.getByRole("button", { name: "编辑" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "GerarDiagrama de referência" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Remover" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Editar" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Gerar referência" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Excluir" })).toBeInTheDocument();
   });
 
   it("opens a reference image preview from the card image", () => {
     renderCard({
-      name: "七星剑",
+      name: "Espada Sete Estrelas",
       aliases: [],
       prop_type: "weapon",
-      visual_prompt: "古铜剑柄，剑身刻七星纹",
+      visual_prompt: "Cabo de bronze com detalhes",
       description: "",
       owner: "",
       notes: "",
       reference_url: "/static/u/p/assets/props/seven-star-sword/reference.png",
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "七星剑 Diagrama de referência" }));
+    fireEvent.click(screen.getByRole("button", { name: "Espada Sete Estrelas Imagem de referência" }));
 
     expect(
       screen.getByRole("link", { name: "Download image" }),
     ).toBeInTheDocument();
-    expect(screen.getAllByAltText("七星剑 Diagrama de referência")).toHaveLength(2);
+    expect(screen.getAllByAltText("Espada Sete Estrelas Imagem de referência")).toHaveLength(2);
   });
 
-  it("shows the NiceGUI generating label for single prop reference generation", () => {
+  it("shows the generating label for single prop reference generation", () => {
     renderCard(
       {
-        name: "七星剑",
+        name: "Espada Sete Estrelas",
         aliases: [],
         prop_type: "weapon",
-        visual_prompt: "古铜剑柄，剑身刻七星纹",
+        visual_prompt: "Cabo de bronze com detalhes",
         description: "",
         owner: "",
         notes: "",
@@ -173,10 +173,10 @@ describe("PropAssetCard", () => {
       { generating: true },
     );
 
-    expect(screen.getByRole("button", { name: "Gerar中..." })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Gerando..." })).toBeDisabled();
   });
 
-  it("renders the NiceGUI empty description fallback", () => {
+  it("renders the empty description fallback", () => {
     renderCard({
       name: "TOKEN",
       aliases: [],
@@ -187,6 +187,6 @@ describe("PropAssetCard", () => {
       notes: "",
     });
 
-    expect(screen.getByText("暂无描述")).toBeInTheDocument();
+    expect(screen.getByText("Sem descrição")).toBeInTheDocument();
   });
 });

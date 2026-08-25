@@ -110,7 +110,7 @@ describe("StyleNode", () => {
       "/style-gallery/golden_age/cover.webp",
     );
     // 标题带上分类，换风格时跟着变；卡片里不再有第二处风格名。
-    expect(screen.getByText("Estilo · 年代 · 黄金时代")).toBeInTheDocument();
+    expect(screen.getByText("风格 · 年代 · 黄金时代")).toBeInTheDocument();
     expect(screen.queryByText("黄金时代")).not.toBeInTheDocument();
   });
 
@@ -125,7 +125,7 @@ describe("StyleNode", () => {
       />,
     );
 
-    expect(screen.getByText("主视觉Estilo")).toBeInTheDocument();
+    expect(screen.getByText("主视觉风格")).toBeInTheDocument();
   });
 
   it("writes the picked style to the downstream image node, not to itself", async () => {
@@ -133,7 +133,7 @@ describe("StyleNode", () => {
     seedCanvas({ withImageNode: true, templateId: "golden_age" });
     renderStyleNode("golden_age");
 
-    await user.click(screen.getByRole("button", { name: "Estilo 黄金时代" }));
+    await user.click(screen.getByRole("button", { name: "风格 黄金时代" }));
     await user.click(screen.getByRole("button", { name: "使用赛博朋克" }));
 
     const nodes = useCanvasStore.getState().nodes;
@@ -153,7 +153,7 @@ describe("StyleNode", () => {
     seedCanvas({ withImageNode: true, templateId: "golden_age" });
     renderStyleNode("golden_age");
 
-    await user.click(screen.getByRole("button", { name: "Estilo 黄金时代" }));
+    await user.click(screen.getByRole("button", { name: "风格 黄金时代" }));
     await user.click(screen.getByRole("button", { name: "Limpeza de estilo" }));
 
     expect(
@@ -184,11 +184,11 @@ describe("StyleNode", () => {
     seedCanvas({ withImageNode: false, templateId: "golden_age" });
     renderStyleNode("golden_age");
 
-    expect(screen.getByText("未连接Imagem节点")).toBeInTheDocument();
+    expect(screen.getByText("Nenhum nó de imagem conectado")).toBeInTheDocument();
     // 写不到任何地方，入口按钮也不该露出来。
     expect(screen.queryByRole("button", { name: "Muda o estilo" })).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Estilo 黄金时代" }));
+    await user.click(screen.getByRole("button", { name: "风格 黄金时代" }));
     // 图墙不该打开 —— 没有下游图片节点时改风格写不到任何地方。
     expect(
       screen.queryByRole("button", { name: "查看赛博朋克详情" }),

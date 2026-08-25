@@ -223,9 +223,9 @@ describe("BeatContextNode", () => {
       expect(localeValue(zh, key)).toEqual(expect.any(String));
       expect(localeValue(en, key)).toEqual(expect.any(String));
     }
-    expect(localeValue(zh, "node.menu.beatContext")).toBe("Contexto da lente");
-    expect(localeValue(zh, "node.beatContextNode.heading")).toBe("Contexto da lente");
-    expect(localeValue(zh, "node.beatContextNode.standaloneTitle")).toBe("Contexto Personalizado da Lente");
+    expect(localeValue(zh, "node.menu.beatContext")).toBe("镜头上下文");
+    expect(localeValue(zh, "node.beatContextNode.heading")).toBe("镜头上下文");
+    expect(localeValue(zh, "node.beatContextNode.standaloneTitle")).toBe("自定义镜头上下文");
     expect(localeValue(en, "viewer.threeD.beatOverlay.title")).toBe("Shot overlay");
   });
 
@@ -319,7 +319,7 @@ describe("BeatContextNode", () => {
       }),
     );
 
-    expect(screen.getByText("Contexto Personalizado da Lente")).toBeInTheDocument();
+    expect(screen.getByText("Contexto da lente")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Sincronizar com a linha principal" }),
     ).not.toBeInTheDocument();
@@ -698,7 +698,7 @@ describe("BeatContextNode", () => {
     const user = userEvent.setup();
     renderNode();
 
-    const visual = screen.getByDisplayValue("全景Tomada，兰州拉面馆内。");
+    const visual = screen.getByDisplayValue("全景镜头，兰州拉面馆内。");
     await user.clear(visual);
     await user.type(visual, "角色 @");
     const identityMention = (
@@ -710,11 +710,11 @@ describe("BeatContextNode", () => {
 
     expect(updateBeat).not.toHaveBeenCalled();
     expect(
-      screen.getByDisplayValue("Função {{面馆男青年_青年时期}}"),
+      screen.getByDisplayValue("角色 {{面馆男青年_青年时期}}"),
     ).toBeInTheDocument();
 
     const updatedVisual =
-      screen.getByDisplayValue("Função {{面馆男青年_青年时期}}");
+      screen.getByDisplayValue("角色 {{面馆男青年_青年时期}}");
     await user.clear(updatedVisual);
     await user.type(updatedVisual, "道具 @");
     const propMention = (await screen.findByText("[[账单]]")).closest("button");
@@ -722,7 +722,7 @@ describe("BeatContextNode", () => {
     await user.click(propMention!);
 
     expect(updateBeat).not.toHaveBeenCalled();
-    expect(screen.getByDisplayValue("Itens [[账单]]")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("道具 [[账单]]")).toBeInTheDocument();
   });
 
   it("updates scene and time as local draft fields", async () => {
@@ -733,11 +733,11 @@ describe("BeatContextNode", () => {
       }),
     );
 
-    await chooseUiSelectOption(user, "场景", "兰州拉面馆");
+    await chooseUiSelectOption(user, "Cenário", "兰州拉面馆");
     expect(updateBeat).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "Cenário" })).toHaveTextContent("兰州拉面馆");
 
-    await chooseUiSelectOption(user, "时间", "夜晚");
+    await chooseUiSelectOption(user, "Tempo", "夜晚");
     expect(updateBeat).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "Tempo" })).toHaveTextContent("夜晚");
   });

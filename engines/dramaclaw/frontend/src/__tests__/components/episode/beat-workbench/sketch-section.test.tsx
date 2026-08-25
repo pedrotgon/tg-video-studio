@@ -400,8 +400,8 @@ describe("SketchSection", () => {
       />,
     );
 
-    expect(screen.getByText("Diretor síntese资产")).toBeInTheDocument();
-    expect(screen.getByText("合成图 + 纯Fundamentos + 元数据")).toBeInTheDocument();
+    expect(screen.getByText("导演合成资产")).toBeInTheDocument();
+    expect(screen.getByText("合成图 + 纯背景 + 元数据")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /转草图/ })).toBeEnabled();
     expect(creditCostMock).toHaveBeenCalledWith(
       "feature",

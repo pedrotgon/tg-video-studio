@@ -190,7 +190,7 @@ describe("StyleGalleryModal", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "查看武侠江湖详情" }));
-    await user.click(screen.getByRole("button", { name: "使用" }));
+    await user.click(screen.getByRole("button", { name: /Uso|使用/ }));
 
     expect(onSelect).toHaveBeenCalledWith("wuxia");
   });

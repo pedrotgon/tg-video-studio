@@ -42,29 +42,11 @@ interface AudioPaneProps {
   spineTemplate?: "drama" | "narrated";
 }
 
-type VoiceConfigTarget = "characters" | "voices";
-
-const ASSET_TAB_STORAGE_KEY_PREFIX = "supertale-asset-tab:";
-
-function assetTabStorageKey(project: string): string {
-  return `${ASSET_TAB_STORAGE_KEY_PREFIX}${encodeURIComponent(project)}`;
-}
-
-function audioPrereqTarget(error: string): VoiceConfigTarget | null {
-  const message = String(error || "").trim();
-  if (!message.includes("Voz do narrador ausente")) return null;
-  if (message.includes("Legenda do protagonista") || message.includes("Estúdio de personagem")) return "characters";
-  return "voices";
-}
-
-function audioPrereqMessage(error: string, t: (key: string) => string): string {
-  const message = String(error || "").trim();
-  if (!message.includes("Voz do narrador ausente")) return message;
-  if (message.includes("Legenda do protagonista") || message.includes("Estúdio de personagem")) {
-    return `${message}${t("episode.workbench.audio.prereqHintCharacters")}`;
-  }
-  return `${message}${t("episode.workbench.audio.prereqHintVoices")}`;
-}
+import {
+  assetTabStorageKey,
+  audioPrereqTarget,
+  audioPrereqMessage,
+} from "./audio-prereqs";
 
 /** 音频 sub-tab — per-beat IndexTTS2 task dispatch and playback. */
 export function AudioPane({

@@ -78,12 +78,12 @@ function renderBrowser(onSendToCanvas?: (entry: unknown) => void) {
 
 /** 侧栏是「先文件夹、再条目」两级，测条目得先点进去。 */
 async function openFolder(label: string) {
-  const folder = await screen.findByLabelText(`文件夹 ${label}`);
+  const folder = await screen.findByLabelText(`Pasta ${label}`);
   fireEvent.click(folder);
 }
 
 async function openItemMenu(name: string) {
-  fireEvent.click(await screen.findByLabelText(`${name} 更多操作`));
+  fireEvent.click(await screen.findByLabelText(`${name} Mais opções`));
 }
 
 describe("AssetLibraryBrowser item actions", () => {
@@ -99,7 +99,7 @@ describe("AssetLibraryBrowser item actions", () => {
   // 封面口径要和弹窗一致：有图就拿第一张图当封面，纯音频文件夹回退到文件夹图标。
   it("shows a cover thumbnail on folders that hold an image", async () => {
     renderBrowser(() => {});
-    const folder = await screen.findByLabelText("文件夹 待分类资产");
+    const folder = await screen.findByLabelText("Pasta 待分类资产");
 
     const cover = folder.querySelector("img");
     expect(cover).toBeTruthy();
@@ -109,7 +109,7 @@ describe("AssetLibraryBrowser item actions", () => {
   it("falls back to the folder icon when nothing inside is an image", async () => {
     fetchFreezoneVideoCharacterLibrary.mockResolvedValue([VOICE_ONLY]);
     renderBrowser(() => {});
-    const folder = await screen.findByLabelText("文件夹 Som");
+    const folder = await screen.findByLabelText("Pasta 音效");
 
     expect(folder.querySelector("img")).toBeNull();
   });
@@ -120,18 +120,18 @@ describe("AssetLibraryBrowser item actions", () => {
     await openItemMenu("原子朋克");
 
     expect(screen.getByRole("menuitem", { name: "Enviar para o Canvas" })).toBeTruthy();
-    expect(screen.getByRole("menuitem", { name: "下载" })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: "Download" })).toBeTruthy();
     expect(screen.getByRole("menuitem", { name: "Renomear" })).toBeTruthy();
     expect(screen.getByRole("menuitem", { name: "Remover" })).toBeTruthy();
   });
 
-  it("hides 发送到画布 when there is no canvas to send to", async () => {
+  it("hides Enviar para o Canvas when there is no canvas to send to", async () => {
     renderBrowser();
     await openFolder("待分类资产");
     await openItemMenu("原子朋克");
 
     expect(screen.queryByRole("menuitem", { name: "Enviar para o Canvas" })).toBeNull();
-    expect(screen.getByRole("menuitem", { name: "下载" })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: "Download" })).toBeTruthy();
   });
 
   // 主线同步来的素材改了名/删掉都会在下次同步时被覆盖回来，所以不给这两个入口。
@@ -141,7 +141,7 @@ describe("AssetLibraryBrowser item actions", () => {
     await openItemMenu("林小满");
 
     expect(screen.getByRole("menuitem", { name: "Enviar para o Canvas" })).toBeTruthy();
-    expect(screen.getByRole("menuitem", { name: "下载" })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: "Download" })).toBeTruthy();
     expect(screen.queryByRole("menuitem", { name: "Renomear" })).toBeNull();
     expect(screen.queryByRole("menuitem", { name: "Remover" })).toBeNull();
   });
@@ -165,7 +165,7 @@ describe("AssetLibraryBrowser item actions", () => {
     renderBrowser(() => {});
     await openFolder("待分类资产");
     await openItemMenu("原子朋克");
-    fireEvent.click(screen.getByRole("menuitem", { name: "下载" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Download" }));
 
     await waitFor(() => expect(downloadUrlAsFile).toHaveBeenCalledTimes(1));
     expect(downloadUrlAsFile.mock.calls[0][1]).toBe("原子朋克.png");
@@ -178,7 +178,7 @@ describe("AssetLibraryBrowser item actions", () => {
     await openItemMenu("原子朋克");
     fireEvent.click(screen.getByRole("menuitem", { name: "Renomear" }));
 
-    const input = screen.getByLabelText(/资产名称/);
+    const input = screen.getByLabelText(/Nome do Ativo/);
     fireEvent.change(input, { target: { value: "赛博霓虹" } });
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
 
@@ -206,9 +206,9 @@ describe("AssetLibraryBrowser item actions", () => {
     expect(deleteFreezoneVideoCharacterLibraryItem).not.toHaveBeenCalled();
 
     // 取消：按文案之外的那个按钮找，免得跟着 i18n 的「取消」文案一起碎。
-    const cancel = within(dialog)
-      .getAllByRole("button")
-      .find((button) => button.textContent !== "Remover");
+    const cancel =
+      within(dialog).queryByRole("button", { name: /cancel/i }) ??
+      dialog.querySelector('[data-slot="alert-dialog-cancel"]');
     fireEvent.click(cancel as HTMLElement);
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull());
     expect(deleteFreezoneVideoCharacterLibraryItem).not.toHaveBeenCalled();

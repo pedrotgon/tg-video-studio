@@ -7,12 +7,12 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) =>
       ({
-        "characters.stats.strip.total": "总角色",
-        "characters.stats.strip.mainCharacter": "解说主角",
-        "characters.stats.strip.portrait": "头像",
-        "characters.stats.strip.identity": "身份",
-        "characters.stats.strip.voice": "声线",
-        "characters.stats.strip.ariaLabel": "角色统计",
+        "characters.stats.strip.total": "Total de personagens",
+        "characters.stats.strip.mainCharacter": "Apresentador principal",
+        "characters.stats.strip.portrait": "Retrato",
+        "characters.stats.strip.identity": "Identidade",
+        "characters.stats.strip.voice": "Voz",
+        "characters.stats.strip.ariaLabel": "Estatísticas dos personagens",
       })[key] ?? key,
   }),
 }));
@@ -26,20 +26,20 @@ import type { Character } from "@/types/character";
 const characters: Character[] = [
   {
     name: "Mira",
-    role: "主角",
+    role: "Apresentadora",
     is_main: true,
     portrait_url: "/static/demo/mira/portrait.png",
     reference_audio_path: "assets/characters/Mira/voice.wav",
   },
   {
     name: "Jun",
-    role: "配角",
+    role: "Co-apresentador",
     portrait_path: "assets/characters/Jun/portrait.png",
     reference_audio_path: "",
   },
   {
     name: "Lio",
-    role: "Scout",
+    role: "Especialista",
     portrait_url: "",
     reference_audio_url: "/static/demo/lio/voice.wav",
   },
@@ -71,28 +71,28 @@ describe("CharacterStatsStrip", () => {
       />,
     );
 
-    const strip = screen.getByRole("list", { name: "Função统计" });
+    const strip = screen.getByRole("list", { name: "Estatísticas dos personagens" });
     expect(strip).toHaveClass("custom-strip");
-    expect(strip).toHaveTextContent("总Função3");
-    expect(strip).toHaveTextContent("Legenda do protagonista1");
-    expect(strip).toHaveTextContent("头像2/3");
+    expect(strip).toHaveTextContent("Total de personagens3");
+    expect(strip).toHaveTextContent("Apresentador principal1");
+    expect(strip).toHaveTextContent("Retrato2/3");
     expect(strip).toHaveTextContent("Identidade2/3");
-    expect(strip).toHaveTextContent("Som1/3");
+    expect(strip).toHaveTextContent("Voz1/3");
 
-    expect(screen.getByLabelText("总Função: 3")).toBeInTheDocument();
-    expect(screen.getByLabelText("头像: 2/3")).toBeInTheDocument();
-    expect(screen.getByLabelText("Som: 1/3")).toBeInTheDocument();
+    expect(screen.getByLabelText("Total de personagens: 3")).toBeInTheDocument();
+    expect(screen.getByLabelText("Retrato: 2/3")).toBeInTheDocument();
+    expect(screen.getByLabelText("Voz: 1/3")).toBeInTheDocument();
   });
 
   it("uses the supplied main character label for drama projects", () => {
     render(
       <CharacterStatsStrip
         characters={characters}
-        mainCharacterLabel="主角"
+        mainCharacterLabel="Personagem principal"
       />,
     );
 
     expect(screen.getByLabelText("Personagem principal: 1")).toBeInTheDocument();
-    expect(screen.queryByLabelText("Legenda do protagonista: 1")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Apresentador principal: 1")).not.toBeInTheDocument();
   });
 });

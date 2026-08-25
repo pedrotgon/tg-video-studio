@@ -99,7 +99,7 @@ export function AssetLibraryBrowser({
       );
     } catch (err) {
       toast.error(
-        `下载失败：${err instanceof Error ? err.message : String(err)}`,
+        `Falha no download: ${err instanceof Error ? err.message : String(err)}`,
       );
     }
   }, []);
@@ -109,7 +109,7 @@ export function AssetLibraryBrowser({
       if (!entry.id) return;
       const confirmed = await confirmDialog({
         title: "Excluir elemento",
-        description: `确定要删除「${entry.name || entry.id}」？删了找不回来。`,
+        description: `Tem certeza de que deseja excluir "${entry.name || entry.id}"? Esta ação não pode ser desfeita.`,
         confirmText: "Remover",
         confirmVariant: "destructive",
       });
@@ -118,10 +118,10 @@ export function AssetLibraryBrowser({
       try {
         await deleteFreezoneVideoCharacterLibraryItem(project, entry.id);
         refreshLibrary();
-        toast.success(`已删除：${entry.name || "Materiais"}`);
+        toast.success(`Excluído: ${entry.name || "Materiais"}`);
       } catch (err) {
         toast.error(
-          `删除失败：${err instanceof Error ? err.message : String(err)}`,
+          `Falha ao excluir: ${err instanceof Error ? err.message : String(err)}`,
         );
       } finally {
         setBusyId(null);
@@ -203,7 +203,7 @@ export function AssetLibraryBrowser({
                   key={folder.key}
                   type="button"
                   onClick={() => setOpenKey(folder.key)}
-                  aria-label={`文件夹 ${folder.label}`}
+                  aria-label={`Pasta ${folder.label}`}
                   className="flex w-full items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-left transition-colors hover:bg-white/[0.06]"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[4px] bg-white/[0.06]">
@@ -233,7 +233,7 @@ export function AssetLibraryBrowser({
         {/* ── 文件夹内：条目列表 ── */}
         {openFolder && openFolder.items.length === 0 ? (
           <div className="px-2 py-6 text-center text-[11px] text-white/25">
-            「{openFolder.label}"Nenhum ativo ainda.
+            Ainda não há ativos na pasta "{openFolder.label}".
           </div>
         ) : null}
 
@@ -344,7 +344,7 @@ function AssetItemMenu({
         render={
           <button
             type="button"
-            aria-label={`${entry.name || "Materiais"} 更多操作`}
+            aria-label={`${entry.name || "Materiais"} Mais opções`}
             // 平时藏起来，hover 或键盘聚焦才出现；自己的菜单开着时常驻，
             // 否则鼠标一移到菜单上按钮就消失了。
             className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/45 transition-colors hover:bg-white/[0.10] hover:text-white focus-visible:opacity-100 ${

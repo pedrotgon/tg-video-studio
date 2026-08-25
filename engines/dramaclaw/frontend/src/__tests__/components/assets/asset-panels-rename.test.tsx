@@ -73,10 +73,18 @@ beforeAll(async () => {
             delete: "Delete",
             loading: "Loading",
             refresh: "Refresh",
+            refreshDone: "Refresh complete",
             save: "Save",
+          },
+          characters: {
+            imageSource: {
+              label: "Image source",
+              loading: "Loading",
+            },
           },
           assets: {
             common: {
+              copyLink: "Copy link",
               delete: "Delete",
               edit: "Edit",
               generated: "generated",
@@ -90,10 +98,15 @@ beforeAll(async () => {
                 "Derived scenes exist. Full rebuild is disabled.",
               newScene: "New scene",
               editScene: "Edit scene",
+              newPlate: "Add scene variant",
+              editPlate: "Edit scene variant",
+              selectScene: "Select scene {{name}}",
+              generatedPlateNamePlaceholder:
+                "Fill in variant or auto-generate after time",
               derivedFrom: "Derived from {{base}}",
               emptyTitle: "No scenes yet",
               emptyDescription: "Create a scene or extract scenes from the project graph.",
-              confirmDelete: "Delete scene \"{{name}}\"?",
+              confirmDelete: 'Delete scene "{{name}}"?',
               deleteTitle: "Delete scene",
               deleted: "Scene deleted",
               master: "Master",
@@ -125,6 +138,9 @@ beforeAll(async () => {
                 environmentPrompt: "Environment prompt",
                 variantPrompt: "Variant delta prompt",
                 description: "Narrative description",
+                baseScene: "Base scene",
+                variant: "Variant",
+                timeOfDay: "Time",
               },
             },
             props: {
@@ -292,7 +308,7 @@ describe("asset panel rename behavior", () => {
     await user.click(await screen.findByRole("button", { name: "New scene" }));
     expect(
       screen.getByText(
-        "Preencha apenas o nome da cena de cenário independente comum; não preencha variantes ou tempo aqui. Se precisar de uma versão com estado/tempo, adicione a variante nos detalhes da cena.",
+        "普通独立场景只填名称；不要在这里填写变体或时间。需要状态/时间版时，在场景详情里添加变体。",
       ),
     ).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Scene name"), {
@@ -374,7 +390,7 @@ describe("asset panel rename behavior", () => {
 
     expect(await screen.findAllByText("Door")).not.toHaveLength(0);
     expect(screen.queryByText("1 个CenárioVariante")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "SelecionarCenário Hall" }));
+    await user.click(screen.getByRole("button", { name: "Select scene Hall" }));
     expect(screen.queryByText("2 个CenárioVariante")).not.toBeInTheDocument();
   });
 
@@ -401,11 +417,11 @@ describe("asset panel rename behavior", () => {
 
     renderWithProviders(<ScenesPanel project="demo" />);
 
-    expect(await screen.findByRole("button", { name: "SelecionarCenário Door" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "SelecionarCenário Hall" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Select scene Door" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Select scene Hall" })).toBeInTheDocument();
     expect(screen.queryByText("Hall_Night")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "SelecionarCenário Hall" }));
+    await user.click(screen.getByRole("button", { name: "Select scene Hall" }));
 
     expect(screen.getByText("Hall_Night")).toBeInTheDocument();
     expect(screen.queryByText("Door_上午")).not.toBeInTheDocument();
@@ -434,15 +450,15 @@ describe("asset panel rename behavior", () => {
 
     const firstRender = renderWithProviders(<ScenesPanel project="demo" />);
 
-    await screen.findByRole("button", { name: "SelecionarCenário Door" });
-    await user.click(screen.getByRole("button", { name: "SelecionarCenário Hall" }));
+    await screen.findByRole("button", { name: "Select scene Door" });
+    await user.click(screen.getByRole("button", { name: "Select scene Hall" }));
     expect(screen.getByText("Hall_Night")).toBeInTheDocument();
 
     firstRender.unmount();
     renderWithProviders(<ScenesPanel project="demo" />);
 
-    await screen.findByRole("button", { name: "SelecionarCenário Door" });
-    expect(screen.getByRole("button", { name: "SelecionarCenário Hall" })).toHaveAttribute(
+    await screen.findByRole("button", { name: "Select scene Door" });
+    expect(screen.getByRole("button", { name: "Select scene Hall" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
@@ -496,29 +512,29 @@ describe("asset panel rename behavior", () => {
 
     renderWithProviders(<ScenesPanel project="demo" />);
 
-    await screen.findByRole("button", { name: "SelecionarCenário Hall" });
-    await user.click(screen.getByRole("button", { name: "Adicionar Variação da Cena" }));
+    await screen.findByRole("button", { name: "Select scene Hall" });
+    await user.click(screen.getByRole("button", { name: "Add scene variant" }));
 
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("Preencher Variação ou Gerar Automaticamente Após o Tempo")).toBeInTheDocument();
+    expect(within(dialog).getByText("Fill in variant or auto-generate after time")).toBeInTheDocument();
     expect(within(dialog).queryByDisplayValue("wide hall")).not.toBeInTheDocument();
     expect(within(dialog).queryByDisplayValue("soft skylight")).not.toBeInTheDocument();
-    fireEvent.change(within(dialog).getByLabelText("Variante"), {
+    fireEvent.change(within(dialog).getByLabelText("Variant"), {
       target: { value: "漏水" },
     });
     fireEvent.change(within(dialog).getByLabelText("Variant delta prompt"), {
       target: { value: "floor water and dripping ceiling" },
     });
-    await user.click(within(dialog).getByRole("combobox", { name: "Tempo" }));
+    await user.click(within(dialog).getByRole("combobox", { name: "Time" }));
     await user.click(await screen.findByRole("option", { name: "夜晚" }));
-    expect(within(dialog).getByText("Hall_Vazamento_夜晚")).toBeInTheDocument();
+    expect(within(dialog).getByText("Hall_漏水_夜晚")).toBeInTheDocument();
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
 
     await waitFor(() => expect(postBody).toBeDefined());
     expect(postBody).toMatchObject({
-      name: "Hall_Vazamento_夜晚",
+      name: "Hall_漏水_夜晚",
       base_scene_id: "Hall",
-      variant_id: "Vazamento",
+      variant_id: "漏水",
       time_of_day: "夜晚",
       variant_prompt: "floor water and dripping ceiling",
       description: "",

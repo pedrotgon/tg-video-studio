@@ -451,14 +451,14 @@ describe("IngestPage settings save", () => {
       screen.getAllByText(
         (_content, element) =>
           element?.tagName === "PRE" &&
-          element.textContent?.includes("1-1 苏鸾寝殿 深夜 内") === true,
+          element.textContent?.includes("1-1 Sala de estar Noite Interna") === true,
       ).length,
     ).toBeGreaterThan(0);
     expect(
       screen.getByText(
         (_content, element) =>
           element?.tagName === "PRE" &&
-          element.textContent?.includes("场次：1") === true,
+          element.textContent?.includes("Número da cena: 1") === true,
       ),
     ).toBeInTheDocument();
     expect(screen.queryByText(/1-1 场景：苏鸾寝殿深夜内/)).not.toBeInTheDocument();
@@ -941,7 +941,7 @@ describe("IngestPage settings save", () => {
     );
 
     expect(screen.getByTestId("chapter-body")).toHaveTextContent(
-      "第一集 待修复 这段原文没有可识别的Cenário头。",
+      "第一集 待修复 这段原文没有可识别的场景头。",
     );
   });
 
@@ -1236,7 +1236,7 @@ describe("IngestPage settings save", () => {
       ok: true,
       data: { filename: "novel.txt", size: 12 },
     });
-    mocks.startIngest.mockRejectedValue(new Error("知识图谱构建失败: provider error"));
+    mocks.startIngest.mockRejectedValue(new Error("Falha na importação: provider error"));
 
     const { container } = render(
       <Wrapper>
@@ -1256,9 +1256,9 @@ describe("IngestPage settings save", () => {
     await user.click(screen.getByRole("button", { name: /start import/i }));
 
     expect(
-      await screen.findByText("知识图谱构建Falha: provider error"),
+      await screen.findByText("Falha na importação: provider error"),
     ).toBeInTheDocument();
-    expect(mocks.toastError).toHaveBeenCalledWith("知识图谱构建失败: provider error");
+    expect(mocks.toastError).toHaveBeenCalledWith("Falha na importação: provider error");
   });
 
   it("allows retrying the same upload after an asynchronous ingest failure", async () => {

@@ -1,7 +1,6 @@
-// SPDX-License-Identifier: Elastic-2.0
-// Copyright (c) 2026 ClaymoreLab
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -135,6 +134,7 @@ describe("AssetLibraryPanel beat context", () => {
       assets: [],
     });
 
+    const user = userEvent.setup();
     const { rerender } = render(
       <AssetLibraryPanel
         project="demo"
@@ -146,8 +146,8 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
-    await screen.findByText(/项目素材加载失败：network down/);
+    await user.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
+    await screen.findByText(/Falha ao carregar os ativos do projeto:network down/);
 
     act(() => {
       rerender(
@@ -163,7 +163,7 @@ describe("AssetLibraryPanel beat context", () => {
 
     await vi.waitFor(() => expect(listFreezoneProjectAssets).toHaveBeenCalledTimes(2));
     await vi.waitFor(() => {
-      expect(screen.queryByText(/项目素材加载失败/)).toBeNull();
+      expect(screen.queryByText(/Falha ao carregar os ativos do projeto/)).toBeNull();
     });
   });
 
@@ -215,6 +215,7 @@ describe("AssetLibraryPanel beat context", () => {
       assets: [],
     });
 
+    const user = userEvent.setup();
     render(
       <AssetLibraryPanel
         project="demo"
@@ -225,11 +226,11 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
-    fireEvent.click(screen.getByRole("button", { name: /场景/ }));
+    await user.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
+    await user.click(screen.getByRole("button", { name: /Cenário/ }));
     expect(await screen.findByText("厨房")).toBeInTheDocument();
-    expect(screen.queryByText("Diagrama de Composição do Diretor")).toBeNull();
-    expect(screen.queryByText("当前Fundamentos · Beat 1")).toBeNull();
+    expect(screen.queryByText("导演合成图")).toBeNull();
+    expect(screen.queryByText("当前背景 · Beat 1")).toBeNull();
   });
 
   it("keeps concrete scene slots and hides auxiliary scene pointers", async () => {
@@ -371,6 +372,7 @@ describe("AssetLibraryPanel beat context", () => {
       assets: [],
     });
 
+    const user = userEvent.setup();
     render(
       <AssetLibraryPanel
         project="demo"
@@ -381,17 +383,17 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
-    fireEvent.click(screen.getByRole("button", { name: /场景/ }));
+    await user.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
+    await user.click(screen.getByRole("button", { name: /Cenário/ }));
 
     expect(await screen.findByText("厨房 / master")).toBeInTheDocument();
     expect(screen.getByText("厨房 / reverse master")).toBeInTheDocument();
-    expect(screen.getByText("厨房 / Mundo do diretor")).toBeInTheDocument();
+    expect(screen.getByText("厨房 / 导演世界")).toBeInTheDocument();
     expect(screen.getByText("卧室 / master")).toBeInTheDocument();
     expect(screen.queryByText("厨房 / 旧 360")).toBeNull();
     expect(screen.queryByText("厨房 / director pano 360")).toBeNull();
-    expect(screen.queryByText("厨房 / Mundo 3D（Frente）")).toBeNull();
-    expect(screen.queryByText("厨房 / Mundo 3D（Verso）")).toBeNull();
+    expect(screen.queryByText("厨房 / Mundo 3D（正面）")).toBeNull();
+    expect(screen.queryByText("厨房 / Mundo 3D（背面）")).toBeNull();
     expect(screen.queryByText("厨房 / Mundo 3D（360）")).toBeNull();
     expect(screen.queryByText("厨房 / Mundo 3D（当前）")).toBeNull();
     expect(screen.queryByText("厨房 / 3D 碰撞体")).toBeNull();
@@ -402,7 +404,7 @@ describe("AssetLibraryPanel beat context", () => {
     expect(screen.queryByText("Mundo positivo")).toBeNull();
     expect(screen.queryByText("O mundo nas costas")).toBeNull();
     expect(screen.queryByText("360 World")).toBeNull();
-    expect(screen.getByRole("button", { name: /场景.*4/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Cenário.*4/ })).toBeInTheDocument();
   });
 
   it("hides the mainline asset tab when the mainline surface is disabled", async () => {
@@ -438,6 +440,7 @@ describe("AssetLibraryPanel beat context", () => {
       assets: [],
     });
 
+    const user = userEvent.setup();
     const { rerender } = render(
       <AssetLibraryPanel
         project="demo"
@@ -448,7 +451,7 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
+    await user.click(screen.getByRole("tab", { name: "Ativos da linha principal" }));
     expect(screen.getByPlaceholderText("Pesquisar elementos...")).toBeInTheDocument();
 
     mainlineAvailable = false;
@@ -502,6 +505,7 @@ describe("AssetLibraryPanel beat context", () => {
       ],
     });
 
+    const user = userEvent.setup();
     render(
       <AssetLibraryPanel
         project="demo"
@@ -512,28 +516,28 @@ describe("AssetLibraryPanel beat context", () => {
       { wrapper: makeWrapper() },
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "Biblioteca de Ativos" }));
+    await user.click(screen.getByRole("tab", { name: "Biblioteca de Ativos" }));
 
     // 根目录只有文件夹,条目要点进去才看得到。
     expect(
-      await screen.findByRole("button", { name: "文件夹 主线" }),
+      await screen.findByRole("button", { name: "Pasta 主线" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "文件夹 待分类资产" }),
+      screen.getByRole("button", { name: "Pasta 待分类资产" }),
     ).toBeInTheDocument();
-    expect(screen.queryByText("Diagrama de referênciaA")).toBeNull();
+    expect(screen.queryByText("参考图A")).toBeNull();
 
     // 主线同步来的条目(不论人物/场景/道具)统统收在一个【主线】文件夹里。
-    fireEvent.click(screen.getByRole("button", { name: "文件夹 主线" }));
+    await user.click(screen.getByRole("button", { name: "Pasta 主线" }));
     expect(await screen.findByText("厨房静帧")).toBeInTheDocument();
-    expect(screen.queryByText("Diagrama de referênciaA")).toBeNull();
+    expect(screen.queryByText("参考图A")).toBeNull();
 
     // 面包屑退回根目录,再进【待分类资产】看本地上传的图片和视频。
-    fireEvent.click(screen.getByRole("button", { name: "Voltar à raiz da biblioteca de ativos" }));
-    fireEvent.click(
-      await screen.findByRole("button", { name: "文件夹 待分类资产" }),
+    await user.click(screen.getByRole("button", { name: "Voltar à raiz da biblioteca de ativos" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Pasta 待分类资产" }),
     );
-    expect(await screen.findByText("Diagrama de referênciaA")).toBeInTheDocument();
+    expect(await screen.findByText("参考图A")).toBeInTheDocument();
     expect(screen.getByText("片段B")).toBeInTheDocument();
     expect(screen.queryByText("厨房静帧")).toBeNull();
   });
@@ -548,6 +552,7 @@ describe("AssetLibraryPanel beat context", () => {
     });
     fetchFreezoneVideoCharacterLibrary.mockResolvedValue({ items: [] });
 
+    const user = userEvent.setup();
     render(
       <AssetLibraryPanel
         project="demo"
@@ -560,8 +565,8 @@ describe("AssetLibraryPanel beat context", () => {
 
     // 资产库装的是本地上传的素材,不属于主线,开关关掉也得留着。
     expect(screen.queryByRole("tab", { name: "Ativos da linha principal" })).toBeNull();
-    fireEvent.click(screen.getByRole("tab", { name: "Biblioteca de Ativos" }));
-    expect(await screen.findByText(/资产库还是空的/)).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Biblioteca de Ativos" }));
+    expect(await screen.findByText(/A biblioteca de ativos ainda está vazia|资产库还是空的/)).toBeInTheDocument();
   });
 
   it("opens the asset library modal from the tab bar icon", async () => {
@@ -575,6 +580,7 @@ describe("AssetLibraryPanel beat context", () => {
     fetchFreezoneAssetLibraryFolders.mockResolvedValue([]);
     syncFreezoneAssetLibraryFromMainline.mockResolvedValue({ items: [] });
 
+    const user = userEvent.setup();
     render(
       <AssetLibraryPanel
         project="demo"
@@ -590,7 +596,7 @@ describe("AssetLibraryPanel beat context", () => {
       "aria-selected",
       "true",
     );
-    fireEvent.click(screen.getByRole("button", { name: "Gestão de Ativos" }));
+    await user.click(screen.getByRole("button", { name: "Gestão de Ativos" }));
 
     expect(await screen.findByRole("button", { name: "Novo" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Ações em massa" })).toBeInTheDocument();
