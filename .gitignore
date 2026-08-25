@@ -43,3 +43,5 @@ engines/**/frontend/node_modules/
 .cursor/
 .idea/
 .vscode/
+graphify-out/
+state/

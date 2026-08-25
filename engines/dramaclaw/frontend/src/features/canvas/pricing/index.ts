@@ -212,7 +212,7 @@ export function resolveModelPriceDisplay(
     displayCurrency,
     pricingSettings.usdToCnyRate
   );
-  const perRunSuffix = options.language.startsWith('zh') ? '/次' : '/run';
+  const perRunSuffix = options.language.startsWith('pt') ? '/op' : '/run';
   const nativeLabel =
     quote.currency === displayCurrency
       ? undefined

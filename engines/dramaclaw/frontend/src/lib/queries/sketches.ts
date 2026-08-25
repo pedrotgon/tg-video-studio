@@ -395,7 +395,7 @@ export function usePoolSelect(project: string, episode: number) {
         )
         .json<PoolSelectResponse>();
       if (!res.ok) {
-        const msg = res.error ?? "选择失败";
+        const msg = res.error ?? "Falha na seleção";
         if (res.stale) throw new StalePoolSelectError(msg);
         throw new Error(msg);
       }

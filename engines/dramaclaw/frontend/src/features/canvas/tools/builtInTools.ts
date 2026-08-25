@@ -12,8 +12,7 @@ import {
 import { stringifyAnnotationItems } from './annotation';
 import type { CanvasToolPlugin } from './types';
 
-// imageGen 也算图片源节点：上传的参考图同样可被裁剪 / 标注 / 分格抽取，
-// 结果会落到新建的下游节点，不会覆盖参考图本身。
+// imageGen também é considerado um nó de origem de imagem.
 function supportsImageSourceNode(node: CanvasNode): boolean {
   return (
     isUploadNode(node) ||
@@ -29,7 +28,7 @@ function hasToolableImage(node: CanvasNode): boolean {
 
 export const cropToolPlugin: CanvasToolPlugin = {
   type: NODE_TOOL_TYPES.crop,
-  label: '裁剪',
+  label: 'Recortar',
   icon: 'crop',
   editor: 'crop',
   supportsNode: (node) => hasToolableImage(node),
@@ -40,10 +39,10 @@ export const cropToolPlugin: CanvasToolPlugin = {
   fields: [
     {
       key: 'aspectRatio',
-      label: '目标比例',
+      label: 'Proporção alvo',
       type: 'select',
       options: [
-        { label: '自由', value: 'free' },
+        { label: 'Livre', value: 'free' },
         { label: '1:1', value: '1:1' },
         { label: '16:9', value: '16:9' },
         { label: '9:16', value: '9:16' },
@@ -58,7 +57,7 @@ export const cropToolPlugin: CanvasToolPlugin = {
 
 export const annotateToolPlugin: CanvasToolPlugin = {
   type: NODE_TOOL_TYPES.annotate,
-  label: '标注',
+  label: 'Anotar',
   icon: 'annotate',
   editor: 'annotate',
   supportsNode: (node) => hasToolableImage(node),
@@ -75,7 +74,7 @@ export const annotateToolPlugin: CanvasToolPlugin = {
 
 export const splitStoryboardToolPlugin: CanvasToolPlugin = {
   type: NODE_TOOL_TYPES.splitStoryboard,
-  label: '分格抽取',
+  label: 'Extrair storyboard',
   icon: 'split',
   editor: 'split',
   supportsNode: (node) => hasToolableImage(node),

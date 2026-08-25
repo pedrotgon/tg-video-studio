@@ -13,7 +13,7 @@ export function getScriptReviewFeedback(result: unknown): ScriptFeedback {
       const summary =
         typeof record.review_summary === "string" && record.review_summary.trim()
           ? record.review_summary.trim()
-          : "存在未修复问题";
+          : "Problemas não resolvidos encontrados";
       return {
         type: "warning",
         key: "episode.script.scriptReviewFailed",

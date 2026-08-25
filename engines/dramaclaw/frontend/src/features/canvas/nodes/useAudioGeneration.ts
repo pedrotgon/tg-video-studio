@@ -61,7 +61,7 @@ export function useAudioGeneration(nodeId: string, data: AudioNodeData) {
     if (trimmed.length === 0) return;
     const project = readUrl().project;
     if (!project) {
-      updateNodeData(nodeId, { generationError: '当前 URL 缺少 project 参数' });
+      updateNodeData(nodeId, { generationError: 'A URL atual não possui o parâmetro do projeto' });
       return;
     }
     updateNodeData(nodeId, {
@@ -104,7 +104,7 @@ export function useAudioGeneration(nodeId: string, data: AudioNodeData) {
       );
       updateNodeData(nodeId, {
         isGenerating: false,
-        generationError: error instanceof Error ? error.message : '生成失败',
+        generationError: error instanceof Error ? error.message : 'Falha na geração',
       });
     }
   }, [

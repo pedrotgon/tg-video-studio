@@ -139,7 +139,7 @@ export function useCancelTask() {
             ...conflict,
             ok: false,
             continued: true,
-            message: "已继续执行任务",
+            message: "Tarefa mantida em execução",
           };
         }
         return send(true);

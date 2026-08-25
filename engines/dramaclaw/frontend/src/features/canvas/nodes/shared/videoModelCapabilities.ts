@@ -102,9 +102,9 @@ export function resolveVideoKeyframeUrls(
     }
 
     const displayName = String(candidate.legacyDisplayName ?? "").trim();
-    if (displayName.includes("首帧") && !firstFrameUrl) {
+    if ((displayName.includes("首帧") || displayName.includes("Primeiro frame")) && !firstFrameUrl) {
       firstFrameUrl = candidate.url;
-    } else if (displayName.includes("尾帧") && !lastFrameUrl) {
+    } else if ((displayName.includes("尾帧") || displayName.includes("Último frame")) && !lastFrameUrl) {
       lastFrameUrl = candidate.url;
     } else {
       unassigned.push(candidate.url);

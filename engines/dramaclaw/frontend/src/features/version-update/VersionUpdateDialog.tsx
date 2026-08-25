@@ -87,7 +87,10 @@ export function VersionUpdateDialog() {
                     body = "MiniMax-H3 conectado com seleção automática de modelos e suporte a fluxos avançados.";
                   } else if (item.title?.includes("Vídeo") || item.body?.includes("Primeiros e últimos quadros")) {
                     title = "Geração de Vídeo Precisa";
-                    body = "Melhorias no controle de primeiro/último quadro e renderização contínua.";
+                    body = "Modos de primeiro e último frame mantidos com precisão na validação, execução e histórico.";
+                  } else if (/[\u3400-\u9fff]/.test(title || "") || /[\u3400-\u9fff]/.test(body || "")) {
+                    title = "Melhorias de Performance e Estabilidade";
+                    body = "Otimizações no fluxo de trabalho do estúdio criativo.";
                   }
                 }
                 return (

@@ -6,8 +6,8 @@ import type {
 } from '@/features/freezone/context/skillRoles';
 
 const PARAMETER_LABELS: Record<string, string> = {
-  aspect_ratio: '比例',
-  quality: '质量',
+  aspect_ratio: 'Proporção',
+  quality: 'Qualidade',
 };
 
 export interface SkillParameterEntry {

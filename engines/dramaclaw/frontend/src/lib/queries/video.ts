@@ -283,7 +283,7 @@ export function useVideoPoolSelect(project: string, episode: number) {
           { json: { pool_id: poolId } },
         )
         .json<VideoPoolSelectResponse>();
-      if (!res.ok) throw new Error(res.error ?? "切换视频失败");
+      if (!res.ok) throw new Error(res.error ?? "Falha ao alternar vídeo");
       return res;
     },
     // Mirror usePoolSelect's pattern: patch caches in place to avoid an
