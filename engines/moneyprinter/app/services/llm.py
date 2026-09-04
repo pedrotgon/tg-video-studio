@@ -560,6 +560,14 @@ def generate_script(
             else:
                 logging.error("gpt returned an empty response")
 
+            # Alguns SDKs devolvem falhas do provedor como texto em vez de
+            # lançar uma exceção. Esse conteúdo nunca pode ser aceito como
+            # roteiro válido; mantenha o ciclo de retry ativo.
+            if final_script.lstrip().lower().startswith(("error:", "erro:")):
+                provider_error = final_script
+                final_script = ""
+                raise ValueError(provider_error)
+
             # Some upstream providers may return quota errors as plain text.
             if final_script and "当日额度已消耗完" in final_script:
                 raise ValueError(final_script)
@@ -569,12 +577,12 @@ def generate_script(
         except Exception as e:
             logger.error(f"failed to generate script: {e}")
 
-        if i < _max_retries:
+        if i < _max_retries - 1:
             logger.warning(f"failed to generate video script, trying again... {i + 1}")
-    if "Error: " in final_script:
-        logger.error(f"failed to generate video script: {final_script}")
-    else:
+    if final_script:
         logger.success(f"completed: \n{final_script}")
+    else:
+        logger.error("failed to generate video script after all retries")
     return final_script.strip()
 
 

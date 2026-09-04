@@ -88,7 +88,10 @@ async def generate_simple_script(body: SimpleScriptRequest):
         or not script.strip()
         or script.lstrip().lower().startswith(("error:", "erro:"))
     ):
-        raise HTTPException(status_code=502, detail="O motor de IA não retornou um roteiro.")
+        raise HTTPException(
+            status_code=503,
+            detail="A IA não conseguiu gerar o roteiro agora. Aguarde alguns segundos e tente novamente.",
+        )
     return {"script": script.strip()}
 
 

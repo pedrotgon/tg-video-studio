@@ -69,7 +69,7 @@ export const SimpleVideoTab: React.FC<SimpleVideoTabProps> = ({ onGenerate, acti
           <div>
             <label htmlFor="video-subject" className="mb-1.5 block text-xs font-semibold text-brand-forest">Tema ou palavra-chave</label>
             <div className="relative">
-              <input id="video-subject" required value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Ex.: 5 mistérios da Roma Antiga" className={`${fieldClass} pr-10`} />
+              <input id="video-subject" required value={subject} onChange={(event) => { setSubject(event.target.value); setScriptError(''); }} placeholder="Ex.: 5 mistérios da Roma Antiga" className={`${fieldClass} pr-10`} />
               <Sparkles className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-gold" />
             </div>
           </div>
@@ -87,7 +87,10 @@ export const SimpleVideoTab: React.FC<SimpleVideoTabProps> = ({ onGenerate, acti
             </div>
             {(isManualScript || scriptError) && (
               <div className="border-t border-[#e4e8ea] p-3.5">
-                {scriptError && <p role="alert" className="mb-2 rounded-md border border-[#edc7c1] bg-[#fff6f4] px-3 py-2 text-xs text-[#9d3d30]">{scriptError}</p>}
+                {scriptError && <div role="alert" className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-md border border-[#edc7c1] bg-[#fff6f4] px-3 py-2 text-xs text-[#9d3d30]">
+                  <span>{scriptError}{script ? ' Seu roteiro anterior foi preservado.' : ''}</span>
+                  <button type="button" onClick={createScript} className="font-semibold underline underline-offset-2">Tentar novamente</button>
+                </div>}
                 {isManualScript && <>
                   <label htmlFor="generated-script" className="mb-1.5 flex items-center gap-2 text-xs font-semibold text-brand-forest"><Edit3 className="h-4 w-4 text-brand-gold" /> Revise o roteiro antes de gerar</label>
                   <textarea id="generated-script" aria-label="Texto do roteiro" value={script} onChange={(event) => setScript(event.target.value)} rows={6} placeholder="O roteiro aprovado aparecerá aqui..." className={`${fieldClass} resize-y`} />

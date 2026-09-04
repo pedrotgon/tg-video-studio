@@ -155,6 +155,30 @@ class TestScriptPromptOptions(unittest.TestCase):
         self.assertIs(captured["app_config"], app_config)
         self.assertEqual(captured["app_config"]["openai_api_key"], "snapshot-key")
 
+    def test_generate_script_retries_provider_error_text(self):
+        """Falhas textuais do SDK não podem aparecer como roteiro válido."""
+        with patch.object(
+            llm,
+            "_generate_response",
+            side_effect=["Error: 503 UNAVAILABLE", "Roteiro recuperado."],
+        ) as generate:
+            result = llm.generate_script(video_subject="Rotina produtiva")
+
+        self.assertEqual(result, "Roteiro recuperado.")
+        self.assertEqual(generate.call_count, 2)
+
+    def test_generate_script_returns_empty_after_provider_errors(self):
+        """Depois dos retries, o chamador recebe falha, não falsa saída."""
+        with patch.object(
+            llm,
+            "_generate_response",
+            return_value="Error: 503 UNAVAILABLE",
+        ) as generate:
+            result = llm.generate_script(video_subject="Rotina produtiva")
+
+        self.assertEqual(result, "")
+        self.assertEqual(generate.call_count, llm._max_retries)
+
     def test_generate_terms_can_request_script_ordered_keywords(self):
         """
         按文案顺序匹配素材依赖 LLM 返回有序关键词。这里不调用真实模型，
