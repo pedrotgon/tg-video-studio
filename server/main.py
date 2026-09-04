@@ -24,6 +24,10 @@ class SimpleVideoRequest(BaseModel):
     subtitlePosition: str = "bottom"
 
 
+class SimpleScriptRequest(BaseModel):
+    videoSubject: str = Field(min_length=1, max_length=500)
+
+
 class ComplexVideoRequest(BaseModel):
     title: str = Field(min_length=1, max_length=160)
     storyPremise: str = Field(min_length=1, max_length=8000)
@@ -53,6 +57,39 @@ async def health_check():
     money = await probe(f"{MONEY_API}/ping")
     drama = await probe(f"{DRAMA_API}/healthz")
     return {"status": "online" if money and drama else "partial", "engines": {"money_printer_turbo": money, "drama_claw": drama}}
+
+
+@app.post("/api/simple/script")
+async def generate_simple_script(body: SimpleScriptRequest):
+    """Gera um rascunho real para revisão antes de criar o vídeo."""
+    payload = {
+        "video_subject": body.videoSubject,
+        "video_language": "pt-BR",
+        "paragraph_number": 3,
+        "video_script_prompt": (
+            "Escreva um roteiro comercial curto para vídeo vertical em pt-BR. "
+            "Use gancho, benefício verificável, demonstração simples e CTA claro. "
+            "Não invente preço, números, depoimentos ou garantias. Retorne apenas "
+            "o texto narrado, em parágrafos curtos."
+        ),
+    }
+    try:
+        async with httpx.AsyncClient(timeout=45) as client:
+            response = await client.post(f"{MONEY_API}/api/v1/scripts", json=payload)
+            response.raise_for_status()
+            result = response.json()
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(status_code=502, detail=f"O motor de IA recusou o roteiro: {exc.response.text[:800]}") from exc
+    except (httpx.HTTPError, ValueError) as exc:
+        raise HTTPException(status_code=503, detail=f"Motor de IA indisponível: {exc}") from exc
+    script = (result.get("data") or {}).get("video_script")
+    if (
+        not isinstance(script, str)
+        or not script.strip()
+        or script.lstrip().lower().startswith(("error:", "erro:"))
+    ):
+        raise HTTPException(status_code=502, detail="O motor de IA não retornou um roteiro.")
+    return {"script": script.strip()}
 
 
 @app.post("/api/simple/generate", status_code=202)

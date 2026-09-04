@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Captions, ChevronRight, Layers3, Loader2, Monitor, Play, Smartphone, Sparkles, Volume2, Zap } from 'lucide-react';
+import { Captions, ChevronRight, Edit3, Layers3, Loader2, Monitor, Play, RefreshCw, Smartphone, Sparkles, Volume2, Zap } from 'lucide-react';
 import { GenerationJob, SimpleVideoConfig } from '../types';
+import { generateSimpleScript } from '../services/api';
 
 interface SimpleVideoTabProps {
   onGenerate: (config: SimpleVideoConfig) => void;
@@ -16,6 +17,8 @@ export const SimpleVideoTab: React.FC<SimpleVideoTabProps> = ({ onGenerate, acti
   const [ratio, setRatio] = useState<'9:16' | '16:9'>('9:16');
   const [subtitleEnabled, setSubtitleEnabled] = useState(true);
   const [isManualScript, setIsManualScript] = useState(false);
+  const [isScriptGenerating, setIsScriptGenerating] = useState(false);
+  const [scriptError, setScriptError] = useState('');
 
   const isGenerating = Boolean(activeJob && !['completed', 'error', 'idle'].includes(activeJob.status));
 
@@ -31,6 +34,21 @@ export const SimpleVideoTab: React.FC<SimpleVideoTabProps> = ({ onGenerate, acti
       subtitleEnabled,
       subtitlePosition: 'bottom',
     });
+  };
+
+  const createScript = async () => {
+    if (!subject.trim() || isScriptGenerating) return;
+    setIsScriptGenerating(true);
+    setScriptError('');
+    try {
+      const generated = await generateSimpleScript(subject.trim());
+      setScript(generated);
+      setIsManualScript(true);
+    } catch (error) {
+      setScriptError(error instanceof Error ? error.message : 'Não foi possível gerar o roteiro.');
+    } finally {
+      setIsScriptGenerating(false);
+    }
   };
 
   return (
@@ -57,17 +75,27 @@ export const SimpleVideoTab: React.FC<SimpleVideoTabProps> = ({ onGenerate, acti
           </div>
 
           <div className="rounded-lg border border-[#e4e8ea] bg-[#fafafa]">
-            <button type="button" onClick={() => setIsManualScript((value) => !value)} className="flex w-full items-center justify-between gap-3 px-3.5 py-3 text-left">
-              <span className="flex items-center gap-2.5 text-xs font-medium text-brand-forest"><Layers3 className="h-4 w-4 text-[#5e727c]" /> Usar roteiro próprio</span>
-              <span className={`relative h-5 w-9 rounded-full transition ${isManualScript ? 'bg-brand-gold' : 'bg-[#cbd3d7]'}`}>
-                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition ${isManualScript ? 'left-[18px]' : 'left-0.5'}`} />
-              </span>
-            </button>
-            {isManualScript && (
+            <div className="flex flex-wrap items-center justify-between gap-3 px-3.5 py-3">
+              <div>
+                <span className="flex items-center gap-2.5 text-xs font-medium text-brand-forest"><Layers3 className="h-4 w-4 text-[#5e727c]" /> Roteiro do vídeo</span>
+                <p className="mt-1 text-[11px] text-[#6f8088]">Gere um rascunho com IA, revise e aprove antes de produzir.</p>
+              </div>
+              <button type="button" onClick={createScript} disabled={!subject.trim() || isScriptGenerating} className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-brand-gold bg-[#fbf7f1] px-3 text-xs font-semibold text-brand-forest transition hover:bg-[#f5ecdf] disabled:cursor-not-allowed disabled:opacity-45">
+                {isScriptGenerating ? <Loader2 className="h-4 w-4 animate-spin text-brand-gold" /> : script ? <RefreshCw className="h-4 w-4 text-brand-gold" /> : <Sparkles className="h-4 w-4 text-brand-gold" />}
+                {isScriptGenerating ? 'Gerando roteiro…' : script ? 'Gerar outra versão' : 'Gerar roteiro com IA'}
+              </button>
+            </div>
+            {(isManualScript || scriptError) && (
               <div className="border-t border-[#e4e8ea] p-3.5">
-                <textarea aria-label="Texto do roteiro" value={script} onChange={(event) => setScript(event.target.value)} rows={4} placeholder="Cole o roteiro que será narrado..." className={`${fieldClass} resize-none`} />
+                {scriptError && <p role="alert" className="mb-2 rounded-md border border-[#edc7c1] bg-[#fff6f4] px-3 py-2 text-xs text-[#9d3d30]">{scriptError}</p>}
+                {isManualScript && <>
+                  <label htmlFor="generated-script" className="mb-1.5 flex items-center gap-2 text-xs font-semibold text-brand-forest"><Edit3 className="h-4 w-4 text-brand-gold" /> Revise o roteiro antes de gerar</label>
+                  <textarea id="generated-script" aria-label="Texto do roteiro" value={script} onChange={(event) => setScript(event.target.value)} rows={6} placeholder="O roteiro aprovado aparecerá aqui..." className={`${fieldClass} resize-y`} />
+                  <p className="mt-1.5 text-[11px] text-[#6f8088]">Este texto será usado na narração do vídeo.</p>
+                </>}
               </div>
             )}
+            {!isManualScript && <button type="button" onClick={() => setIsManualScript(true)} className="flex w-full items-center gap-2 border-t border-[#e4e8ea] px-3.5 py-2.5 text-left text-[11px] font-medium text-[#5e727c] hover:text-brand-forest">Ou cole seu próprio roteiro <ChevronRight className="h-3.5 w-3.5" /></button>}
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">

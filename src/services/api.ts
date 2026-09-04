@@ -11,6 +11,18 @@ const messageFromResponse = async (response: Response) => {
 
 const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
+export const generateSimpleScript = async (videoSubject: string): Promise<string> => {
+  const response = await fetch('/api/simple/script', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ videoSubject }),
+  });
+  if (!response.ok) throw new Error(await messageFromResponse(response));
+  const data = await response.json();
+  if (typeof data.script !== 'string' || !data.script.trim()) throw new Error('A IA não retornou um roteiro para revisar.');
+  return data.script.trim();
+};
+
 export const generateSimpleVideo = async (config: SimpleVideoConfig, onProgress: (job: GenerationJob) => void): Promise<GenerationJob> => {
   const initial: GenerationJob = {
     id: `mpt-${Date.now()}`,
