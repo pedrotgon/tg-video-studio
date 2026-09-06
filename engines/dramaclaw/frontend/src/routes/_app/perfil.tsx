@@ -652,6 +652,19 @@ function ProfilePage() {
     return map;
   }, [data?.transcripts]);
 
+  const formatCadence = (text: string): string[] => {
+    if (!text) return [];
+    const normalized = text.replace(/\r\n/g, "\n");
+    if (normalized.includes("\n")) {
+      return normalized.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+    }
+    return normalized
+      .replace(/([.!?])\s+(?=[A-ZÀ-Ú"'\d])/g, "$1\n")
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  };
+
   const filteredPosts = useMemo(() => {
     return posts.filter((p) => {
       const plays = Number(p.metrics?.plays || p.metrics?.views || 0);
@@ -664,7 +677,8 @@ function ProfilePage() {
   }, [posts, dadosFilter, transcriptsMap]);
 
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
+    const formatted = formatCadence(text).join("\n\n");
+    navigator.clipboard.writeText(formatted);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2500);
   };
@@ -678,40 +692,47 @@ function ProfilePage() {
     setError("");
     setNotice("");
     const activeCta = selectedKeywords.length > 0 ? selectedKeywords[0] : "MUNDOFIT";
+
     try {
-      await api.post(`${endpoint}/strategic-copies`, {
-        json: {
+      const resp = await fetch(`/api/v1/projects/${encodeURIComponent(project)}/profile/copies`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           input_text: inputText.trim(),
           target_cta: activeCta,
-        },
+        }),
       });
-      await queryClient.invalidateQueries({ queryKey: ["client-profile", project] });
-      setNotice("Processamento de copywriting iniciado.");
-      setTab("copies");
-    } catch (e: unknown) {
-      let detail = "Não foi possível gerar copies. Tente novamente.";
-      const resp = (e as { response?: Response }).response;
-      if (resp) {
-        const payload = await resp.clone().json().catch(() => null);
-        if (typeof payload?.detail === "string") detail = payload.detail;
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.detail || "Falha ao solicitar geração de copies.");
       }
-      setError(detail);
+
+      const res = await resp.json();
+      if (res.data?.id) {
+        setNotice("Gerando 10 copies estratégicas...");
+        await queryClient.invalidateQueries({ queryKey: ["client-profile", project] });
+      }
+    } catch (err: any) {
+      setError(err.message || "Erro inesperado ao gerar copies.");
     } finally {
       setBusy(false);
     }
   }
 
   async function handleClearCopies() {
-    if (copies.length === 0) return;
-    setBusy(true);
-    setError("");
-    setNotice("");
     try {
-      await api.delete(`${endpoint}/copies`);
+      setBusy(true);
+      const resp = await fetch(`/api/v1/projects/${encodeURIComponent(project)}/profile/copies`, {
+        method: "DELETE",
+      });
+      if (!resp.ok) {
+        throw new Error("Falha ao limpar copies.");
+      }
+      setNotice("Copies removidas com sucesso.");
       await queryClient.invalidateQueries({ queryKey: ["client-profile", project] });
-      setNotice("Todas as copies geradas foram limpas com sucesso.");
-    } catch (e: unknown) {
-      setError("Não foi possível limpar as copies. Tente novamente.");
+    } catch (err: any) {
+      setError(err.message || "Erro ao limpar copies.");
     } finally {
       setBusy(false);
     }
@@ -725,13 +746,15 @@ function ProfilePage() {
   }, [selectedVaultDoc]);
 
   function handleUseInEsteira(item: { titulo: string; briefing: string; cta?: string; hook?: string }) {
-    const fullText = `${item.titulo}: ${item.briefing}${item.hook ? ` Gancho: "${item.hook}".` : ""}${item.cta ? ` CTA com palavra-chave: ${item.cta}.` : ""}`;
+    const theme = item.titulo || item.briefing;
     try {
-      localStorage.setItem("tg_esteira_theme", fullText);
+      localStorage.setItem("tg_esteira_theme", theme);
+      if (item.briefing) {
+        localStorage.setItem("tg_esteira_script", formatCadence(item.briefing).join("\n\n"));
+      }
     } catch {}
-    window.location.assign(`/?theme=${encodeURIComponent(fullText)}`);
+    window.location.assign(`/?theme=${encodeURIComponent(theme)}`);
   }
-
 
   return (
     <main className="tg-profile min-h-screen bg-[#FAFAFA] text-[#031A26] pb-16">
@@ -2206,8 +2229,12 @@ function ProfilePage() {
                           </div>
                         )}
 
-                        <div className="text-xs text-[#031A26] whitespace-pre-wrap leading-relaxed mb-4 max-h-48 overflow-y-auto">
-                          {copy.text}
+                        <div className="text-xs text-[#031A26] leading-relaxed mb-4 max-h-56 overflow-y-auto space-y-2">
+                          {formatCadence(copy.text).map((sentence, sIdx) => (
+                            <p key={sIdx} className="m-0 leading-relaxed">
+                              {sentence}
+                            </p>
+                          ))}
                         </div>
                       </div>
 

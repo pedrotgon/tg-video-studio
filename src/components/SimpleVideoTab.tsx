@@ -17,6 +17,19 @@ const PROFILE_PROJECT_ID = '01M1SAXW27GVCP7QF6EYY7PSQN';
 const steps = ['Copy', 'Roteiro', 'Tom e voz', 'Revisão', 'Vídeo'];
 const field = 'w-full rounded-lg border border-[#dce1e3] bg-white px-3.5 py-2.5 text-sm text-brand-forest outline-none transition placeholder:text-[#819098] focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20';
 
+const formatCadence = (text: string): string[] => {
+  if (!text) return [];
+  const normalized = text.replace(/\r\n/g, '\n');
+  if (normalized.includes('\n')) {
+    return normalized.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  }
+  return normalized
+    .replace(/([.!?])\s+(?=[A-ZÀ-Ú"'\d])/g, '$1\n')
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean);
+};
+
 export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepChange }) => {
   const [step, setStep] = useState(1);
   const [query, setQuery] = useState('');
@@ -45,8 +58,7 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
 
   useEffect(() => {
     try {
-      const params = new URLSearchParams(window.location.search);
-      const incoming = params.get('theme') || localStorage.getItem('tg_esteira_theme');
+      const incoming = (localStorage.getItem('tg_esteira_theme') || '').trim();
       if (incoming && !query) {
         setQuery(incoming);
         localStorage.removeItem('tg_esteira_theme');
@@ -121,7 +133,7 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
   };
   const production = (): SimpleVideoConfig => ({
     videoSubject: selectedCopy?.title || query,
-    videoScript: selectedCopy?.text,
+    videoScript: selectedCopy?.text ? formatCadence(selectedCopy.text).join('\n\n') : undefined,
     tone,
     keywords: 'home workout, bodyweight exercise, core workout, fitness at home, healthy lifestyle',
     voiceName: voice,
@@ -150,10 +162,17 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
     {model && <p className="text-xs text-[#66736b]">{model === 'gemini-3.7-flash' ? 'Gemini 3.7 Flash · High' : `Modelo alternativo: ${model}`}</p>}
 
     {step === 1 && <section className="rounded-xl border border-[#dce1e3] bg-white p-5 shadow-[0_4px_16px_-4px_rgba(3,26,38,.08)] lg:p-6">
-      <div className="mb-4"><h2 className="text-base font-semibold text-brand-forest">Gerar copies</h2><p className="mt-0.5 text-xs text-[#6f8088]">Digite um tema ou um alias da Memória, como AD 98.</p></div>
-      <div className="grid gap-2 sm:grid-cols-[minmax(0,3fr)_minmax(150px,1fr)]">
-        <input value={query} onChange={(event) => { setQuery(event.target.value); setError(''); resetQualification(); }} onKeyDown={(event) => { if (event.key === 'Enter') startQualification(); }} placeholder="Tema ou referência: AD 98" aria-label="Tema ou referência da memória" className={field} />
-        <button type="button" onClick={startQualification} disabled={!query.trim() || busy} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-brand-forest px-4 text-xs font-semibold text-white disabled:opacity-45">{busy && copyPhase === 'input' ? <Loader2 className="h-4 w-4 animate-spin text-brand-gold" /> : <Sparkles className="h-4 w-4 text-brand-gold" />}{busy && copyPhase === 'input' ? 'Pensando…' : 'Continuar'}</button>
+      <div className="mb-4">
+        <h2 className="text-lg font-bold text-brand-forest">Gerar copies</h2>
+      </div>
+      <div>
+        <label className="block text-xs font-bold text-brand-forest mb-1.5">
+          Tema ou Referência
+        </label>
+        <div className="grid gap-2 sm:grid-cols-[minmax(0,3fr)_minmax(150px,1fr)]">
+          <input value={query} onChange={(event) => { setQuery(event.target.value); setError(''); resetQualification(); }} onKeyDown={(event) => { if (event.key === 'Enter') startQualification(); }} placeholder="Tema ou referência (ex: AD 98, Método Baixo Impacto, #MUNDOFIT...)" aria-label="Tema ou referência da memória" className={field} />
+          <button type="button" onClick={startQualification} disabled={!query.trim() || busy} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-brand-forest px-4 text-xs font-semibold text-white disabled:opacity-45">{busy && copyPhase === 'input' ? <Loader2 className="h-4 w-4 animate-spin text-brand-gold" /> : <Sparkles className="h-4 w-4 text-brand-gold" />}{busy && copyPhase === 'input' ? 'Pensando…' : 'Continuar'}</button>
+        </div>
       </div>
       {(message || error) && <p role={error ? 'alert' : 'status'} className={`mt-3 rounded-md border px-3 py-2 text-xs ${error ? 'border-[#edc7c1] bg-[#fff6f4] text-[#9d3d30]' : 'border-[#dce1e3] bg-[#fafafa] text-[#5e727c]'}`}>{error || message}</p>}
       {memory && <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-md border border-[#c9dfd2] bg-[#f5fbf7] px-3 py-2 text-xs text-[#256a45]"><span><strong>{memory.alias}</strong> confirmado pelo post {memory.post_id}.</span><a href={memory.source_url} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">Ver fonte</a></div>}
@@ -180,13 +199,29 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
         {copies.map((item, index) => <article key={item.id} className="rounded-lg border border-[#e4e8ea] bg-[#fafafa] p-3.5">
           <div className="flex items-start justify-between gap-3"><div><span className="text-[10px] font-semibold uppercase tracking-wide text-brand-gold">Copy {String(index + 1).padStart(2, '0')}</span><h3 className="mt-0.5 text-sm font-semibold leading-snug text-brand-forest">{item.title}</h3>{item.angle && <p className="mt-1 text-[11px] text-[#6f8088]">{item.angle}</p>}</div><button type="button" onClick={() => chooseCopy(item)} className="shrink-0 rounded-md bg-brand-forest px-2.5 py-1.5 text-[10px] font-semibold text-white">Usar</button></div>
           {item.hook_spoken && <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-[#43565f]">“{item.hook_spoken}”</p>}
-          <details className="group mt-3 border-t border-[#e4e8ea] pt-2"><summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-semibold text-[#5e727c]">Ver fala completa <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180" /></summary><p className="mt-2 whitespace-pre-wrap text-xs leading-relaxed text-brand-forest">{item.text}</p></details>
+          <details className="group mt-3 border-t border-[#e4e8ea] pt-2">
+            <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-semibold text-[#5e727c]">
+              Ver fala completa <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180" />
+            </summary>
+            <div className="mt-2 space-y-1.5 text-xs leading-relaxed text-brand-forest">
+              {formatCadence(item.text).map((sentence, sIdx) => (
+                <p key={sIdx} className="m-0 leading-relaxed">{sentence}</p>
+              ))}
+            </div>
+          </details>
         </article>)}
       </div>}
     </section>}
 
     {step === 2 && selectedCopy && <Panel title="2. Roteiro" subtitle="No modo rápido, a copy aprovada será a narração; o motor monta a sequência visual.">
-      <div className="rounded-lg border border-[#e4e8ea] bg-[#fafafa] p-4"><p className="text-[10px] font-semibold uppercase tracking-wide text-brand-gold">Fala aprovada</p><p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-brand-forest">{selectedCopy.text}</p></div>
+      <div className="rounded-lg border border-[#e4e8ea] bg-[#fafafa] p-4">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-gold">Fala aprovada</p>
+        <div className="mt-2 space-y-2 text-sm leading-relaxed text-brand-forest">
+          {formatCadence(selectedCopy.text).map((sentence, sIdx) => (
+            <p key={sIdx} className="m-0 leading-relaxed">{sentence}</p>
+          ))}
+        </div>
+      </div>
       <Nav back={() => go(1)} backLabel="Copies" next={() => go(3)} nextLabel="Tom e voz" />
     </Panel>}
 
@@ -197,7 +232,18 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
     </Panel>}
 
     {step === 4 && selectedCopy && <Panel title="4. Revisão" subtitle="Confirme a fala e as configurações antes de produzir.">
-      <div className="rounded-lg border border-[#e4e8ea] bg-[#fafafa] p-4"><dl className="grid gap-4 text-xs md:grid-cols-3"><div><dt className="text-[#72828a]">Copy</dt><dd className="mt-1 font-medium text-brand-forest">{selectedCopy.title}</dd></div><div><dt className="text-[#72828a]">Tom e voz</dt><dd className="mt-1 font-medium text-brand-forest">{tone} · {voice.replace('pt-BR-', '').replace('Neural', '')}</dd></div><div><dt className="text-[#72828a]">Entrega</dt><dd className="mt-1 font-medium text-brand-forest">{ratio === '9:16' ? 'Vertical' : 'Horizontal'} · {subtitles ? 'legendas ativas' : 'sem legendas'}</dd></div></dl><p className="mt-4 border-t border-[#e4e8ea] pt-4 whitespace-pre-wrap text-sm leading-relaxed text-brand-forest">{selectedCopy.text}</p></div>
+      <div className="rounded-lg border border-[#e4e8ea] bg-[#fafafa] p-4">
+        <dl className="grid gap-4 text-xs md:grid-cols-3">
+          <div><dt className="text-[#72828a]">Copy</dt><dd className="mt-1 font-medium text-brand-forest">{selectedCopy.title}</dd></div>
+          <div><dt className="text-[#72828a]">Tom e voz</dt><dd className="mt-1 font-medium text-brand-forest">{tone} · {voice.replace('pt-BR-', '').replace('Neural', '')}</dd></div>
+          <div><dt className="text-[#72828a]">Entrega</dt><dd className="mt-1 font-medium text-brand-forest">{ratio === '9:16' ? 'Vertical' : 'Horizontal'} · {subtitles ? 'legendas ativas' : 'sem legendas'}</dd></div>
+        </dl>
+        <div className="mt-4 border-t border-[#e4e8ea] pt-4 space-y-2 text-sm leading-relaxed text-brand-forest">
+          {formatCadence(selectedCopy.text).map((sentence, sIdx) => (
+            <p key={sIdx} className="m-0 leading-relaxed">{sentence}</p>
+          ))}
+        </div>
+      </div>
       <Nav back={() => go(3)} backLabel="Editar" next={() => go(5)} nextLabel="Ir para vídeo" />
     </Panel>}
 

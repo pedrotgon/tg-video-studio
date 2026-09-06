@@ -114,35 +114,71 @@ class CopyInput(BaseModel):
 
 
 def validate_qualifier_payload(payload: dict) -> list[dict]:
-    questions = payload.get("questions")
-    if not isinstance(questions, list) or not 3 <= len(questions) <= 5:
-        raise ValueError("qualification question count")
+    raw_questions = payload.get("questions") if isinstance(payload, dict) else None
+    if not isinstance(raw_questions, list):
+        raw_questions = []
+
+    sanitized: list[dict] = []
     seen_ids: set[str] = set()
-    for question in questions:
+
+    for idx, question in enumerate(raw_questions):
         if not isinstance(question, dict):
-            raise ValueError("invalid qualification question")
-        question_id = question.get("id")
-        title = question.get("question")
-        options = question.get("options")
-        if not isinstance(question_id, str) or not question_id or question_id in seen_ids:
-            raise ValueError("invalid qualification id")
-        if not isinstance(title, str) or not title.strip() or len(title) > 20:
-            raise ValueError("qualification question too long")
-        if not isinstance(options, list) or not 2 <= len(options) <= 4:
-            raise ValueError("invalid qualification options")
-        option_ids: set[str] = set()
-        for option in options:
-            if not isinstance(option, dict):
-                raise ValueError("invalid qualification option")
-            option_id = option.get("id")
-            label = option.get("label")
-            if not isinstance(option_id, str) or not option_id or option_id in option_ids:
-                raise ValueError("invalid qualification option id")
-            if not isinstance(label, str) or not label.strip() or len(label) > 10:
-                raise ValueError("qualification option too long")
-            option_ids.add(option_id)
-        seen_ids.add(question_id)
-    return questions
+            continue
+        qid = str(question.get("id") or f"q_{idx}").strip()
+        if not qid or qid in seen_ids:
+            qid = f"q_{idx}_{len(seen_ids)}"
+        seen_ids.add(qid)
+
+        title = str(question.get("question") or "").strip()
+        if not title:
+            title = f"Direção {idx + 1}?"
+        if len(title) > 20:
+            title = title[:20].rstrip(" ,.-")
+            if not title.endswith("?"):
+                title = title[:19] + "?"
+
+        raw_options = question.get("options")
+        if not isinstance(raw_options, list) or len(raw_options) < 2:
+            raw_options = [{"id": "opt_1", "label": "Sim"}, {"id": "opt_2", "label": "Não"}]
+
+        sanitized_opts: list[dict] = []
+        seen_opt_ids: set[str] = set()
+        for o_idx, opt in enumerate(raw_options[:4]):
+            if not isinstance(opt, dict):
+                continue
+            oid = str(opt.get("id") or f"opt_{o_idx}").strip()
+            if not oid or oid in seen_opt_ids:
+                oid = f"opt_{o_idx}_{len(seen_opt_ids)}"
+            seen_opt_ids.add(oid)
+            label = str(opt.get("label") or f"Opção {o_idx + 1}").strip()
+            if len(label) > 10:
+                label = label[:10].strip()
+            sanitized_opts.append({"id": oid, "label": label})
+
+        if len(sanitized_opts) < 2:
+            sanitized_opts.append({"id": f"opt_{len(sanitized_opts)}", "label": "Geral"})
+
+        sanitized.append({
+            "id": qid,
+            "question": title,
+            "options": sanitized_opts,
+        })
+        if len(sanitized) == 5:
+            break
+
+    defaults = [
+        {"id": "objetivo", "question": "Qual objetivo?", "options": [{"id": "converter", "label": "Converter"}, {"id": "engajar", "label": "Engajar"}, {"id": "viralizar", "label": "Viralizar"}]},
+        {"id": "abordagem", "question": "Qual abordagem?", "options": [{"id": "pratica", "label": "Prática"}, {"id": "desafio", "label": "Desafio"}, {"id": "direta", "label": "Direta"}]},
+        {"id": "formato", "question": "Qual formato?", "options": [{"id": "sem_pulo", "label": "Sem pulo"}, {"id": "ritmo", "label": "Ritmado"}, {"id": "em_casa", "label": "Em casa"}]},
+    ]
+    for d in defaults:
+        if len(sanitized) >= 3:
+            break
+        if d["id"] not in seen_ids:
+            sanitized.append(d)
+            seen_ids.add(d["id"])
+
+    return sanitized[:5]
 
 
 async def context(project, user, role="editor"):

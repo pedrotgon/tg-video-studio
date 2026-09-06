@@ -231,8 +231,9 @@ class ProfileStore:
             candidates = {
                 normalize_query(str(item.get("id", ""))),
                 normalize_query(str(item.get("alias", ""))),
+                normalize_query(str(item.get("titulo", ""))),
             }
-            if normalized in candidates:
+            if normalized in candidates or (len(normalized) >= 4 and any(normalized in c for c in candidates)):
                 post_id = item.get("post_id")
                 post = self.get("post", post_id) if post_id else None
                 return {
@@ -243,17 +244,49 @@ class ProfileStore:
                     "post": post,
                 }
 
-        # Check posts directly by ID or source_url
+        # Check posts directly by ID, source_url or caption tags
         posts = self.list("post")
         for p in posts:
-            if p.get("id") == query or normalize_query(p.get("id", "")) == normalized or (p.get("source_url") and query in p["source_url"]):
+            p_keys = {
+                p.get("id", ""),
+                normalize_query(p.get("id", "")),
+                normalize_query(p.get("shortcode", "")),
+            }
+            caption = str(p.get("caption") or "")
+            if normalized in p_keys or (p.get("source_url") and query in p["source_url"]) or (len(normalized) >= 4 and normalized in normalize_query(caption)):
                 return {
-                    "alias": {"id": p["id"], "alias": p["id"]},
+                    "alias": {"id": p["id"], "alias": f"Post {p['id']}"},
                     "target_kind": "post",
                     "target_id": p["id"],
                     "target": p,
                     "post": p,
                 }
+
+        # Canonical graph node shortcuts
+        graph_shortcuts = {
+            "metodobaixoimpacto": "DauwjqVBoHh",
+            "baixoimpacto": "DauwjqVBoHh",
+            "desafioritbox": "Da_JAVQSCPu",
+            "desafiomusical": "Da_JAVQSCPu",
+            "treinonasala": "Da_JAVQSCPu",
+            "ad98": "Da_JAVQSCPu",
+            "post82k": "Dce8x59SSP2",
+            "reel82k": "Dce8x59SSP2",
+            "82k": "Dce8x59SSP2",
+            "mundofit": "Da_JAVQSCPu",
+            "quero": "DcUjm2eyjbC",
+        }
+        for g_key, target_pid in graph_shortcuts.items():
+            if g_key in normalized or normalized in g_key:
+                p = self.get("post", target_pid)
+                if p:
+                    return {
+                        "alias": {"id": f"graph_{target_pid}", "alias": query.strip()},
+                        "target_kind": "post",
+                        "target_id": target_pid,
+                        "target": p,
+                        "post": p,
+                    }
         return None
 
     def get_context_bundle(
