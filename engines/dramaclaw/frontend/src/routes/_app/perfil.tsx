@@ -7,7 +7,7 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music, BookOpen, Sparkles, FileText, Copy } from "lucide-react";
+import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music, BookOpen, Sparkles, FileText, Copy, Share2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import "@/components/profile/profile.css";
 
@@ -327,6 +327,204 @@ Emagrecimento prático e descomplicado para mulheres reais que não têm tempo o
   },
 };
 
+type GraphPillar = "todos" | "identidade" | "documentos" | "postagens" | "copywriting";
+
+interface GraphNodeItem {
+  id: string;
+  pillar: "identidade" | "documentos" | "postagens" | "copywriting";
+  title: string;
+  badge: string;
+  metric?: string;
+  summary: string;
+  connections: string[];
+  actionType?: "esteira" | "doc" | "postagens";
+  actionPayload?: any;
+}
+
+const GRAPH_NODES: GraphNodeItem[] = [
+  // PILAR 1: IDENTIDADE & DNA
+  {
+    id: "node_thaix",
+    pillar: "identidade",
+    title: "Thaix Santiago",
+    badge: "Criadora & DNA",
+    metric: "417k seguidoras",
+    summary: "Especialista em emagrecimento feminino no Ritbox. Comunicação acolhedora ('Bora mulher'), sem cobranças tóxicas.",
+    connections: ["node_uvp", "node_doc_about", "node_doc_persona", "node_post_ad98", "node_copy_ad98"],
+  },
+  {
+    id: "node_uvp",
+    pillar: "identidade",
+    title: "Método Baixo Impacto",
+    badge: "UVP Inegociável",
+    metric: "Zero Saltos",
+    summary: "Treinos na sala de casa sem agressão aos joelhos e coluna. Promessa de queima de gordura sem sofrimento.",
+    connections: ["node_thaix", "node_doc_framework", "node_doc_regras", "node_copy_ad98", "node_copy_baixo_impacto"],
+    actionType: "esteira",
+    actionPayload: {
+      titulo: "Método Baixo Impacto: Treino na Sala",
+      briefing: "Roteiro focado em emagrecimento feminino ritmado para quem tem dor no joelho ou sobrepeso.",
+      hook: "Se você não pode pular mas quer secar a barriga, faça este exercício na sua sala",
+      cta: "MUNDOFIT",
+    },
+  },
+
+  // PILAR 2: DOCUMENTOS DO VAULT
+  {
+    id: "node_doc_about",
+    pillar: "documentos",
+    title: "About Me (about.md)",
+    badge: "Dossiê Executivo",
+    metric: "Canônico",
+    summary: "Histórico profissional, autoridade de marca e pilares centrais da metodologia Ritbox.",
+    connections: ["node_thaix", "node_doc_persona", "node_doc_regras"],
+    actionType: "doc",
+    actionPayload: "about",
+  },
+  {
+    id: "node_doc_persona",
+    pillar: "documentos",
+    title: "Persona & Dores (persona.md)",
+    badge: "Audiência Real",
+    metric: "28 a 55 anos",
+    summary: "Mulheres e mães sem tempo, metabolismo sobrecarregado, buscando emagrecer em casa com segurança.",
+    connections: ["node_thaix", "node_doc_framework", "node_copy_gancho_culpa"],
+    actionType: "doc",
+    actionPayload: "persona",
+  },
+  {
+    id: "node_doc_funil",
+    pillar: "documentos",
+    title: "Funil ManyChat (funil.md)",
+    badge: "Automação DM",
+    metric: "15k Directs",
+    summary: "Fluxo de conversão orgânica via comentário com palavra-chave oficial para entrega imediata de aula.",
+    connections: ["node_copy_mundofit", "node_doc_framework", "node_post_ad98"],
+    actionType: "doc",
+    actionPayload: "funil",
+  },
+  {
+    id: "node_doc_framework",
+    pillar: "documentos",
+    title: "Framework 80/20 (framework.md)",
+    badge: "Estrutura de Copy",
+    metric: "4 Blocos",
+    summary: "Fórmula comprovada: Gancho magnético de 3s + Agitação + Mecanismo Único + CTA Obrigatório.",
+    connections: ["node_uvp", "node_doc_regras", "node_copy_ad98", "node_copy_mundofit"],
+    actionType: "doc",
+    actionPayload: "framework",
+  },
+  {
+    id: "node_doc_regras",
+    pillar: "documentos",
+    title: "Regras Thiago Neiva (regras.md)",
+    badge: "Compliance",
+    metric: "20 a 40s",
+    summary: "Diretrizes de produção: frases curtas para teleprompter, zero saltos, ambiente doméstico e CTA padronizado.",
+    connections: ["node_doc_framework", "node_uvp", "node_copy_ad98"],
+    actionType: "doc",
+    actionPayload: "regras",
+  },
+
+  // PILAR 3: POSTAGENS DO ACERVO
+  {
+    id: "node_post_ad98",
+    pillar: "postagens",
+    title: "AD 98: Treino na Sala",
+    badge: "Top 1 Performer",
+    metric: "6.6M plays",
+    summary: "Criativo com maior volume de interações da história do canal (33.266 comentários pedindo o treino).",
+    connections: ["node_thaix", "node_uvp", "node_copy_ad98", "node_copy_mundofit"],
+    actionType: "postagens",
+  },
+  {
+    id: "node_post_82k",
+    pillar: "postagens",
+    title: "Reel 82k: Desafio Ritbox",
+    badge: "Viral Orgânico",
+    metric: "82.5k likes",
+    summary: "Reel dinâmico com prova visual de alunas emagrecendo com ritmos populares sem impacto.",
+    connections: ["node_thaix", "node_uvp", "node_copy_ad98"],
+    actionType: "postagens",
+  },
+  {
+    id: "node_post_acervo",
+    pillar: "postagens",
+    title: "Acervo Minerado",
+    badge: "15 Publicações",
+    metric: "12M+ alcance",
+    summary: "Base observada com taxa média de engajamento de 0.44% e fala autêntica transcrita.",
+    connections: ["node_thaix", "node_post_ad98", "node_post_82k"],
+    actionType: "postagens",
+  },
+
+  // PILAR 4: COPYWRITING VALIDADO
+  {
+    id: "node_copy_ad98",
+    pillar: "copywriting",
+    title: "AD 98: Treino sem Pulo",
+    badge: "Copy Validada",
+    metric: "Conversão Máxima",
+    summary: "Roteiro campeão: 'Se você tem mais de 30 anos e não aguenta mais pular na sala, faça este movimento'.",
+    connections: ["node_thaix", "node_uvp", "node_doc_framework", "node_post_ad98", "node_copy_mundofit"],
+    actionType: "esteira",
+    actionPayload: {
+      titulo: "AD 98: Treino sem Pulo",
+      briefing: "Desafio musical de ritmo com treino de baixo impacto na sala de casa, sem saltos e sem impacto nos joelhos. Foco em mulheres 28-55 anos.",
+      hook: "Se você tem mais de 30 anos e não aguenta mais pular na sala, faça este movimento",
+      cta: "MUNDOFIT",
+    },
+  },
+  {
+    id: "node_copy_mundofit",
+    pillar: "copywriting",
+    title: "CTA: Palavra MUNDOFIT",
+    badge: "Funil Direto",
+    metric: "Automação ManyChat",
+    summary: "Comando canônico ao final de cada vídeo: 'Comente MUNDOFIT para receber a aula no seu Direct'.",
+    connections: ["node_doc_funil", "node_copy_ad98", "node_doc_framework"],
+    actionType: "esteira",
+    actionPayload: {
+      titulo: "Campanha MUNDOFIT Direta",
+      briefing: "Roteiro com chamada para comentar MUNDOFIT e receber o treino no direct do Instagram.",
+      hook: "Quer treinar comigo na sala da sua casa sem pagar academia?",
+      cta: "MUNDOFIT",
+    },
+  },
+  {
+    id: "node_copy_gancho_culpa",
+    pillar: "copywriting",
+    title: "Gancho: 'Não É Culpa Sua'",
+    badge: "Gatilho Psicológico",
+    metric: "Alta Empatia",
+    summary: "Quebra de objeção que acolhe a aluna e transfere a responsabilidade para metodologias tradicionais ineficazes.",
+    connections: ["node_doc_persona", "node_thaix", "node_doc_framework"],
+    actionType: "esteira",
+    actionPayload: {
+      titulo: "Gancho: Não É Culpa Sua",
+      briefing: "Roteiro focado em acolhimento e quebra de culpa de dietas frustradas para mulheres sobrecarregadas.",
+      hook: "Se você já tentou de tudo e não conseguiu emagrecer, escuta isso: a culpa não é sua.",
+      cta: "MUNDOFIT",
+    },
+  },
+  {
+    id: "node_copy_baixo_impacto",
+    pillar: "copywriting",
+    title: "Copy: Método Baixo Impacto",
+    badge: "Segurança Articular",
+    metric: "100% Proteção",
+    summary: "Roteiro focado em demonstrar exercícios simples e ritmados para queimar calorias sem prejudicar coluna e joelho.",
+    connections: ["node_uvp", "node_doc_regras", "node_copy_ad98"],
+    actionType: "esteira",
+    actionPayload: {
+      titulo: "Método Baixo Impacto Seguro",
+      briefing: "Treino seguro de baixo impacto para queima de gordura em casa sem pular.",
+      hook: "Para queimar gordura você não precisa destruir seus joelhos pulando em casa.",
+      cta: "MUNDOFIT",
+    },
+  },
+];
+
 function ProfilePage() {
   const [project] = useState("01M1SAXW27GVCP7QF6EYY7PSQN");
   const [tab, setTab] = useState<"geral" | "memoria" | "acervo" | "copies">("geral");
@@ -336,9 +534,11 @@ function ProfilePage() {
   const [profile, setProfile] = useState<Profile>(emptyProfile);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Estados da Memória (Notion Docs + Ativos 80/20)
-  const [memoriaSubView, setMemoriaSubView] = useState<"docs" | "ativos">("docs");
+  // Estados da Memória (Grafos + Notion Docs + Copywriting)
+  const [memoriaSubView, setMemoriaSubView] = useState<"grafos" | "docs" | "copywriting">("grafos");
   const [selectedVaultDoc, setSelectedVaultDoc] = useState<string>("about");
+  const [selectedGraphNode, setSelectedGraphNode] = useState<string>("node_thaix");
+  const [graphPillarFilter, setGraphPillarFilter] = useState<GraphPillar>("todos");
 
   // Estados da Aba Dados (Notion-style)
   const [dadosView, setDadosView] = useState<"gallery" | "table">("gallery");
@@ -449,14 +649,14 @@ function ProfilePage() {
     return VAULT_DOCS.about;
   }, [selectedVaultDoc]);
 
-  function handleUseAd98InGenerator() {
-    setInputText(
-      "Ativo Validado AD 98: Desafio musical de ritmo com treino de baixo impacto na sala de casa, sem saltos e sem impacto nos joelhos. Foco em mulheres 28-55 anos com rotina sobrecarregada."
-    );
-    setTargetCta("MUNDOFIT");
-    setTab("copies");
-    setNotice("Briefing do AD 98 carregado no Gerador de Copies. Pronto para gerar 10 roteiros.");
+  function handleUseInEsteira(item: { titulo: string; briefing: string; cta?: string; hook?: string }) {
+    const fullText = `${item.titulo}: ${item.briefing}${item.hook ? ` Gancho: "${item.hook}".` : ""}${item.cta ? ` CTA com palavra-chave: ${item.cta}.` : ""}`;
+    try {
+      localStorage.setItem("tg_esteira_theme", fullText);
+    } catch {}
+    window.location.assign(`/?theme=${encodeURIComponent(fullText)}`);
   }
+
 
   return (
     <main className="tg-profile min-h-screen bg-[#FAFAFA] text-[#031A26] pb-16">
@@ -505,8 +705,8 @@ function ProfilePage() {
           {[
             { id: "geral", label: "Geral" },
             { id: "memoria", label: "Memória" },
-            { id: "acervo", label: "Dados" },
-            { id: "copies", label: "Copies" },
+            { id: "acervo", label: "Postagens" },
+            { id: "copies", label: "Copywriting" },
           ].map((t) => (
             <button
               key={t.id}
@@ -633,14 +833,14 @@ function ProfilePage() {
                     onClick={() => setTab("acervo")}
                     className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-[#F5F4F3] text-[#031A26] border border-[#DCE1E3] hover:border-[#B9915B] transition-colors"
                   >
-                    <span>Dados ({posts.length})</span>
+                    <span>Postagens ({posts.length})</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setTab("copies")}
                     className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-[#F5F4F3] text-[#031A26] border border-[#DCE1E3] hover:border-[#B9915B] transition-colors"
                   >
-                    <span>10 Copies</span>
+                    <span>Copywriting</span>
                   </button>
                   <a
                     href="https://www.instagram.com/thaix.santiago/"
@@ -833,48 +1033,243 @@ function ProfilePage() {
         {/* ABA 2: MEMÓRIA (NOTION WIKI & 21ST.DEV ATIVOS 80/20) */}
         {tab === "memoria" && (
           <section className="space-y-4">
-            {/* Notion Toolbar */}
+            {/* Memoria Toolbar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-[#E8ECEE] shadow-xs">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 p-0.5 bg-[#F4F6F7] rounded-lg border border-[#E2E7E9]">
-                  <button
-                    type="button"
-                    onClick={() => setMemoriaSubView("docs")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                      memoriaSubView === "docs"
-                        ? "bg-white text-[#031A26] shadow-xs"
-                        : "text-[#5E727C] hover:text-[#031A26]"
-                    }`}
-                  >
-                    <BookOpen className="w-3.5 h-3.5 text-[#B9915B]" />
-                    Documentos do Vault (6)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMemoriaSubView("ativos")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                      memoriaSubView === "ativos"
-                        ? "bg-white text-[#031A26] shadow-xs"
-                        : "text-[#5E727C] hover:text-[#031A26]"
-                    }`}
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-[#B9915B]" />
-                    Ativos Validados 80/20 (5)
-                  </button>
-                </div>
-                <span className="text-xs text-[#5E727C] font-medium hidden md:inline ml-2">
-                  Memória estruturada • Fonte canônica para roteiros e copies
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-medium px-2.5 py-1 rounded-md bg-[#F4F6F7] text-[#5E727C] border border-[#E2E7E9]">
-                  Vault v2.4 • Thaix Santiago
-                </span>
+              <div className="flex items-center gap-1.5 p-0.5 bg-[#F4F6F7] rounded-lg border border-[#E2E7E9]">
+                <button
+                  type="button"
+                  onClick={() => setMemoriaSubView("grafos")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    memoriaSubView === "grafos"
+                      ? "bg-white text-[#031A26] shadow-xs"
+                      : "text-[#5E727C] hover:text-[#031A26]"
+                  }`}
+                >
+                  <Share2 className="w-3.5 h-3.5 text-[#B9915B]" />
+                  Grafos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMemoriaSubView("docs")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    memoriaSubView === "docs"
+                      ? "bg-white text-[#031A26] shadow-xs"
+                      : "text-[#5E727C] hover:text-[#031A26]"
+                  }`}
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-[#B9915B]" />
+                  Documentos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMemoriaSubView("copywriting")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    memoriaSubView === "copywriting"
+                      ? "bg-white text-[#031A26] shadow-xs"
+                      : "text-[#5E727C] hover:text-[#031A26]"
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#B9915B]" />
+                  Copywriting
+                </button>
               </div>
             </div>
 
-            {/* SUB-VIEW 1: DOCUMENTOS DO VAULT (NOTION WIKI 2-COL) */}
+            {/* SUB-VIEW 1: GRAFOS DE CONHECIMENTO ESTRATÉGICO CONSOLIDADO */}
+            {memoriaSubView === "grafos" && (() => {
+              const activeNode = GRAPH_NODES.find((n) => n.id === selectedGraphNode) || GRAPH_NODES[0];
+              const displayedNodes = graphPillarFilter === "todos"
+                ? GRAPH_NODES
+                : GRAPH_NODES.filter((n) => n.pillar === graphPillarFilter);
+
+              const pillars: { id: "identidade" | "documentos" | "postagens" | "copywriting"; label: string }[] = [
+                { id: "identidade", label: "Identidade & DNA" },
+                { id: "documentos", label: "Documentos Canônicos" },
+                { id: "postagens", label: "Postagens Mineradas" },
+                { id: "copywriting", label: "Copywriting Validado" },
+              ];
+
+              return (
+                <div className="space-y-4">
+                  {/* Filtro de Pilares do Grafo */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-xl border border-[#E8ECEE] shadow-xs">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#5E727C] mr-1">
+                        Pilares do Grafo:
+                      </span>
+                      {[
+                        { id: "todos", label: "Todos os Pilares" },
+                        { id: "identidade", label: "Identidade" },
+                        { id: "documentos", label: "Documentos" },
+                        { id: "postagens", label: "Postagens" },
+                        { id: "copywriting", label: "Copywriting" },
+                      ].map((f) => (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => setGraphPillarFilter(f.id as any)}
+                          className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                            graphPillarFilter === f.id
+                              ? "bg-[#031A26] text-[#B9915B]"
+                              : "bg-[#F4F6F7] text-[#5E727C] hover:text-[#031A26] hover:bg-[#EBEFEF]"
+                          }`}
+                        >
+                          {f.label}
+                        </button>
+                      ))}
+                    </div>
+                    <span className="text-[11px] text-[#5E727C]">
+                      Consolidação de regras de negócio, dados e acervo da criadora
+                    </span>
+                  </div>
+
+                  {/* Matriz dos 4 Pilares Interconectados */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {pillars.map((pillar) => {
+                      const nodesInPillar = displayedNodes.filter((n) => n.pillar === pillar.id);
+                      if (nodesInPillar.length === 0) return null;
+
+                      return (
+                        <div key={pillar.id} className="space-y-2.5">
+                          <div className="flex items-center justify-between px-1">
+                            <span className="text-xs font-bold text-[#031A26]">
+                              {pillar.label}
+                            </span>
+                            <span className="text-[10px] font-semibold text-[#5E727C] bg-[#F4F6F7] px-1.5 py-0.5 rounded">
+                              {nodesInPillar.length} nós
+                            </span>
+                          </div>
+
+                          <div className="space-y-2.5">
+                            {nodesInPillar.map((node) => {
+                              const isSelected = selectedGraphNode === node.id;
+                              const isConnected = activeNode.connections.includes(node.id);
+
+                              return (
+                                <button
+                                  key={node.id}
+                                  type="button"
+                                  onClick={() => setSelectedGraphNode(node.id)}
+                                  className={`w-full text-left p-3.5 rounded-xl border transition-all flex flex-col justify-between gap-2 shadow-2xs hover:shadow-xs ${
+                                    isSelected
+                                      ? "bg-white border-[#031A26] ring-2 ring-[#031A26]/10"
+                                      : isConnected
+                                      ? "bg-[#FCFBF9] border-[#B9915B] shadow-2xs"
+                                      : "bg-white border-[#E8ECEE] hover:border-[#B9915B]/40 opacity-70 hover:opacity-100"
+                                  }`}
+                                >
+                                  <div>
+                                    <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
+                                        {node.badge}
+                                      </span>
+                                      {isConnected && (
+                                        <span className="text-[10px] font-bold text-[#B9915B] bg-[#FCFBF9] px-1.5 py-0.5 rounded border border-[#B9915B]/40">
+                                          Conectado
+                                        </span>
+                                      )}
+                                      {node.metric && (
+                                        <span className="text-[10px] font-bold text-[#031A26]">
+                                          {node.metric}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <h4 className="text-xs font-bold text-[#031A26] leading-snug">
+                                      {node.title}
+                                    </h4>
+                                    <p className="text-[11px] text-[#5E727C] mt-1 line-clamp-2 leading-relaxed">
+                                      {node.summary}
+                                    </p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Dossiê de Conexões do Nó Selecionado */}
+                  <div className="bg-white p-5 rounded-xl border border-[#DCE1E3] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1.5 max-w-2xl">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-[#031A26] text-[#B9915B]">
+                          {activeNode.badge}
+                        </span>
+                        <h3 className="text-base font-bold text-[#031A26]">
+                          {activeNode.title}
+                        </h3>
+                        {activeNode.metric && (
+                          <span className="text-xs font-semibold text-[#5E727C]">
+                            ({activeNode.metric})
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-[#031A26] leading-relaxed">
+                        {activeNode.summary}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        <span className="text-[11px] font-bold text-[#5E727C] mr-1">
+                          Conexões Estratégicas:
+                        </span>
+                        {activeNode.connections.map((cId) => {
+                          const target = GRAPH_NODES.find((gn) => gn.id === cId);
+                          if (!target) return null;
+                          return (
+                            <button
+                              key={cId}
+                              type="button"
+                              onClick={() => setSelectedGraphNode(cId)}
+                              className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9] hover:border-[#B9915B] hover:text-[#B9915B] transition-colors"
+                            >
+                              {target.title} ↗
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0 self-start md:self-auto">
+                      {activeNode.actionType === "esteira" && activeNode.actionPayload && (
+                        <button
+                          type="button"
+                          onClick={() => handleUseInEsteira(activeNode.actionPayload)}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-[#031A26] text-[#B9915B] hover:bg-[#031A26]/90 transition-colors shadow-xs"
+                        >
+                          <span>Usar na Esteira</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      {activeNode.actionType === "doc" && activeNode.actionPayload && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedVaultDoc(activeNode.actionPayload);
+                            setMemoriaSubView("docs");
+                          }}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-[#031A26] text-white hover:bg-[#031A26]/90 transition-colors shadow-xs"
+                        >
+                          <BookOpen className="w-3.5 h-3.5 text-[#B9915B]" />
+                          <span>Ler Documento</span>
+                        </button>
+                      )}
+                      {activeNode.actionType === "postagens" && (
+                        <button
+                          type="button"
+                          onClick={() => setTab("acervo")}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9] hover:border-[#B9915B] transition-colors"
+                        >
+                          <span>Ver no Acervo</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* SUB-VIEW 2: DOCUMENTOS DO VAULT (NOTION WIKI 2-COL) */}
             {memoriaSubView === "docs" && (
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 {/* Sidebar do Notion Wiki */}
@@ -986,145 +1381,181 @@ function ProfilePage() {
               </div>
             )}
 
-            {/* SUB-VIEW 2: ATIVOS VALIDADOS 80/20 (21ST.DEV CARDS) */}
-            {memoriaSubView === "ativos" && (
-              <div className="space-y-4">
-                <div className="bg-white p-5 rounded-xl border border-[#E8ECEE] shadow-xs">
-                  <div className="max-w-2xl mb-4">
-                    <h3 className="text-sm font-bold text-[#031A26]">
-                      Ativos Estratégicos Validados (80/20)
-                    </h3>
-                    <p className="text-xs text-[#5E727C] mt-0.5">
-                      Blocos de alta conversão minerados a partir de 12M+ visualizações, 52k comentários e regras inegociáveis de negócio.
+            {/* SUB-VIEW 3: COPYWRITING (CARDS LIMPOS) */}
+            {memoriaSubView === "copywriting" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* CARD 1: AD 98 */}
+                <div className="p-5 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#031A26] text-[#B9915B]">
+                        Top 1 Performer
+                      </span>
+                      <span className="text-xs font-bold text-[#031A26]">
+                        6.6M plays
+                      </span>
+                    </div>
+                    <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                      AD 98: Treino na Sala de Casa
+                    </h4>
+                    <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                      Gancho comprovado que gera mais de 33.000 comentários pedindo aula no direct. 100% sem impacto, focado em queima de gordura sem saltos.
                     </p>
                   </div>
+                  <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-[#5E727C]">33.266 comentários</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUseInEsteira({
+                        titulo: "AD 98: Treino na Sala de Casa",
+                        briefing: "Desafio musical de ritmo com treino de baixo impacto na sala de casa, sem saltos e sem impacto nos joelhos. Foco em mulheres 28-55 anos com rotina sobrecarregada.",
+                        hook: "Se você tem mais de 30 anos e não aguenta mais pular na sala, faça este movimento",
+                        cta: "MUNDOFIT",
+                      })}
+                      className="font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
+                    >
+                      Usar na Esteira →
+                    </button>
+                  </div>
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {/* CARD 1: AD 98 */}
-                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-2.5">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#031A26] text-[#B9915B]">
-                            Top 1 Performer
-                          </span>
-                          <span className="text-xs font-bold text-[#031A26]">
-                            6.6M plays
-                          </span>
-                        </div>
-                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
-                          AD 98: Treino na Sala de Casa
-                        </h4>
-                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
-                          Gancho comprovado que gera mais de 33.000 comentários pedindo aula no direct. 100% sem impacto, focado em queima de gordura sem saltos.
-                        </p>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
-                        <span className="text-[11px] text-[#5E727C]">33.266 comentários</span>
-                        <button
-                          type="button"
-                          onClick={() => handleUseAd98InGenerator()}
-                          className="font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
-                        >
-                          Usar nas Copies →
-                        </button>
-                      </div>
+                {/* CARD 2: MÉTODO BAIXO IMPACTO */}
+                <div className="p-5 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
+                        Proposta Única (UVP)
+                      </span>
+                      <span className="text-xs font-bold text-[#031A26]">
+                        Ritbox Casa
+                      </span>
                     </div>
+                    <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                      Método 100% Baixo Impacto
+                    </h4>
+                    <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                      Treino para quem tem dor no joelho, sobrepeso ou pós-parto. Sem esteira chata, sem musculação pesada, praticado em 20 minutos.
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-[#5E727C]">Inclusão articular</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUseInEsteira({
+                        titulo: "Método 100% Baixo Impacto",
+                        briefing: "Treino seguro de baixo impacto para queima de gordura em casa sem pular.",
+                        hook: "Para queimar gordura você não precisa destruir seus joelhos pulando em casa.",
+                        cta: "MUNDOFIT",
+                      })}
+                      className="font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
+                    >
+                      Usar na Esteira →
+                    </button>
+                  </div>
+                </div>
 
-                    {/* CARD 2: MÉTODO BAIXO IMPACTO */}
-                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-2.5">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
-                            Proposta Única (UVP)
-                          </span>
-                          <span className="text-xs font-bold text-[#031A26]">
-                            Ritbox Casa
-                          </span>
-                        </div>
-                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
-                          Método 100% Baixo Impacto
-                        </h4>
-                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
-                          Treino para quem tem dor no joelho, sobrepeso ou pós-parto. Sem esteira chata, sem musculação pesada, praticado em 20 minutos.
-                        </p>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
-                        <span className="text-[11px] text-[#5E727C]">Inclusão articular</span>
-                        <span className="text-[11px] font-semibold text-[#031A26]">Zero impacto</span>
-                      </div>
+                {/* CARD 3: PERSONA REAL */}
+                <div className="p-5 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
+                        Público-Alvo
+                      </span>
+                      <span className="text-xs font-bold text-[#031A26]">
+                        28 a 55 anos
+                      </span>
                     </div>
+                    <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                      Mulheres e Mães Sem Tempo
+                    </h4>
+                    <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                      Jornada dupla, metabolismo lento após os 30, sensação de inchaço e roupas apertadas no armário. Buscam acolhimento, não cobrança.
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-[#5E727C]">Tom acolhedor</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUseInEsteira({
+                        titulo: "Persona: Mulheres e Mães Sem Tempo",
+                        briefing: "Roteiro empático focado na rotina sobrecarregada e treino rápido de 15 a 20 minutos na sala.",
+                        hook: "Se você tem uma rotina corrida e não tem tempo para academia, esse recado é pra você.",
+                        cta: "MUNDOFIT",
+                      })}
+                      className="font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
+                    >
+                      Usar na Esteira →
+                    </button>
+                  </div>
+                </div>
 
-                    {/* CARD 3: PERSONA REAL */}
-                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-2.5">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
-                            Público-Alvo
-                          </span>
-                          <span className="text-xs font-bold text-[#031A26]">
-                            28 a 55 anos
-                          </span>
-                        </div>
-                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
-                          Mulheres e Mães Sem Tempo
-                        </h4>
-                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
-                          Jornada dupla, metabolismo lento após os 30, sensação de inchaço e roupas apertadas no armário. Buscam acolhimento, não cobrança.
-                        </p>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
-                        <span className="text-[11px] text-[#5E727C]">Tom acolhedor</span>
-                        <span className="text-[11px] font-semibold text-[#031A26]">"Bora mulher"</span>
-                      </div>
+                {/* CARD 4: MANYCHAT MUNDOFIT */}
+                <div className="p-5 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FCFBF9] text-[#B9915B] border border-[#B9915B]/30">
+                        Funil de Conversão
+                      </span>
+                      <span className="text-xs font-bold text-[#031A26]">
+                        Direct / DM
+                      </span>
                     </div>
+                    <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                      Automação: Palavra MUNDOFIT
+                    </h4>
+                    <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                      Chamada de ação obrigatória ao final de cada criativo. O comentário dispara a entrega imediata da aula completa no Instagram Direct.
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-[#5E727C]">Taxa de resposta alta</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUseInEsteira({
+                        titulo: "Campanha MUNDOFIT Direta",
+                        briefing: "Roteiro direto com chamada para comentar MUNDOFIT e receber o treino no direct do Instagram.",
+                        hook: "Quer treinar comigo na sala da sua casa sem pagar academia?",
+                        cta: "MUNDOFIT",
+                      })}
+                      className="font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
+                    >
+                      Usar na Esteira →
+                    </button>
+                  </div>
+                </div>
 
-                    {/* CARD 4: MANYCHAT MUNDOFIT */}
-                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-2.5">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FCFBF9] text-[#B9915B] border border-[#B9915B]/30">
-                            Funil de Conversão
-                          </span>
-                          <span className="text-xs font-bold text-[#031A26]">
-                            Direct / DM
-                          </span>
-                        </div>
-                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
-                          Automação: Palavra MUNDOFIT
-                        </h4>
-                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
-                          Chamada de ação obrigatória ao final de cada criativo. O comentário dispara a entrega imediata da aula completa no Instagram Direct.
-                        </p>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
-                        <span className="text-[11px] text-[#5E727C]">Taxa de resposta alta</span>
-                        <span className="text-[11px] font-semibold text-[#B9915B]">CTA Oficial</span>
-                      </div>
+                {/* CARD 5: REGRAS THIAGO NEIVA */}
+                <div className="p-5 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#031A26] text-white">
+                        Governança Criativa
+                      </span>
+                      <span className="text-xs font-bold text-[#031A26]">
+                        Conformidade
+                      </span>
                     </div>
-
-                    {/* CARD 5: REGRAS THIAGO NEIVA */}
-                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-2.5">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#031A26] text-white">
-                            Governança Criativa
-                          </span>
-                          <span className="text-xs font-bold text-[#031A26]">
-                            Conformidade
-                          </span>
-                        </div>
-                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
-                          Regras de Ouro Thiago Neiva
-                        </h4>
-                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
-                          20 a 40 segundos por copy, frases curtas para teleprompter, zero promessas milagrosas e retenção nos primeiros 2 segundos.
-                        </p>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
-                        <span className="text-[11px] text-[#5E727C]">Auditoria ativa</span>
-                        <span className="text-[11px] font-semibold text-[#031A26]">100% Seguro</span>
-                      </div>
-                    </div>
+                    <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                      Regras de Ouro Thiago Neiva
+                    </h4>
+                    <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                      20 a 40 segundos por copy, frases curtas para teleprompter, zero promessas milagrosas e retenção nos primeiros 2 segundos.
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-[#5E727C]">Auditoria ativa</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUseInEsteira({
+                        titulo: "Regras de Ouro Thiago Neiva",
+                        briefing: "Roteiro teleprompter de 30 segundos, frases curtas, tom acolhedor e chamada MUNDOFIT.",
+                        hook: "Bora mulher, 20 minutos de treino aqui comigo na sala de casa!",
+                        cta: "MUNDOFIT",
+                      })}
+                      className="font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
+                    >
+                      Usar na Esteira →
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1379,18 +1810,18 @@ function ProfilePage() {
           </section>
         )}
 
-        {/* ABA 4: COPIES */}
+        {/* ABA 4: COPYWRITING */}
         {tab === "copies" && (
           <section className="space-y-6">
-            {/* Box de Geração de 10 Copies */}
+            {/* Box de Geração de Copywriting */}
             <div className="bg-white p-6 rounded-xl border border-[#DCE1E3] shadow-sm space-y-4">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-bold text-[#031A26]">
-                    Gerador Estratégico de Copies (Fórmula 80/20)
+                    Copywriting Estratégico &amp; Roteiros Validados (Fórmula 80/20)
                   </h2>
                   <p className="text-xs text-[#5E727C]">
-                    Insira um tema ou briefing. O motor gera 10 roteiros completos cobrindo os 10 ângulos virais comprovados da Thaix.
+                    Insira um tema ou briefing. O motor gera 10 roteiros completos cobrindo os 10 ângulos virais comprovados da Thaix Santiago.
                   </p>
                 </div>
                 {runningJob && (
@@ -1491,14 +1922,28 @@ function ProfilePage() {
                         <span className="text-xs text-[#5E727C] font-medium">
                           CTA: <strong>{copy.target_cta || targetCta}</strong>
                         </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(copy.text, copy.id)}
-                          className="text-xs font-bold border-[#DCE1E3]"
-                        >
-                          {copiedId === copy.id ? "Copiado" : "Copiar Roteiro"}
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleUseInEsteira({
+                              titulo: copy.title,
+                              briefing: copy.text,
+                              hook: copy.hook_spoken,
+                              cta: copy.target_cta || targetCta,
+                            })}
+                            className="text-xs font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
+                          >
+                            Usar na Esteira →
+                          </button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyToClipboard(copy.text, copy.id)}
+                            className="text-xs font-bold border-[#DCE1E3]"
+                          >
+                            {copiedId === copy.id ? "Copiado" : "Copiar Roteiro"}
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}

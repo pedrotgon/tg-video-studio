@@ -43,6 +43,17 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
   };
   useEffect(() => { if (activeJob) go(5); }, [activeJob?.id]);
 
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const incoming = params.get('theme') || localStorage.getItem('tg_esteira_theme');
+      if (incoming && !query) {
+        setQuery(incoming);
+        localStorage.removeItem('tg_esteira_theme');
+      }
+    } catch {}
+  }, []);
+
   const resetQualification = () => {
     setQuestions([]);
     setAnswers({});
