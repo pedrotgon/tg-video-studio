@@ -660,24 +660,19 @@ function ProfilePage() {
 
   return (
     <main className="tg-profile min-h-screen bg-[#FAFAFA] text-[#031A26] pb-16">
-      <div className="max-w-5xl mx-auto px-6 pt-6 space-y-5">
+      <div className="max-w-5xl mx-auto px-6 pt-5 space-y-3.5">
         {/* Topo Limpo estilo Esteira de Conteúdo */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-[24px] font-bold leading-tight text-[#031A26]">
-                Thaix Santiago
-              </h1>
-              <span className="text-xs px-2.5 py-0.5 rounded-md bg-[#F4F6F7] text-[#5E727C] border border-[#E2E7E9] font-medium">
-                @{profile.handle || "thaix.santiago"}
-              </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-md bg-[#F4F6F7] text-[#5E727C] border border-[#E2E7E9] font-medium">
-                {profile.followers_display || "417 mil"} seguidoras
-              </span>
-            </div>
-            <p className="mt-1 text-sm text-[#5E727C]">
-              Memória estratégica, acervo validado e geração de copies 80/20.
-            </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-[24px] font-bold leading-tight text-[#031A26]">
+              Thaix Santiago
+            </h1>
+            <span className="text-xs px-2.5 py-0.5 rounded-md bg-[#F4F6F7] text-[#5E727C] border border-[#E2E7E9] font-medium">
+              @{profile.handle || "thaix.santiago"}
+            </span>
+            <span className="text-xs px-2.5 py-0.5 rounded-md bg-[#F4F6F7] text-[#5E727C] border border-[#E2E7E9] font-medium">
+              {profile.followers_display || "417 mil"} seguidoras
+            </span>
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
