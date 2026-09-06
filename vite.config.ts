@@ -11,6 +11,7 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    allowedHosts: true,
     proxy: {
       // The creative studio is served by DramaClaw behind the TG origin.
       // Rewriting only at the dev proxy keeps localhost:5174 invisible to the browser.
