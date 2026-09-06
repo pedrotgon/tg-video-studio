@@ -339,18 +339,26 @@ async def generate_simple_script(body: SimpleScriptRequest):
 
 @app.post("/api/simple/generate", status_code=202)
 async def generate_simple(body: SimpleVideoRequest):
+    voice_map = {
+        "pt-BR-FabioNeural": "pt-BR-AntonioNeural",
+        "pt-BR-ThalitaNeural": "pt-BR-ThalitaMultilingualNeural",
+    }
+    voice = voice_map.get(body.voiceName, body.voiceName) or "pt-BR-FranciscaNeural"
     payload = {
         "video_subject": body.videoSubject,
         "video_script": body.videoScript or "",
         "video_terms": body.keywords or "home workout, bodyweight exercise, core workout, fitness at home, healthy lifestyle",
         "video_aspect": body.videoRatio,
         "video_language": "pt-BR",
-        "voice_name": body.voiceName,
+        "voice_name": voice,
         "subtitle_enabled": body.subtitleEnabled,
         "subtitle_position": body.subtitlePosition,
         "video_source": "pexels",
         "video_count": 1,
+        "video_transition_mode": "Shuffle",
+        "video_clip_duration": 4,
     }
+
     try:
         async with httpx.AsyncClient(timeout=30) as client:
             response = await client.post(f"{MONEY_API}/api/v1/videos", json=payload)

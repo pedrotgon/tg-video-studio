@@ -284,12 +284,18 @@ def get_all_azure_voices(filter_locals=None) -> list[str]:
     return voices
 
 
+VOICE_ALIASES = {
+    "pt-BR-FabioNeural": "pt-BR-AntonioNeural",
+    "pt-BR-ThalitaNeural": "pt-BR-ThalitaMultilingualNeural",
+}
+
+
 def parse_voice_name(name: str):
     # zh-CN-XiaoyiNeural-Female
     # zh-CN-YunxiNeural-Male
     # zh-CN-XiaoxiaoMultilingualNeural-V2-Female
     name = name.replace("-Female", "").replace("-Male", "").strip()
-    return name
+    return VOICE_ALIASES.get(name, name)
 
 
 def is_azure_v2_voice(voice_name: str):
@@ -836,53 +842,54 @@ def azure_tts_v1(
     voice_name = parse_voice_name(voice_name)
     text = text.strip()
     rate_str = convert_rate_to_percent(voice_rate)
-    for i in range(3):
-        try:
-            logger.info(f"start, voice name: {voice_name}, try: {i + 1}")
 
-            # 这里同时兼容 edge_tts 7.x 和旧版便携包里可能残留的老依赖：
-            # 1. 新版支持 `boundary` + `stream_sync()`
-            # 2. 旧版不支持 `boundary`，且通常只暴露异步 `stream()`
-            ensure_file_path_exists(voice_file)
-            communicate = create_edge_tts_communicate(text, voice_name, rate_str)
-            sub_maker = edge_tts.SubMaker()
-            timeout_seconds = get_edge_tts_timeout_seconds()
+    candidate_voices = [voice_name]
+    if "pt-BR" in voice_name:
+        for fallback_v in ["pt-BR-FranciscaNeural", "pt-BR-AntonioNeural", "pt-BR-ThalitaMultilingualNeural"]:
+            if fallback_v not in candidate_voices:
+                candidate_voices.append(fallback_v)
 
-            with open(voice_file, "wb") as file:
-                def _handle_chunk(chunk):
-                    chunk_type = chunk["type"]
-                    if chunk_type == "audio":
-                        file.write(chunk["data"])
-                    elif chunk_type in ["WordBoundary", "SentenceBoundary"]:
-                        # 无论来自 7.x 的同步流，还是旧版异步流，只要事件结构
-                        # 里仍有边界信息，就统一喂给 SubMaker，保证后续字幕链路
-                        # 仍然走项目现有逻辑。
-                        sub_maker.feed(chunk)
+    for current_voice in candidate_voices:
+        max_tries = 1 if len(candidate_voices) > 1 else 3
+        for i in range(max_tries):
+            try:
+                logger.info(f"start, voice name: {current_voice}, try: {i + 1}")
 
-                stream_edge_tts_chunks(
-                    communicate, _handle_chunk, timeout_seconds=timeout_seconds
-                )
+                ensure_file_path_exists(voice_file)
+                communicate = create_edge_tts_communicate(text, current_voice, rate_str)
+                sub_maker = edge_tts.SubMaker()
+                timeout_seconds = get_edge_tts_timeout_seconds()
 
-            if not sub_maker.get_srt():
-                logger.warning("failed, sub_maker.get_srt() is empty")
-                continue
+                with open(voice_file, "wb") as file:
+                    def _handle_chunk(chunk):
+                        chunk_type = chunk["type"]
+                        if chunk_type == "audio":
+                            file.write(chunk["data"])
+                        elif chunk_type in ["WordBoundary", "SentenceBoundary"]:
+                            sub_maker.feed(chunk)
 
-            logger.info(f"completed, output file: {voice_file}")
-            return sub_maker
-        except Exception as e:
-            logger.error(f"failed, error: {str(e)}")
-            # TTS 流式写入如果在首包前超时或网络异常，会留下 0 字节音频文件。
-            # 这种文件既不可播放，也可能误导后续排查，因此失败后只清理空文件；
-            # 如果已经写入了部分数据，则保留现场文件，便于分析服务端返回内容。
-            if os.path.exists(voice_file) and os.path.getsize(voice_file) == 0:
-                try:
-                    os.remove(voice_file)
-                except Exception as remove_error:
-                    logger.warning(
-                        "failed to remove empty tts file: "
-                        f"{voice_file}, error: {str(remove_error)}"
+                    stream_edge_tts_chunks(
+                        communicate, _handle_chunk, timeout_seconds=timeout_seconds
                     )
+
+                if not sub_maker.get_srt():
+                    logger.warning(f"failed for {current_voice}, sub_maker.get_srt() is empty")
+                    continue
+
+                logger.info(f"completed, output file: {voice_file}")
+                return sub_maker
+            except Exception as e:
+                logger.error(f"failed for {current_voice}, error: {str(e)}")
+                if os.path.exists(voice_file) and os.path.getsize(voice_file) == 0:
+                    try:
+                        os.remove(voice_file)
+                    except Exception as remove_error:
+                        logger.warning(
+                            "failed to remove empty tts file: "
+                            f"{voice_file}, error: {str(remove_error)}"
+                        )
     return None
+
 
 
 def siliconflow_tts(
