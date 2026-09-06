@@ -249,49 +249,49 @@ html.dark [class*="to-sky-"] {
 
 /* TG skin final cascade (must follow the upstream light/dark token blocks). */
 html:not(.dark) {
-  --background: #f0eee9; --foreground: #19382b; --card: #fbfaf7; --card-foreground: #19382b;
-  --popover: #fbfaf7; --popover-foreground: #19382b; --primary: #19382b; --primary-foreground: #f0eee9;
-  --secondary: #e8e2d8; --secondary-foreground: #19382b; --muted: #e9e5dd; --muted-foreground: #597064;
-  --accent: #c5a880; --accent-foreground: #19382b; --border: #d8d0c4; --input: #d8d0c4; --ring: #c5a880;
-  --sidebar: #19382b; --sidebar-foreground: #f0eee9; --sidebar-primary: #c5a880; --sidebar-primary-foreground: #19382b;
-  --sidebar-accent: #234c3b; --sidebar-accent-foreground: #f0eee9; --sidebar-border: rgba(197,168,128,.26); --sidebar-ring: #c5a880;
-  --accent-rgb: 197 168 128; --font-family-ui-default: 'DM Sans', system-ui, sans-serif; --font-family-ui-macos: 'DM Sans', system-ui, sans-serif;
+  --background: #FAFAFA; --foreground: #031A26; --card: #FFFFFF; --card-foreground: #031A26;
+  --popover: #FFFFFF; --popover-foreground: #031A26; --primary: #031A26; --primary-foreground: #FFFFFF;
+  --secondary: #F4F6F7; --secondary-foreground: #031A26; --muted: #F4F6F7; --muted-foreground: #5E727C;
+  --accent: #B9915B; --accent-foreground: #031A26; --border: #DCE1E3; --input: #DCE1E3; --ring: #B9915B;
+  --sidebar: #031A26; --sidebar-foreground: #FFFFFF; --sidebar-primary: #B9915B; --sidebar-primary-foreground: #031A26;
+  --sidebar-accent: #0B3345; --sidebar-accent-foreground: #FFFFFF; --sidebar-border: rgba(185, 145, 91, .28); --sidebar-ring: #B9915B;
+  --accent-rgb: 185 145 91; --font-family-ui-default: 'DM Sans', system-ui, sans-serif; --font-family-ui-macos: 'DM Sans', system-ui, sans-serif;
 }
 
 /* ── TGZap skin ─────────────────────────────────────────────────────────────
-   The complete DramaClaw interface is preserved; only design tokens and type
-   are adapted to the TG system (Forest, Champagne Gold and Cloud Dancer).
+   G4 Nexus Whisper Schema design system: Navy (#031A26), Champagne Gold (#B9915B),
+   Clean White (#FFFFFF) and Neutral Slate (#5E727C).
    ────────────────────────────────────────────────────────────────────────── */
 :root {
-  --background: #f0eee9;
-  --foreground: #19382b;
-  --card: #fbfaf7;
-  --card-foreground: #19382b;
-  --popover: #fbfaf7;
-  --popover-foreground: #19382b;
-  --primary: #19382b;
-  --primary-foreground: #f0eee9;
-  --secondary: #e8e2d8;
-  --secondary-foreground: #19382b;
-  --muted: #e9e5dd;
-  --muted-foreground: #597064;
-  --accent: #c5a880;
-  --accent-foreground: #19382b;
-  --border: #d8d0c4;
-  --input: #d8d0c4;
-  --ring: #c5a880;
-  --sidebar: #19382b;
-  --sidebar-foreground: #f0eee9;
-  --sidebar-primary: #c5a880;
-  --sidebar-primary-foreground: #19382b;
-  --sidebar-accent: #234c3b;
-  --sidebar-accent-foreground: #f0eee9;
-  --sidebar-border: rgba(197, 168, 128, .26);
-  --sidebar-ring: #c5a880;
-  --accent-rgb: 197 168 128;
+  --background: #FAFAFA;
+  --foreground: #031A26;
+  --card: #FFFFFF;
+  --card-foreground: #031A26;
+  --popover: #FFFFFF;
+  --popover-foreground: #031A26;
+  --primary: #031A26;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F4F6F7;
+  --secondary-foreground: #031A26;
+  --muted: #F4F6F7;
+  --muted-foreground: #5E727C;
+  --accent: #B9915B;
+  --accent-foreground: #031A26;
+  --border: #DCE1E3;
+  --input: #DCE1E3;
+  --ring: #B9915B;
+  --sidebar: #031A26;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #B9915B;
+  --sidebar-primary-foreground: #031A26;
+  --sidebar-accent: #0B3345;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(185, 145, 91, .28);
+  --sidebar-ring: #B9915B;
+  --accent-rgb: 185 145 91;
   --font-family-ui-default: 'DM Sans', system-ui, sans-serif;
   --font-family-ui-macos: 'DM Sans', system-ui, sans-serif;
-  --ui-shadow-panel: 0 18px 42px rgba(25, 56, 43, .13);
+  --ui-shadow-panel: 0 18px 42px rgba(3, 26, 38, .10);
 }
 
 body { font-family: 'DM Sans', system-ui, sans-serif; }
@@ -1977,26 +1977,26 @@ button:hover .st-keyframe-video-play {
 
   /* TG skin final cascade: follows all upstream light theme declarations. */
   html:not(.dark) {
-    --background: #f0eee9; --foreground: #19382b; --card: #fbfaf7; --card-foreground: #19382b;
-    --popover: #fbfaf7; --popover-foreground: #19382b; --primary: #19382b; --primary-foreground: #f0eee9;
-    --secondary: #e8e2d8; --secondary-foreground: #19382b; --muted: #e9e5dd; --muted-foreground: #597064;
-    --accent: #c5a880; --accent-foreground: #19382b; --border: #d8d0c4; --input: #d8d0c4; --ring: #c5a880;
-    --sidebar: #19382b; --sidebar-foreground: #f0eee9; --sidebar-primary: #c5a880; --sidebar-primary-foreground: #19382b;
-    --sidebar-accent: #234c3b; --sidebar-accent-foreground: #f0eee9; --sidebar-border: rgba(197,168,128,.26); --sidebar-ring: #c5a880;
-    --accent-rgb: 197 168 128; --font-family-ui-default: 'DM Sans', system-ui, sans-serif; --font-family-ui-macos: 'DM Sans', system-ui, sans-serif;
+    --background: #FAFAFA; --foreground: #031A26; --card: #FFFFFF; --card-foreground: #031A26;
+    --popover: #FFFFFF; --popover-foreground: #031A26; --primary: #031A26; --primary-foreground: #FFFFFF;
+    --secondary: #F4F6F7; --secondary-foreground: #031A26; --muted: #F4F6F7; --muted-foreground: #5E727C;
+    --accent: #B9915B; --accent-foreground: #031A26; --border: #DCE1E3; --input: #DCE1E3; --ring: #B9915B;
+    --sidebar: #031A26; --sidebar-foreground: #FFFFFF; --sidebar-primary: #B9915B; --sidebar-primary-foreground: #031A26;
+    --sidebar-accent: #0B3345; --sidebar-accent-foreground: #FFFFFF; --sidebar-border: rgba(185, 145, 91, .28); --sidebar-ring: #B9915B;
+    --accent-rgb: 185 145 91; --font-family-ui-default: 'DM Sans', system-ui, sans-serif; --font-family-ui-macos: 'DM Sans', system-ui, sans-serif;
   }
 
   .dark {
-    --background: #10271e; --foreground: #f0eee9; --card: #19382b; --card-foreground: #f0eee9;
-    --popover: #19382b; --popover-foreground: #f0eee9; --primary: #c5a880; --primary-foreground: #10271e;
-    --secondary: #234c3b; --secondary-foreground: #f0eee9; --muted: #19382b; --muted-foreground: #aebdb6;
-    --accent: #c5a880; --accent-foreground: #10271e; --border: #355c4b; --input: #355c4b; --ring: #c5a880;
-    --sidebar: #10271e; --sidebar-foreground: #f0eee9; --sidebar-primary: #c5a880; --sidebar-primary-foreground: #10271e;
-    --sidebar-accent: #234c3b; --sidebar-accent-foreground: #f0eee9; --sidebar-border: rgba(197,168,128,.3); --sidebar-ring: #c5a880;
-    --bg-rgb: 16 39 30; --surface-rgb: 25 56 43; --border-rgb: 53 92 75; --text-rgb: 240 238 233;
-    --text-muted-rgb: 174 189 182; --accent-rgb: 197 168 128; --ui-surface-panel: rgba(25,56,43,.94);
-    --ui-surface-field: rgba(16,39,30,.85); --ui-border-soft: rgba(197,168,128,.12); --ui-border-strong: rgba(197,168,128,.28);
-    --ui-glow-accent: 0 0 24px rgba(197,168,128,.18); --font-family-ui-default: 'DM Sans', system-ui, sans-serif;
+    --background: #020F17; --foreground: #F5F4F3; --card: #031A26; --card-foreground: #F5F4F3;
+    --popover: #031A26; --popover-foreground: #F5F4F3; --primary: #B9915B; --primary-foreground: #020F17;
+    --secondary: #0B3345; --secondary-foreground: #F5F4F3; --muted: #031A26; --muted-foreground: #8B9FA8;
+    --accent: #B9915B; --accent-foreground: #020F17; --border: #123444; --input: #123444; --ring: #B9915B;
+    --sidebar: #020F17; --sidebar-foreground: #F5F4F3; --sidebar-primary: #B9915B; --sidebar-primary-foreground: #020F17;
+    --sidebar-accent: #0B3345; --sidebar-accent-foreground: #F5F4F3; --sidebar-border: rgba(185, 145, 91, .3); --sidebar-ring: #B9915B;
+    --bg-rgb: 2 15 23; --surface-rgb: 3 26 38; --border-rgb: 18 52 68; --text-rgb: 245 244 243;
+    --text-muted-rgb: 139 159 168; --accent-rgb: 185 145 91; --ui-surface-panel: rgba(3, 26, 38, .94);
+    --ui-surface-field: rgba(2, 15, 23, .85); --ui-border-soft: rgba(185, 145, 91, .12); --ui-border-strong: rgba(185, 145, 91, .28);
+    --ui-glow-accent: 0 0 24px rgba(185, 145, 91, .18); --font-family-ui-default: 'DM Sans', system-ui, sans-serif;
   }
 
 }

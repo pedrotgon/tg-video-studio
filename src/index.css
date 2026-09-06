@@ -91,7 +91,7 @@ h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif; letter
 .brand-context { color: var(--muted-copy); font-size: 11px; }
 .header-actions { display: flex; align-items: center; gap: 10px; }
 .engine-indicator { display: flex; align-items: center; gap: 6px; color: var(--muted-copy); font-size: 11px; }
-.engine-indicator::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #22a06b; box-shadow: 0 0 0 3px rgba(34,160,107,.1); }
+.engine-indicator::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #b9915b; box-shadow: 0 0 0 3px rgba(185,145,91,.15); }
 .advanced-toggle {
   display: flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 12px; border-radius: 8px;
   border: 1px solid var(--line); background: #fff; color: var(--navy); font-size: 12px; font-weight: 600; cursor: pointer;

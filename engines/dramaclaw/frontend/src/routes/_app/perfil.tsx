@@ -7,7 +7,8 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music } from "lucide-react";
+import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music, BookOpen, Sparkles, FileText, Copy } from "lucide-react";
+import { toast } from "sonner";
 import "@/components/profile/profile.css";
 
 export const Route = createFileRoute("/_app/perfil")({
@@ -166,12 +167,6 @@ type MemoryItem = {
   policy_reason?: string;
 };
 
-type EdgeDef = {
-  source: string;
-  target: string;
-  label: string;
-  status: EvidenceStatus;
-};
 
 type Data = {
   profile: Profile | null;
@@ -332,55 +327,6 @@ Emagrecimento prático e descomplicado para mulheres reais que não têm tempo o
   },
 };
 
-// 6 Grupos Operacionais de Memória
-const GROUP_CONFIG: Record<
-  MemoryGroup,
-  { label: string; bg: string; fill: string; border: string; text: string }
-> = {
-  identidade: {
-    label: "Identidade",
-    bg: "bg-[#B9915B]/10",
-    fill: "#B9915B",
-    border: "border-[#B9915B]",
-    text: "text-[#B9915B]",
-  },
-  audiencia: {
-    label: "Audiência",
-    bg: "bg-[#1E3A5F]/15",
-    fill: "#1E3A5F",
-    border: "border-[#1E3A5F]",
-    text: "text-[#93C5FD]",
-  },
-  acervo: {
-    label: "Acervo",
-    bg: "bg-[#031A26]/10",
-    fill: "#031A26",
-    border: "border-white/40",
-    text: "text-white",
-  },
-  estrutura: {
-    label: "Estruturas",
-    bg: "bg-[#C5A880]/15",
-    fill: "#C5A880",
-    border: "border-[#C5A880]",
-    text: "text-[#C5A880]",
-  },
-  validacao: {
-    label: "Validação",
-    bg: "bg-[#8C6D3B]/15",
-    fill: "#8C6D3B",
-    border: "border-[#8C6D3B]",
-    text: "text-[#D4AF37]",
-  },
-  producao: {
-    label: "Produção",
-    bg: "bg-[#D4AF37]/15",
-    fill: "#D4AF37",
-    border: "border-[#D4AF37]",
-    text: "text-[#D4AF37]",
-  },
-};
-
 function ProfilePage() {
   const [project] = useState("01M1SAXW27GVCP7QF6EYY7PSQN");
   const [tab, setTab] = useState<"geral" | "memoria" | "acervo" | "copies">("geral");
@@ -390,13 +336,9 @@ function ProfilePage() {
   const [profile, setProfile] = useState<Profile>(emptyProfile);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Estados da Memória e Dossiê Relacional
-  const [selectedGroup, setSelectedGroup] = useState<string>("Todos");
-  const [selectedNodeId, setSelectedNodeId] = useState<string>("mem_prod_ad98");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [memoriaSubView, setMemoriaSubView] = useState<"grafo" | "docs">("grafo");
+  // Estados da Memória (Notion Docs + Ativos 80/20)
+  const [memoriaSubView, setMemoriaSubView] = useState<"docs" | "ativos">("docs");
   const [selectedVaultDoc, setSelectedVaultDoc] = useState<string>("about");
-  const [hoveredEdge, setHoveredEdge] = useState<EdgeDef | null>(null);
 
   // Estados da Aba Dados (Notion-style)
   const [dadosView, setDadosView] = useState<"gallery" | "table">("gallery");
@@ -500,101 +442,12 @@ function ProfilePage() {
     }
   }
 
-  // Carregamento 100% dinâmico dos Itens da Memória da API
-  const memoryItems = useMemo<MemoryItem[]>(() => {
-    if (!data?.memory_items || data.memory_items.length === 0) {
-      return [];
-    }
-    return data.memory_items.map((item, idx) => {
-      const col = item.coluna ?? 1;
-      const defaultX = col === 1 ? 130 : col === 2 ? 380 : col === 3 ? 630 : 855;
-      return {
-        ...item,
-        x: item.x ?? defaultX,
-        y: item.y ?? (85 + (idx % 7) * 85),
-        r: item.r ?? 22,
-        coluna: col,
-        blocos_de_copy: item.blocos_de_copy ?? [],
-        relacoes: item.relacoes ?? [],
-      };
-    });
-  }, [data?.memory_items]);
-
-  // Carregamento 100% dinâmico das Relações da API
-  const edgesList = useMemo<EdgeDef[]>(() => {
-    if (data?.relations && data.relations.length > 0) {
-      return data.relations.map((r) => ({
-        source: r.source_id,
-        target: r.target_id,
-        label: r.relation_type,
-        status: (r.status as EvidenceStatus) || "observado",
-      }));
-    }
-    return [];
-  }, [data?.relations]);
-
-  // Filtragem dos Itens por Grupo, Evidência, Validação e Busca
-  const filteredItems = useMemo(() => {
-    return memoryItems.filter((item) => {
-      let matchFilter = true;
-      if (selectedGroup === "Todos") {
-        matchFilter = true;
-      } else if (["observado", "inferido", "hipotese", "bloqueado"].includes(selectedGroup)) {
-        matchFilter = item.status_de_evidencia === selectedGroup;
-      } else if (selectedGroup === "client_approved") {
-        matchFilter = item.status_de_validacao === "client_approved" || item.status_de_validacao === "aprovado";
-      } else if (selectedGroup === "commercially_validated") {
-        matchFilter = item.status_de_validacao === "commercially_validated";
-      } else if (selectedGroup === "sem_validacao") {
-        matchFilter = item.status_de_validacao === "sem_validacao";
-      } else {
-        matchFilter = item.tipo === selectedGroup;
-      }
-
-      const q = searchQuery.trim().toLowerCase();
-      if (!q) return matchFilter;
-      const matchSearch =
-        item.id.toLowerCase().includes(q) ||
-        item.alias.toLowerCase().includes(q) ||
-        item.titulo.toLowerCase().includes(q) ||
-        item.texto_resumo.toLowerCase().includes(q) ||
-        (item.cta && item.cta.toLowerCase().includes(q));
-      return matchFilter && matchSearch;
-    });
-  }, [memoryItems, selectedGroup, searchQuery]);
-
-  const activeItem = useMemo<MemoryItem | undefined>(() => {
-    if (memoryItems.length === 0) return undefined;
-    return memoryItems.find((m) => m.id === selectedNodeId) || memoryItems[0];
-  }, [memoryItems, selectedNodeId]);
-
-  const { connectedNodeIds, activeEdges } = useMemo(() => {
-    const ids = new Set<string>();
-    const edges: EdgeDef[] = [];
-    if (!activeItem) return { connectedNodeIds: ids, activeEdges: edges };
-    edgesList.forEach((edge) => {
-      if (edge.source === activeItem.id) {
-        ids.add(edge.target);
-        edges.push(edge);
-      } else if (edge.target === activeItem.id) {
-        ids.add(edge.source);
-        edges.push(edge);
-      }
-    });
-    return { connectedNodeIds: ids, activeEdges: edges };
-  }, [activeItem, edgesList]);
-
   const activeDoc = useMemo(() => {
     if (selectedVaultDoc && VAULT_DOCS[selectedVaultDoc]) {
       return VAULT_DOCS[selectedVaultDoc];
     }
-    if (!activeItem) return VAULT_DOCS.about;
-    if (activeItem.tipo === "identidade") return VAULT_DOCS.identidade;
-    if (activeItem.tipo === "audiencia") return VAULT_DOCS.persona;
-    if (activeItem.tipo === "estrutura") return VAULT_DOCS.framework;
-    if (activeItem.tipo === "producao") return VAULT_DOCS.regras;
     return VAULT_DOCS.about;
-  }, [selectedVaultDoc, activeItem?.tipo]);
+  }, [selectedVaultDoc]);
 
   function handleUseAd98InGenerator() {
     setInputText(
@@ -606,98 +459,79 @@ function ProfilePage() {
   }
 
   return (
-    <main className="tg-profile min-h-screen bg-[#F5F4F3] text-[#031A26] pb-16">
-      {/* Header Executivo Nexus-Style */}
-      <header className="border-b border-[#DCE1E3] bg-white px-8 py-5 mb-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <main className="tg-profile min-h-screen bg-[#FAFAFA] text-[#031A26] pb-16">
+      <div className="max-w-5xl mx-auto px-6 pt-6 space-y-5">
+        {/* Topo Limpo estilo Esteira de Conteúdo */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-semibold bg-[#031A26] text-[#B9915B]">
-                Perfil Estratégico
+            <div className="flex items-center gap-2">
+              <h1 className="text-[24px] font-bold leading-tight text-[#031A26]">
+                Thaix Santiago
+              </h1>
+              <span className="text-xs px-2.5 py-0.5 rounded-md bg-[#F4F6F7] text-[#5E727C] border border-[#E2E7E9] font-medium">
+                @{profile.handle || "thaix.santiago"}
               </span>
-              <span className="text-xs text-[#5E727C]">Central da Agência TG</span>
+              <span className="text-xs px-2.5 py-0.5 rounded-md bg-[#F4F6F7] text-[#5E727C] border border-[#E2E7E9] font-medium">
+                {profile.followers_display || "417 mil"} seguidoras
+              </span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#031A26]">
-              {profile.name || "THAIX | Emagrecimento Feminino & Ritbox"}
-            </h1>
-            <p className="text-sm text-[#5E727C]">
-              DNA da criadora, mapa relacional de audiência e motor de copies 80/20.
+            <p className="mt-1 text-sm text-[#5E727C]">
+              Memória estratégica, acervo validado e geração de copies 80/20.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <div className="text-sm font-bold text-[#031A26]">
-                @{profile.handle || "thaix.santiago"}
-              </div>
-              <div className="text-xs text-[#5E727C]">
-                {profile.followers_display || "417 mil"} seguidoras • Base Ativa
-              </div>
-            </div>
-            <div className="size-11 rounded-full bg-[#031A26] text-[#B9915B] font-bold text-sm grid place-items-center shadow-sm border border-[#B9915B]/40">
-              TH
-            </div>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <a
+              href="/"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#DCE1E3] bg-white text-xs font-semibold text-[#031A26] hover:border-[#B9915B] transition-colors shadow-xs"
+            >
+              <span>Esteira de Vídeo</span>
+              <span className="text-[#B9915B]">→</span>
+            </a>
+            <a
+              href="https://www.instagram.com/thaix.santiago/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#DCE1E3] bg-white text-xs font-semibold text-[#031A26] hover:border-[#B9915B] transition-colors shadow-xs"
+            >
+              <span>Instagram</span>
+              <ExternalLink className="w-3 h-3 text-[#B9915B]" />
+            </a>
           </div>
         </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-8 space-y-6">
-        {/* Navegação por Abas Limpas */}
-        <nav className="flex gap-8 border-b border-[#DCE1E3] bg-transparent pt-1">
-          <button
-            type="button"
-            onClick={() => setTab("geral")}
-            className={`pb-3 text-sm transition-colors border-b-2 ${
-              tab === "geral"
-                ? "border-[#031A26] text-[#031A26] font-bold"
-                : "border-transparent text-[#5E727C] hover:text-[#031A26] font-medium"
-            }`}
-          >
-            Geral
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("memoria")}
-            className={`pb-3 text-sm transition-colors border-b-2 ${
-              tab === "memoria"
-                ? "border-[#031A26] text-[#031A26] font-bold"
-                : "border-transparent text-[#5E727C] hover:text-[#031A26] font-medium"
-            }`}
-          >
-            Memória
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("acervo")}
-            className={`pb-3 text-sm transition-colors border-b-2 ${
-              tab === "acervo"
-                ? "border-[#031A26] text-[#031A26] font-bold"
-                : "border-transparent text-[#5E727C] hover:text-[#031A26] font-medium"
-            }`}
-          >
-            Dados
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("copies")}
-            className={`pb-3 text-sm transition-colors border-b-2 ${
-              tab === "copies"
-                ? "border-[#031A26] text-[#031A26] font-bold"
-                : "border-transparent text-[#5E727C] hover:text-[#031A26] font-medium"
-            }`}
-          >
-            Copies
-          </button>
+        {/* Navegação por Abas Limpas no Topo */}
+        <nav className="flex gap-6 border-b border-[#E2E7E9]">
+          {[
+            { id: "geral", label: "Geral" },
+            { id: "memoria", label: "Memória" },
+            { id: "acervo", label: "Dados" },
+            { id: "copies", label: "Copies" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id as any)}
+              className={`pb-3 text-sm font-semibold transition-all border-b-2 ${
+                tab === t.id
+                  ? "border-[#031A26] text-[#031A26]"
+                  : "border-transparent text-[#5E727C] hover:text-[#031A26]"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
         </nav>
 
         {error && (
-          <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+          <div className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
             {error}
           </div>
         )}
         {notice && (
-          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium">
-            {notice}
+          <div className="p-3.5 rounded-lg bg-[#F4F6F7] border border-[#E2E7E9] text-[#031A26] text-xs font-medium flex items-center justify-between">
+            <span>{notice}</span>
+            <button type="button" onClick={() => setNotice("")} className="text-[#5E727C] hover:text-[#031A26] text-xs font-bold">×</button>
           </div>
         )}
 
@@ -768,7 +602,7 @@ function ProfilePage() {
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="text-xl font-bold text-[#031A26]">About Me: Thaix Santiago</h2>
-                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
                         Perfil Ativo • 417k seguidoras
                       </span>
                       <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#FCFBF9] text-[#B9915B] border border-[#B9915B]/30">
@@ -987,11 +821,7 @@ function ProfilePage() {
                   <p className="text-xs text-[#031A26]/85 leading-relaxed">
                     Desafios musicais ("você aguenta a música toda?"), quebra de objeção imediata ("sem pulos para não doer joelho") e quebra de padrão com energia contagiante logo nos primeiros 2 segundos.
                   </p>
-                </div>
-
-                <div className="p-4 rounded-lg bg-[#F5F4F3] border border-[#DCE1E3]">
-                  <h3 className="text-sm font-bold text-[#031A26] mb-1">4. Mecânica de Conversão (CTA)</h3>
-                  <p className="text-xs text-[#031A26]/85 leading-relaxed">
+<p className="text-xs text-[#031A26]/85 leading-relaxed">
                     Chamada orientada a palavra-chave nos comentários (ex: <strong>"MUNDOFIT"</strong>) com envio de aula completa e gratuita no Direct (estratégia nativa de automação ManyChat).
                   </p>
                 </div>
@@ -1000,867 +830,305 @@ function ProfilePage() {
           </section>
         )}
 
-        {/* ABA 2: MEMÓRIA (MAPA RELACIONAL DOS 5 TÓPICOS) */}
-        {/* ABA 2: MEMÓRIA (DOSSIÊ RELACIONAL OPERACIONAL) */}
+        {/* ABA 2: MEMÓRIA (NOTION WIKI & 21ST.DEV ATIVOS 80/20) */}
         {tab === "memoria" && (
-          <section className="space-y-6">
-            <div className="bg-white p-6 rounded-xl border border-[#DCE1E3] shadow-sm">
-              {/* Header do Dossiê */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-[#031A26] text-[#B9915B]">
-                      Memória Operacional
-                    </span>
-                    <span className="text-xs text-[#5E727C]">
-                      Dossiê Relacional Verificado • 6 Grupos de Ativos
-                    </span>
-                  </div>
-                  <h2 className="text-xl font-bold text-[#031A26]">
-                    Memória Estratégica: Thaix Santiago
-                  </h2>
-                  <p className="text-xs text-[#5E727C]">
-                    Contexto estruturado para geração de copies, roteiros e direcionamento criativo sem alucinação.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setMemoriaSubView("grafo")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      memoriaSubView === "grafo"
-                        ? "bg-[#031A26] text-white"
-                        : "bg-[#F5F4F3] text-[#5E727C] hover:text-[#031A26]"
-                    }`}
-                  >
-                    Dossiê Relacional (Grafo)
-                  </button>
+          <section className="space-y-4">
+            {/* Notion Toolbar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-[#E8ECEE] shadow-xs">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 p-0.5 bg-[#F4F6F7] rounded-lg border border-[#E2E7E9]">
                   <button
                     type="button"
                     onClick={() => setMemoriaSubView("docs")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
                       memoriaSubView === "docs"
-                        ? "bg-[#031A26] text-white"
-                        : "bg-[#F5F4F3] text-[#5E727C] hover:text-[#031A26]"
+                        ? "bg-white text-[#031A26] shadow-xs"
+                        : "text-[#5E727C] hover:text-[#031A26]"
                     }`}
                   >
-                    Documentos Vault (.md)
+                    <BookOpen className="w-3.5 h-3.5 text-[#B9915B]" />
+                    Documentos do Vault (6)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMemoriaSubView("ativos")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                      memoriaSubView === "ativos"
+                        ? "bg-white text-[#031A26] shadow-xs"
+                        : "text-[#5E727C] hover:text-[#031A26]"
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-[#B9915B]" />
+                    Ativos Validados 80/20 (5)
                   </button>
                 </div>
+                <span className="text-xs text-[#5E727C] font-medium hidden md:inline ml-2">
+                  Memória estruturada • Fonte canônica para roteiros e copies
+                </span>
               </div>
 
-              {/* Painel de Cobertura e KPIs Auditados da API (Tempo Real) */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <div className="p-3 bg-[#FCFBF9] rounded-lg border border-[#B9915B]/30">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#B9915B]">
-                    Acervo & Arquivos
-                  </div>
-                  <div className="text-base font-extrabold text-[#031A26] mt-0.5">
-                    {data?.coverage_summary?.media_files_total ?? 0} de {data?.coverage_summary?.posts_total ?? 0} vídeos
-                  </div>
-                  <div className="text-[11px] text-[#5E727C]">
-                    {data?.coverage_summary?.blocked_no_media_total ?? 0} sem arquivo de mídia
-                  </div>
-                </div>
-
-                <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C]">
-                    Fala Auditada vs Música
-                  </div>
-                  <div className="text-base font-extrabold text-emerald-800 mt-0.5">
-                    {data?.coverage_summary?.useful_speech_total ?? 0} com fala autêntica
-                  </div>
-                  <div className="text-[11px] text-[#5E727C]">
-                    {data?.coverage_summary?.music_no_speech_total ?? 0} apenas música/ritmo
-                  </div>
-                </div>
-
-                <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C]">
-                    Evidências da Memória
-                  </div>
-                  <div className="text-base font-extrabold text-[#031A26] mt-0.5">
-                    {data?.coverage_summary?.observed_items_total ?? 0} fatos • {data?.coverage_summary?.inferred_items_total ?? 0} padrões
-                  </div>
-                  <div className="text-[11px] text-[#5E727C]">
-                    {data?.coverage_summary?.hypotheses_total ?? 0} hipótese • {data?.coverage_summary?.blocked_items_total ?? 0} bloqueado
-                  </div>
-                </div>
-
-                <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C]">
-                    Validação & Auditoria
-                  </div>
-                  <div className="text-base font-extrabold text-[#031A26] mt-0.5">
-                    {data?.coverage_summary?.client_approved_total ?? 0} aprovados cliente
-                  </div>
-                  <div className="text-[11px] text-slate-500">
-                    {data?.coverage_summary?.validation_events_total ?? 0} auditorias • {data?.coverage_summary?.sensitive_claims_blocked_total ?? 0} claims retidos
-                  </div>
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-medium px-2.5 py-1 rounded-md bg-[#F4F6F7] text-[#5E727C] border border-[#E2E7E9]">
+                  Vault v2.4 • Thaix Santiago
+                </span>
               </div>
+            </div>
 
-              {/* Barra de Filtros por Evidência, Validação, Grupo e Busca */}
-              <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 mb-4 p-2 rounded-lg bg-[#F5F4F3] border border-[#DCE1E3]">
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedGroup("Todos")}
-                    className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                      selectedGroup === "Todos"
-                        ? "bg-[#031A26] text-[#B9915B] shadow-sm"
-                        : "bg-white text-[#5E727C] hover:text-[#031A26] border border-[#DCE1E3]"
-                    }`}
-                  >
-                    Todos ({memoryItems.length})
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedGroup("observado")}
-                    className={`px-2 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                      selectedGroup === "observado"
-                        ? "bg-[#031A26] text-emerald-400 shadow-sm"
-                        : "bg-white text-emerald-800 hover:text-[#031A26] border border-[#DCE1E3]"
-                    }`}
-                  >
-                    ● Fatos ({data?.coverage_summary?.observed_items_total ?? 0})
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedGroup("inferido")}
-                    className={`px-2 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                      selectedGroup === "inferido"
-                        ? "bg-[#031A26] text-sky-400 shadow-sm"
-                        : "bg-white text-sky-800 hover:text-[#031A26] border border-[#DCE1E3]"
-                    }`}
-                  >
-                    ▲ Padrões ({data?.coverage_summary?.inferred_items_total ?? 0})
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedGroup("hipotese")}
-                    className={`px-2 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                      selectedGroup === "hipotese"
-                        ? "bg-[#031A26] text-amber-400 shadow-sm"
-                        : "bg-white text-amber-800 hover:text-[#031A26] border border-[#DCE1E3]"
-                    }`}
-                  >
-                    ◆ Hipóteses ({data?.coverage_summary?.hypotheses_total ?? 0})
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedGroup("client_approved")}
-                    className={`px-2 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                      selectedGroup === "client_approved"
-                        ? "bg-[#031A26] text-[#B9915B] shadow-sm"
-                        : "bg-white text-[#031A26] hover:text-[#B9915B] border border-[#DCE1E3]"
-                    }`}
-                  >
-                    ✓ Aprovados ({data?.coverage_summary?.client_approved_total ?? 0})
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedGroup("sem_validacao")}
-                    className={`px-2 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                      selectedGroup === "sem_validacao"
-                        ? "bg-[#031A26] text-slate-300 shadow-sm"
-                        : "bg-white text-slate-600 hover:text-[#031A26] border border-[#DCE1E3]"
-                    }`}
-                  >
-                    ○ Sem Validação ({data?.coverage_summary?.sem_validacao_total ?? 0})
-                  </button>
-
-                  <div className="h-4 w-px bg-[#DCE1E3] mx-1" />
-
-                  {(["identidade", "audiencia", "acervo", "estrutura", "validacao", "producao"] as const).map((grp) => {
-                    const cfg = GROUP_CONFIG[grp];
-                    const count = memoryItems.filter((m) => m.tipo === grp).length;
+            {/* SUB-VIEW 1: DOCUMENTOS DO VAULT (NOTION WIKI 2-COL) */}
+            {memoriaSubView === "docs" && (
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* Sidebar do Notion Wiki */}
+                <div className="md:col-span-4 lg:col-span-3 space-y-1 bg-white p-3 rounded-xl border border-[#E8ECEE] shadow-xs h-fit">
+                  <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#5E727C]">
+                    Estrutura da Memória
+                  </div>
+                  {Object.entries(VAULT_DOCS).map(([key, doc]) => {
+                    const isSelected = selectedVaultDoc === key;
                     return (
                       <button
-                        key={grp}
+                        key={key}
                         type="button"
-                        onClick={() => setSelectedGroup(grp)}
-                        className={`px-2 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                          selectedGroup === grp
-                            ? "bg-[#031A26] text-[#B9915B] shadow-sm"
-                            : "bg-white text-[#5E727C] hover:text-[#031A26] border border-[#DCE1E3]"
+                        onClick={() => setSelectedVaultDoc(key)}
+                        className={`w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center justify-between gap-2 ${
+                          isSelected
+                            ? "bg-[#F4F6F7] font-semibold text-[#031A26] border-l-2 border-[#B9915B] shadow-2xs"
+                            : "text-[#5E727C] hover:bg-[#F9FAFB] hover:text-[#031A26]"
                         }`}
                       >
-                        <span
-                          className="size-2 rounded-full inline-block"
-                          style={{ backgroundColor: cfg.fill }}
-                        />
-                        {cfg.label} ({count})
+                        <div className="flex items-center gap-2 truncate">
+                          <FileText className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-[#B9915B]" : "text-[#5E727C]"}`} />
+                          <span className="truncate">{doc.title.replace(/^[^:]+:\s*/, "")}</span>
+                        </div>
+                        <span className="text-[10px] font-medium text-[#5E727C] bg-white px-1.5 py-0.5 rounded border border-[#E8ECEE] shrink-0">
+                          {doc.category}
+                        </span>
                       </button>
                     );
                   })}
+                  <div className="pt-3 mt-3 border-t border-[#F0F2F3] px-2">
+                    <p className="text-[11px] text-[#5E727C] leading-relaxed">
+                      Documentos sincronizados com o repositório local em <code className="text-[10px] font-mono bg-[#F4F6F7] px-1 py-0.5 rounded">vault/*.md</code>.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="w-full md:w-72">
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar por ID, alias (ex: AD 98), CTA ou tema..."
-                    className="h-8 text-xs bg-white border-[#DCE1E3]"
-                  />
-                </div>
-              </div>
-
-              {memoriaSubView === "grafo" ? (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                  {/* Canvas SVG Interativo com 4 Colunas L-to-R (Evidências -> Padrões -> Validação -> Produção) */}
-                  <div className="lg:col-span-7 bg-[#031A26] rounded-xl border border-[#B9915B]/30 p-2 shadow-inner relative overflow-hidden flex flex-col justify-between">
-                    <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[#B9915B] uppercase tracking-wider bg-black/50 px-2 py-0.5 rounded border border-white/10">
-                        {filteredItems.length} nós no escopo
-                      </span>
-                      {selectedGroup !== "Todos" && (
-                        <span className="text-[10px] font-bold text-white/90 bg-white/15 px-2 py-0.5 rounded">
-                          Filtro: {GROUP_CONFIG[selectedGroup as MemoryGroup]?.label || selectedGroup}
+                {/* Canvas de Leitura do Documento (Notion Canvas) */}
+                <div className="md:col-span-8 lg:col-span-9 bg-white p-6 md:p-8 rounded-xl border border-[#E8ECEE] shadow-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-[#F0F2F3]">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
+                          {activeDoc.category}
                         </span>
-                      )}
+                        <span className="text-xs text-[#5E727C]">
+                          Arquivo: {selectedVaultDoc}.md
+                        </span>
+                      </div>
+                      <h2 className="text-xl font-bold text-[#031A26]">
+                        {activeDoc.title}
+                      </h2>
                     </div>
 
-                    <div className="w-full h-[640px] relative">
-                      <svg viewBox="0 0 980 740" className="w-full h-full select-none cursor-pointer">
-                        <defs>
-                          <pattern id="memoria-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                            <circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.05)" />
-                          </pattern>
-                        </defs>
-                        <rect width="980" height="740" fill="url(#memoria-grid)" />
-
-                        {/* 4 Colunas Estruturais (Containers de Fluxo Esquerda -> Direita) */}
-                        <g opacity="0.35">
-                          {/* Coluna 1 */}
-                          <rect x="20" y="20" width="220" height="700" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-                          <text x="130" y="42" textAnchor="middle" fill="#B9915B" fontSize="10" fontWeight="700" letterSpacing="0.08em">
-                            1. EVIDÊNCIAS & ORIGEM
-                          </text>
-
-                          {/* Coluna 2 */}
-                          <rect x="260" y="20" width="230" height="700" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-                          <text x="375" y="42" textAnchor="middle" fill="#C5A880" fontSize="10" fontWeight="700" letterSpacing="0.08em">
-                            2. PADRÕES DE COPY
-                          </text>
-
-                          {/* Coluna 3 */}
-                          <rect x="510" y="20" width="220" height="700" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-                          <text x="620" y="42" textAnchor="middle" fill="#D4AF37" fontSize="10" fontWeight="700" letterSpacing="0.08em">
-                            3. VALIDAÇÃO & HIPÓTESES
-                          </text>
-
-                          {/* Coluna 4 */}
-                          <rect x="750" y="20" width="210" height="700" rx="10" fill="rgba(185,145,91,0.04)" stroke="rgba(185,145,91,0.25)" strokeWidth="1" />
-                          <text x="855" y="42" textAnchor="middle" fill="#FFFFFF" fontSize="10" fontWeight="700" letterSpacing="0.08em">
-                            4. PRODUÇÃO OPERACIONAL
-                          </text>
-                        </g>
-
-                        {/* Conexões (Edges Relacionais Dinâmicas com Semântica de Evidência) */}
-                        <g>
-                          {edgesList.map((edge, idx) => {
-                            const sourceItem = memoryItems.find((n) => n.id === edge.source);
-                            const targetItem = memoryItems.find((n) => n.id === edge.target);
-                            if (!sourceItem || !targetItem) return null;
-
-                            const isSelectedEdge =
-                              sourceItem.id === selectedNodeId || targetItem.id === selectedNodeId;
-                            const isHovered =
-                              hoveredEdge?.source === edge.source && hoveredEdge?.target === edge.target;
-
-                            // Estilo da Aresta: Sólida para fatos observados, Tracejada para inferências, Pontilhada para hipóteses
-                            let dashArray = "none";
-                            if (edge.status === "inferido") dashArray = "6,4";
-                            if (edge.status === "hipotese") dashArray = "2,3";
-
-                            const strokeColor = isSelectedEdge || isHovered ? "#B9915B" : "rgba(255, 255, 255, 0.18)";
-                            const strokeW = isSelectedEdge || isHovered ? 2.4 : 1.2;
-                            const opacity = isSelectedEdge || isHovered ? 1 : 0.45;
-
-                            const midX = (sourceItem.x + targetItem.x) / 2;
-                            const midY = (sourceItem.y + targetItem.y) / 2;
-
-                            return (
-                              <g
-                                key={idx}
-                                onMouseEnter={() => setHoveredEdge(edge)}
-                                onMouseLeave={() => setHoveredEdge(null)}
-                              >
-                                <line
-                                  x1={sourceItem.x}
-                                  y1={sourceItem.y}
-                                  x2={targetItem.x}
-                                  y2={targetItem.y}
-                                  stroke={strokeColor}
-                                  strokeWidth={strokeW}
-                                  strokeDasharray={dashArray}
-                                  strokeOpacity={opacity}
-                                />
-                                {/* Rótulo da relação exibido apenas no foco/hover */}
-                                {(isSelectedEdge || isHovered) && (
-                                  <g transform={`translate(${midX}, ${midY})`}>
-                                    <rect
-                                      x={-((edge.label.length * 5.2) / 2 + 6)}
-                                      y={-9}
-                                      width={edge.label.length * 5.2 + 12}
-                                      height={18}
-                                      rx={4}
-                                      fill="#031A26"
-                                      stroke="#B9915B"
-                                      strokeWidth={1}
-                                    />
-                                    <text
-                                      x={0}
-                                      y={3}
-                                      textAnchor="middle"
-                                      fill="#B9915B"
-                                      fontSize="9"
-                                      fontWeight="600"
-                                      fontFamily="monospace"
-                                    >
-                                      {edge.label}
-                                    </text>
-                                  </g>
-                                )}
-                              </g>
-                            );
-                          })}
-                        </g>
-
-                        {/* Vértices (Nós Operacionais com Cores e Tamanhos Semânticos) */}
-                        <g>
-                          {memoryItems.map((item) => {
-                            const isSelected = item.id === selectedNodeId;
-                            const isNeighbor = connectedNodeIds.has(item.id);
-                            const isVisible = filteredItems.some((fi) => fi.id === item.id);
-                            const isAD98 = item.id === "mem_prod_ad98";
-
-                            if (!isVisible) return null;
-
-                            const groupCfg = GROUP_CONFIG[item.tipo] || GROUP_CONFIG.identidade;
-                            const fill = isSelected ? "#B9915B" : groupCfg.fill;
-
-                            // Esmaecimento de nós fora da vizinhança direta quando um nó está selecionado
-                            const nodeOpacity = isSelected || isNeighbor || selectedGroup !== "Todos" ? 1 : 0.25;
-
-                            return (
-                              <g
-                                key={item.id}
-                                onClick={() => setSelectedNodeId(item.id)}
-                                className="transition-transform duration-150"
-                              >
-                                {isSelected && (
-                                  <circle
-                                    cx={item.x}
-                                    cy={item.y}
-                                    r={item.r + 7}
-                                    fill="none"
-                                    stroke="#B9915B"
-                                    strokeWidth={2}
-                                    strokeOpacity={0.7}
-                                    className="animate-pulse"
-                                  />
-                                )}
-
-                                {isAD98 && !isSelected && (
-                                  <circle
-                                    cx={item.x}
-                                    cy={item.y}
-                                    r={item.r + 4}
-                                    fill="none"
-                                    stroke="#D4AF37"
-                                    strokeWidth={1.5}
-                                    strokeDasharray="4,2"
-                                    strokeOpacity={0.6}
-                                  />
-                                )}
-
-                                <circle
-                                  cx={item.x}
-                                  cy={item.y}
-                                  r={item.r}
-                                  fill={fill}
-                                  stroke={isSelected ? "#FFFFFF" : isNeighbor ? "#B9915B" : "rgba(255,255,255,0.4)"}
-                                  strokeWidth={isSelected ? 2.8 : isAD98 ? 2.2 : 1.2}
-                                  opacity={nodeOpacity}
-                                />
-
-                                {/* Texto do Nó (Legível sem Zoom) */}
-                                <text
-                                  x={item.x}
-                                  y={item.y + item.r + 12}
-                                  textAnchor="middle"
-                                  fill={isSelected ? "#FFFFFF" : isNeighbor ? "#B9915B" : "rgba(255,255,255,0.85)"}
-                                  fontSize={isSelected || isAD98 ? 11 : 9.5}
-                                  fontWeight={isSelected || isAD98 ? 700 : 500}
-                                  fontFamily="Plus Jakarta Sans, sans-serif"
-                                  opacity={nodeOpacity}
-                                >
-                                  {item.alias}
-                                </text>
-                              </g>
-                            );
-                          })}
-                        </g>
-                      </svg>
-                    </div>
-
-                    {/* Barra de Legenda do Grafo */}
-                    <div className="border-t border-white/10 pt-2 px-3 flex flex-wrap items-center justify-between gap-2 text-[10px] text-white/60">
-                      <div className="flex items-center gap-3">
-                        <span className="font-semibold text-white/80">Relações:</span>
-                        <span className="flex items-center gap-1"><span className="inline-block w-4 h-0.5 bg-[#B9915B]" /> Fato (Sólida)</span>
-                        <span className="flex items-center gap-1"><span className="inline-block w-4 h-0.5 border-b border-dashed border-[#B9915B]" /> Inferência (Tracejada)</span>
-                        <span className="flex items-center gap-1"><span className="inline-block w-4 h-0.5 border-b border-dotted border-[#B9915B]" /> Hipótese (Pontilhada)</span>
-                      </div>
-                      <div className="text-[10px] text-[#B9915B]">
-                        Clique em qualquer nó para focar e abrir o dossiê detalhado
-                      </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(activeDoc.content);
+                          toast.success("Conteúdo copiado!");
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9] hover:bg-[#EBEFEF] transition-colors"
+                      >
+                        <Copy className="w-3.5 h-3.5 text-[#5E727C]" />
+                        Copiar .md
+                      </button>
                     </div>
                   </div>
 
-                  {/* Painel Lateral: Dossiê Estruturado do Ativo Selecionado */}
-                  {!activeItem ? (
-                    <div className="lg:col-span-5 bg-[#F5F4F3] p-8 rounded-xl border border-[#DCE1E3] flex flex-col items-center justify-center text-center space-y-2">
-                      <div className="size-10 rounded-full bg-[#031A26]/10 flex items-center justify-center text-lg text-[#B9915B]">●</div>
-                      <div className="font-bold text-[#031A26]">Nenhum nó selecionado</div>
-                      <div className="text-xs text-[#5E727C] max-w-xs">Clique em qualquer nó do grafo ou utilize a barra de busca para inspecionar o dossiê com fontes auditadas.</div>
-                    </div>
-                  ) : (
-                    <div className="lg:col-span-5 bg-[#F5F4F3] p-5 rounded-xl border border-[#DCE1E3] flex flex-col justify-between space-y-4">
-                      <div className="space-y-4">
-                        {/* Header do Ativo */}
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#031A26] text-[#B9915B]">
-                              {GROUP_CONFIG[activeItem.tipo]?.label || activeItem.tipo}
-                            </span>
-                            <span
-                              className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
-                                activeItem.status_de_evidencia === "observado"
-                                  ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                                  : activeItem.status_de_evidencia === "inferido"
-                                  ? "bg-sky-100 text-sky-800 border border-sky-300"
-                                  : activeItem.status_de_evidencia === "bloqueado"
-                                  ? "bg-rose-100 text-rose-800 border border-rose-300"
-                                  : "bg-amber-100 text-amber-800 border border-amber-300"
-                              }`}
-                            >
-                              {activeItem.status_de_evidencia === "observado"
-                                ? "● Fato Observado"
-                                : activeItem.status_de_evidencia === "inferido"
-                                ? "▲ Inferência Fundamentada"
-                                : activeItem.status_de_evidencia === "bloqueado"
-                                ? "✖ Bloqueado (Mídia Ausente)"
-                                : "◆ Hipótese em Teste"}
-                            </span>
-                            <span
-                              className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                                activeItem.status_de_validacao === "client_approved" || activeItem.status_de_validacao === "aprovado"
-                                  ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                                  : activeItem.status_de_validacao === "commercially_validated"
-                                  ? "bg-blue-50 text-blue-800 border-blue-300"
-                                  : activeItem.status_de_validacao === "em_teste"
-                                  ? "bg-amber-50 text-amber-800 border-amber-300"
-                                  : "bg-slate-100 text-slate-600 border-slate-300"
-                              }`}
-                            >
-                              {activeItem.status_de_validacao === "client_approved" || activeItem.status_de_validacao === "aprovado"
-                                ? "✓ Aprovado pelo Cliente"
-                                : activeItem.status_de_validacao === "commercially_validated"
-                                ? "★ Validado Comercialmente"
-                                : activeItem.status_de_validacao === "em_teste"
-                                ? "◆ Em Teste / Hipótese"
-                                : "○ Sem Validação Comercial"}
-                            </span>
-                          </div>
-
-                          <h3 className="text-base font-extrabold text-[#031A26]">
-                            {activeItem.alias}
+                  {/* Renderização Limpa do Conteúdo Markdown */}
+                  <div className="prose prose-sm max-w-none text-[#031A26] space-y-4">
+                    {activeDoc.content.split("\n\n").map((block, idx) => {
+                      const trimmed = block.trim();
+                      if (trimmed.startsWith("# ")) {
+                        return null;
+                      }
+                      if (trimmed.startsWith("## ")) {
+                        return (
+                          <h3 key={idx} className="text-base font-bold text-[#031A26] pt-3 pb-1 border-b border-[#F4F6F7]">
+                            {trimmed.replace(/^##\s*/, "")}
                           </h3>
-                          <div className="text-xs font-semibold text-[#5E727C]">
-                            {activeItem.titulo}
+                        );
+                      }
+                      if (trimmed.startsWith("> ")) {
+                        return (
+                          <div key={idx} className="p-3.5 rounded-lg bg-[#FCFBF9] border-l-3 border-[#B9915B] text-xs text-[#031A26] font-medium leading-relaxed">
+                            {trimmed.replace(/^>\s*/, "")}
                           </div>
-                        </div>
-
-                        {/* 1. O QUE É */}
-                        <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C] block mb-1">
-                            1. O que é
-                          </span>
-                          <p className="text-xs text-[#031A26] leading-relaxed">
-                            {activeItem.texto_resumo || "Sem descrição registrada."}
-                          </p>
-                        </div>
-
-                        {/* 2. POR QUE IMPORTA */}
-                        <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C] block mb-1">
-                            2. Por que importa (Impacto Operacional)
-                          </span>
-                          <p className="text-xs text-[#031A26] leading-relaxed">
-                            {activeItem.hipotese ||
-                              (activeItem.tipo === "acervo"
-                                ? "Evidência pública e verificável de volume que valida a retenção de público no Instagram."
-                                : activeItem.tipo === "estrutura"
-                                ? "Padrão anatômico reutilizável para compor novos roteiros de alta retenção."
-                                : activeItem.tipo === "validacao"
-                                ? "Métrica comprovada para separar teses vencedoras de meras suposições criativas."
-                                : "Contexto mestre de posicionamento que orienta o tom e as diretrizes de copy.")}
-                          </p>
-
-                          {/* Destaque Especial para o Ativo Mestre AD 98 */}
-                          {activeItem.id === "mem_prod_ad98" && (
-                            <div className="mt-3 pt-3 border-t border-[#DCE1E3] space-y-2">
-                              <div className="text-[11px] font-bold text-[#B9915B]">
-                                Multiplicação em 10 Novas Copies
-                              </div>
-                              <div className="text-xs text-[#5E727C]">
-                                Este ativo combina o gancho musical vencedor (6.6M plays), mecanismo sem saltos e CTA MUNDOFIT.
-                              </div>
-                              <Button
-                                onClick={handleUseAd98InGenerator}
-                                className="w-full bg-[#031A26] text-[#B9915B] hover:bg-[#031A26]/90 border border-[#B9915B]/40 text-xs font-bold py-2 mt-1"
-                              >
-                                Usar AD 98 no Gerador (10 Copies) →
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* 3. EVIDÊNCIAS & DADOS OBSERVADOS */}
-                        <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C] block mb-2">
-                            3. Evidências & Dados Verificados
-                          </span>
-
-                          {/* Métricas Reais se existirem */}
-                          {activeItem.metricas && Object.keys(activeItem.metricas).length > 0 ? (
-                            <div className="grid grid-cols-2 gap-2 mb-3 p-2 bg-[#F5F4F3] rounded border border-[#DCE1E3]">
-                              {activeItem.metricas.plays && (
-                                <div>
-                                  <span className="text-[10px] font-semibold text-[#5E727C] block">Plays Observados</span>
-                                  <span className="text-xs font-bold text-[#031A26]">
-                                    {Number(activeItem.metricas.plays).toLocaleString("pt-BR")}
-                                  </span>
-                                </div>
-                              )}
-                              {activeItem.metricas.comments && (
-                                <div>
-                                  <span className="text-[10px] font-semibold text-[#5E727C] block">Comentários</span>
-                                  <span className="text-xs font-bold text-[#031A26]">
-                                    {Number(activeItem.metricas.comments).toLocaleString("pt-BR")}
-                                  </span>
-                                </div>
-                              )}
-                              {activeItem.metricas.likes && (
-                                <div>
-                                  <span className="text-[10px] font-semibold text-[#5E727C] block">Curtidas</span>
-                                  <span className="text-xs font-bold text-[#031A26]">
-                                    {Number(activeItem.metricas.likes).toLocaleString("pt-BR")}
-                                  </span>
-                                </div>
-                              )}
-                              {activeItem.metricas.followers && (
-                                <div>
-                                  <span className="text-[10px] font-semibold text-[#5E727C] block">Seguidoras</span>
-                                  <span className="text-xs font-bold text-[#031A26]">
-                                    {activeItem.metricas.followers}
-                                  </span>
-                                </div>
-                              )}
-                              <div className="col-span-2 text-[10px] text-[#5E727C] pt-1 border-t border-[#DCE1E3]">
-                                Data da observação: {activeItem.observado_em ? "05/09/2026" : "sem evidência registrada"}
-                              </div>
-                            </div>
-                          ) : null}
-
-                          {/* Transcrição de Áudio / Diagnóstico de Fala */}
-                          {activeItem.copy_falada && (
-                            <div className={`mb-3 p-2.5 rounded text-xs border ${
-                              activeItem.copy_falada.includes("SEM FALA DISCURSIVA") || activeItem.copy_falada.includes("sem evidência de fala")
-                                ? "bg-slate-50 border-slate-200 text-slate-700"
-                                : "bg-emerald-50/80 border-emerald-300 text-emerald-950"
-                            }`}>
-                              <span className={`font-bold block text-[10px] uppercase mb-0.5 ${
-                                activeItem.copy_falada.includes("SEM FALA DISCURSIVA") || activeItem.copy_falada.includes("sem evidência de fala")
-                                  ? "text-slate-600"
-                                  : "text-emerald-800"
-                              }`}>
-                                {activeItem.copy_falada.includes("SEM FALA DISCURSIVA") || activeItem.copy_falada.includes("sem evidência de fala")
-                                  ? "Diagnóstico de Áudio (Sem Fala Criadora)"
-                                  : "Transcrição Autêntica de Fala (Faster Whisper)"}
-                              </span>
-                              {activeItem.copy_falada}
-                            </div>
-                          )}
-
-                          {/* Blocos Anatômicos da Copy com Offsets, Timestamps e Compliance */}
-                          {activeItem.blocos_de_copy && activeItem.blocos_de_copy.length > 0 ? (
-                            <div className="space-y-2 mb-2">
-                              <span className="text-[10px] font-bold text-[#5E727C] block">
-                                Blocos Anatômicos da Copy (Offsets & Timestamps Auditados):
-                              </span>
-                              {activeItem.blocos_de_copy.map((bloco, bIdx) => {
-                                const func = (bloco.funcao || bloco.role || "").toLowerCase();
-                                const text = bloco.texto || bloco.literal_text || "";
-                                const isBlocked = bloco.policy_status === "blocked_from_generator" || bloco.policy_status === "quarantined";
-                                return (
-                                <div
-                                  key={bIdx}
-                                  className={`p-2.5 rounded border text-xs leading-relaxed ${
-                                    isBlocked
-                                      ? "bg-rose-50 border-rose-300 text-[#031A26]"
-                                      : func.includes("gancho")
-                                      ? "bg-[#FCFBF9] border-[#B9915B]/50 text-[#031A26]"
-                                      : func.includes("mecanismo") || func.includes("promessa")
-                                      ? "bg-[#F0F7FF] border-[#0B3345]/30 text-[#031A26]"
-                                      : func.includes("cta")
-                                      ? "bg-[#FFFBEB] border-amber-400 text-[#031A26]"
-                                      : "bg-[#F8FAFC] border-slate-300 text-[#031A26]"
-                                  }`}
-                                >
-                                  <div className="flex items-center justify-between mb-1">
-                                    <span className="text-[9px] font-bold uppercase tracking-wider text-[#B9915B]">
-                                      {bloco.funcao || bloco.role || "bloco"}
-                                    </span>
-                                    <span className="text-[9px] font-mono text-[#5E727C]">
-                                      {bloco.status}
-                                    </span>
-                                  </div>
-
-                                  {isBlocked && (
-                                    <div className="mb-1.5 px-2 py-0.5 rounded bg-rose-100 border border-rose-300 text-[10px] font-semibold text-rose-900 flex items-center gap-1">
-                                      <span>⚠️ RETIDO COMPLIANCE:</span>
-                                      <span>{bloco.policy_reason || "Alegação sensível de saúde (bloqueado no gerador)"}</span>
-                                    </div>
-                                  )}
-
-                                  <div className="font-medium">"{text}"</div>
-
-                                  {/* Rastreabilidade Exata: Caracteres e Áudio */}
-                                  <div className="mt-1.5 pt-1.5 border-t border-black/5 flex flex-wrap items-center gap-2 text-[10px] text-[#5E727C] font-mono">
-                                    {bloco.start_char != null && bloco.end_char != null && (
-                                      <span className="bg-white/80 px-1.5 py-0.5 rounded border border-black/10">
-                                        legenda chars: [{bloco.start_char}..{bloco.end_char}]
-                                      </span>
-                                    )}
-                                    {bloco.start_sec != null && bloco.end_sec != null && (
-                                      <span className="bg-white/80 px-1.5 py-0.5 rounded border border-black/10 text-emerald-800">
-                                        áudio: [{bloco.start_sec}s → {bloco.end_sec}s]
-                                      </span>
-                                    )}
-                                    {bloco.source_ids && bloco.source_ids.length > 0 && (
-                                      <span className="text-slate-500">
-                                        fonte: {bloco.source_ids.join(", ")}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                          ) : null}
-
-                          {/* Caso não haja métricas nem blocos */}
-                          {(!activeItem.metricas || Object.keys(activeItem.metricas).length === 0) &&
-                            (!activeItem.blocos_de_copy || activeItem.blocos_de_copy.length === 0) &&
-                            !activeItem.copy_falada && (
-                              <div className="text-xs text-[#5E727C] italic">
-                                Sem evidência direta registrada. Nó de diretriz ou hipótese.
-                              </div>
-                            )}
-                        </div>
-
-                        {/* 4. CONEXÕES RELACIONAIS */}
-                        <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C] block mb-2">
-                            4. Conexões Relacionais ({activeEdges.length})
-                          </span>
-                          {activeEdges.length === 0 ? (
-                            <div className="text-xs text-[#5E727C] italic">
-                              Nenhuma conexão mapeada neste nó.
-                            </div>
-                          ) : (
-                            <div className="flex flex-col gap-1.5">
-                              {activeEdges.map((edge, eIdx) => {
-                                const otherId = edge.source === activeItem.id ? edge.target : edge.source;
-                                const otherItem = memoryItems.find((m) => m.id === otherId);
-                                if (!otherItem) return null;
-                                return (
-                                  <button
-                                    key={eIdx}
-                                    type="button"
-                                    onClick={() => setSelectedNodeId(otherItem.id)}
-                                    className="flex items-center justify-between p-2 rounded bg-[#F5F4F3] hover:bg-[#031A26] hover:text-[#B9915B] text-left border border-[#DCE1E3] transition-colors group text-xs"
-                                  >
-                                    <div>
-                                      <span className="font-bold block text-[#031A26] group-hover:text-[#B9915B]">
-                                        {otherItem.alias}
-                                      </span>
-                                      <span className="text-[10px] text-[#5E727C] group-hover:text-white/80 font-mono">
-                                        {edge.label} • {edge.status}
-                                      </span>
-                                    </div>
-                                    <span className="text-xs font-bold text-[#B9915B]">→</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* 5. FONTE & RASTREABILIDADE */}
-                        <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C] block mb-1">
-                            5. Fonte & Rastreabilidade
-                          </span>
-                          <div className="text-xs text-[#5E727C] space-y-1">
-                            <div>
-                              Fonte Oficial:{" "}
-                              {activeItem.fonte_url ? (
-                                <a
-                                  href={activeItem.fonte_url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-[#B9915B] font-bold hover:underline"
-                                >
-                                  Instagram Oficial ↗
-                                </a>
-                              ) : (
-                                "Registro interno do projeto"
-                              )}
-                            </div>
-                            {activeItem.post_id && (
-                              <div>Post ID: <span className="font-mono text-[#031A26]">{activeItem.post_id}</span></div>
-                            )}
-                            <div>Versão do esquema: v{activeItem.versao}</div>
-                          </div>
-                        </div>
-
-                        {/* 6. EVENTOS DE AUDITORIA & VALIDAÇÃO */}
-                        <div className="p-3 bg-white rounded-lg border border-[#DCE1E3]">
-                          <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C]">
-                              6. Auditoria & Validações ({data?.validation_events?.length ?? 0})
-                            </span>
-                            <span className="text-[9px] font-mono text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                              0 validation_event = 0 aprovação
-                            </span>
-                          </div>
-                          {(!data?.validation_events || data.validation_events.length === 0) ? (
-                            <div className="text-xs text-[#5E727C] italic">
-                              Nenhum evento de validação registrado para este projeto.
-                            </div>
-                          ) : (
-                            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                              {data.validation_events.map((evt) => (
-                                <div key={evt.id} className="p-2 rounded bg-[#F8FAFC] border border-slate-200 text-xs">
-                                  <div className="flex items-center justify-between font-mono text-[10px] text-[#5E727C]">
-                                    <span className="font-bold text-[#031A26] uppercase">{evt.event_type}</span>
-                                    <span>{evt.status} • {evt.created_at?.slice(0, 10)}</span>
-                                  </div>
-                                  <div className="text-[#031A26] text-[11px] mt-0.5 font-medium leading-tight">{evt.audit_log}</div>
-                                  <div className="text-[10px] text-[#5E727C] mt-1 flex items-center justify-between pt-1 border-t border-slate-100">
-                                    <span>Alvo: <strong className="font-mono">{evt.target_id}</strong> ({evt.previous_status} → {evt.new_status})</span>
-                                    <span>Por: {evt.decided_by}</span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Acesso Secundário ao Markdown Completo */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          if (activeItem) {
-                            if (activeItem.tipo === "identidade") setSelectedVaultDoc("identidade");
-                            else if (activeItem.tipo === "audiencia") setSelectedVaultDoc("persona");
-                            else if (activeItem.tipo === "estrutura") setSelectedVaultDoc("framework");
-                            else if (activeItem.tipo === "producao") setSelectedVaultDoc("regras");
-                            else setSelectedVaultDoc("about");
-                          } else {
-                            setSelectedVaultDoc("about");
-                          }
-                          setMemoriaSubView("docs");
-                        }}
-                        className="w-full text-xs font-bold mt-2 border-[#DCE1E3] bg-white text-[#031A26]"
-                      >
-                        Ver Documento Vault Completo ({activeDoc.title})
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                /* Subview dos Documentos Vault (.md) */
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
-                    {Object.entries(VAULT_DOCS).map(([key, doc]) => {
-                      const isSelected = selectedVaultDoc === key;
+                        );
+                      }
+                      if (trimmed.startsWith("- ") || trimmed.startsWith("1. ") || trimmed.startsWith("2. ") || trimmed.startsWith("3. ")) {
+                        const lines = trimmed.split("\n");
+                        return (
+                          <ul key={idx} className="space-y-1.5 text-xs text-[#2A3B43] leading-relaxed pl-4 list-disc marker:text-[#B9915B]">
+                            {lines.map((line, lIdx) => (
+                              <li key={lIdx}>{line.replace(/^[-*]|\d+\.\s*/, "").trim()}</li>
+                            ))}
+                          </ul>
+                        );
+                      }
                       return (
-                        <button
-                          key={key}
-                          type="button"
-                          onClick={() => setSelectedVaultDoc(key)}
-                          className={`p-3 rounded-lg border text-left transition-all ${
-                            isSelected
-                              ? "bg-[#031A26] text-white border-[#031A26] shadow-xs"
-                              : "bg-white text-[#031A26] border-[#DCE1E3] hover:border-[#B9915B]"
-                          }`}
-                        >
-                          <span
-                            className={`text-[10px] font-bold uppercase tracking-wider block mb-1 ${
-                              isSelected ? "text-[#B9915B]" : "text-[#5E727C]"
-                            }`}
-                          >
-                            {doc.category}
-                          </span>
-                          <span className="text-xs font-bold block truncate">
-                            {key}.md
-                          </span>
-                        </button>
+                        <p key={idx} className="text-xs text-[#2A3B43] leading-relaxed">
+                          {trimmed}
+                        </p>
                       );
                     })}
                   </div>
+                </div>
+              </div>
+            )}
 
-                  <div className="bg-[#F5F4F3] p-6 rounded-xl border border-[#DCE1E3]">
-                    <div className="flex items-center justify-between mb-4">
+            {/* SUB-VIEW 2: ATIVOS VALIDADOS 80/20 (21ST.DEV CARDS) */}
+            {memoriaSubView === "ativos" && (
+              <div className="space-y-4">
+                <div className="bg-white p-5 rounded-xl border border-[#E8ECEE] shadow-xs">
+                  <div className="max-w-2xl mb-4">
+                    <h3 className="text-sm font-bold text-[#031A26]">
+                      Ativos Estratégicos Validados (80/20)
+                    </h3>
+                    <p className="text-xs text-[#5E727C] mt-0.5">
+                      Blocos de alta conversão minerados a partir de 12M+ visualizações, 52k comentários e regras inegociáveis de negócio.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* CARD 1: AD 98 */}
+                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
                       <div>
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-[#031A26] text-[#B9915B] mr-2">
-                          {activeDoc.category}
-                        </span>
-                        <span className="text-sm font-bold text-[#031A26]">
-                          {activeDoc.title}
-                        </span>
+                        <div className="flex items-center justify-between gap-2 mb-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#031A26] text-[#B9915B]">
+                            Top 1 Performer
+                          </span>
+                          <span className="text-xs font-bold text-[#031A26]">
+                            6.6M plays
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                          AD 98: Treino na Sala de Casa
+                        </h4>
+                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                          Gancho comprovado que gera mais de 33.000 comentários pedindo aula no direct. 100% sem impacto, focado em queima de gordura sem saltos.
+                        </p>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setMemoriaSubView("grafo")}
-                        className="text-xs font-bold"
-                      >
-                        ← Voltar ao Dossiê Relacional
-                      </Button>
+                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                        <span className="text-[11px] text-[#5E727C]">33.266 comentários</span>
+                        <button
+                          type="button"
+                          onClick={() => handleUseAd98InGenerator()}
+                          className="font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
+                        >
+                          Usar nas Copies →
+                        </button>
+                      </div>
                     </div>
 
-                    <pre className="text-xs font-mono text-[#031A26] whitespace-pre-wrap bg-white p-6 rounded-xl border border-[#DCE1E3] leading-relaxed max-h-[500px] overflow-y-auto">
-                      {activeDoc.content}
-                    </pre>
+                    {/* CARD 2: MÉTODO BAIXO IMPACTO */}
+                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
+                            Proposta Única (UVP)
+                          </span>
+                          <span className="text-xs font-bold text-[#031A26]">
+                            Ritbox Casa
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                          Método 100% Baixo Impacto
+                        </h4>
+                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                          Treino para quem tem dor no joelho, sobrepeso ou pós-parto. Sem esteira chata, sem musculação pesada, praticado em 20 minutos.
+                        </p>
+                      </div>
+                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                        <span className="text-[11px] text-[#5E727C]">Inclusão articular</span>
+                        <span className="text-[11px] font-semibold text-[#031A26]">Zero impacto</span>
+                      </div>
+                    </div>
+
+                    {/* CARD 3: PERSONA REAL */}
+                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
+                            Público-Alvo
+                          </span>
+                          <span className="text-xs font-bold text-[#031A26]">
+                            28 a 55 anos
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                          Mulheres e Mães Sem Tempo
+                        </h4>
+                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                          Jornada dupla, metabolismo lento após os 30, sensação de inchaço e roupas apertadas no armário. Buscam acolhimento, não cobrança.
+                        </p>
+                      </div>
+                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                        <span className="text-[11px] text-[#5E727C]">Tom acolhedor</span>
+                        <span className="text-[11px] font-semibold text-[#031A26]">"Bora mulher"</span>
+                      </div>
+                    </div>
+
+                    {/* CARD 4: MANYCHAT MUNDOFIT */}
+                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FCFBF9] text-[#B9915B] border border-[#B9915B]/30">
+                            Funil de Conversão
+                          </span>
+                          <span className="text-xs font-bold text-[#031A26]">
+                            Direct / DM
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                          Automação: Palavra MUNDOFIT
+                        </h4>
+                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                          Chamada de ação obrigatória ao final de cada criativo. O comentário dispara a entrega imediata da aula completa no Instagram Direct.
+                        </p>
+                      </div>
+                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                        <span className="text-[11px] text-[#5E727C]">Taxa de resposta alta</span>
+                        <span className="text-[11px] font-semibold text-[#B9915B]">CTA Oficial</span>
+                      </div>
+                    </div>
+
+                    {/* CARD 5: REGRAS THIAGO NEIVA */}
+                    <div className="p-4 rounded-xl bg-white border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all shadow-2xs hover:shadow-xs flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#031A26] text-white">
+                            Governança Criativa
+                          </span>
+                          <span className="text-xs font-bold text-[#031A26]">
+                            Conformidade
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-[#031A26] mb-1.5">
+                          Regras de Ouro Thiago Neiva
+                        </h4>
+                        <p className="text-xs text-[#5E727C] leading-relaxed line-clamp-3">
+                          20 a 40 segundos por copy, frases curtas para teleprompter, zero promessas milagrosas e retenção nos primeiros 2 segundos.
+                        </p>
+                      </div>
+                      <div className="mt-4 pt-3 border-t border-[#F0F2F3] flex items-center justify-between text-xs">
+                        <span className="text-[11px] text-[#5E727C]">Auditoria ativa</span>
+                        <span className="text-[11px] font-semibold text-[#031A26]">100% Seguro</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </section>
         )}
 
@@ -1951,7 +1219,7 @@ function ProfilePage() {
                                 {post.type || "Reel"}
                               </span>
                               {hasSpeech ? (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 backdrop-blur-xs border border-emerald-500/30">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#031A26] text-[#B9915B] backdrop-blur-xs border border-[#B9915B]/30">
                                   <Mic className="w-2.5 h-2.5" /> Fala Auditada
                                 </span>
                               ) : (
@@ -1975,7 +1243,7 @@ function ProfilePage() {
                                   {post.type || "Reel"}
                                 </span>
                                 {hasSpeech ? (
-                                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
                                     <Mic className="w-2.5 h-2.5" /> Fala Auditada
                                   </span>
                                 ) : (
@@ -2000,7 +1268,7 @@ function ProfilePage() {
                         <div className="flex items-center gap-2.5">
                           <span title="Curtidas">❤️ {formatCompact(likes)}</span>
                           <span title="Comentários">💬 {formatCompact(comments)}</span>
-                          <span title="Taxa de Engajamento" className="text-[#059669] font-medium">ER {er}%</span>
+                          <span title="Taxa de Engajamento" className="text-[#031A26] font-medium">ER {er}%</span>
                         </div>
                         <a
                           href={post.source_url}
@@ -2076,12 +1344,12 @@ function ProfilePage() {
                             <td className="py-2.5 px-3 text-[#5E727C]">
                               {formatCompact(comments)}
                             </td>
-                            <td className="py-2.5 px-3 font-semibold text-[#059669]">
+                            <td className="py-2.5 px-3 font-semibold text-[#031A26]">
                               {er}%
                             </td>
                             <td className="py-2.5 px-3">
                               {hasSpeech ? (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#059669]">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#031A26]">
                                   <Mic className="w-3 h-3" /> Fala
                                 </span>
                               ) : (

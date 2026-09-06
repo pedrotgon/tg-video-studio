@@ -1217,7 +1217,7 @@ function ProjectDashboard() {
       tone: moreContext.trim(),
     };
     const output: CommercialBrOutput = { variants, duration_seconds: duration, aspect_ratio: aspectRatio, captions: true };
-    const brand: CommercialBrBrand = { tone: "direto, acolhedor e confiante", primary_color: "#19382B", accent_color: "#C5A880", logo_asset_id: null };
+    const brand: CommercialBrBrand = { tone: "direto, acolhedor e confiante", primary_color: "#031A26", accent_color: "#B9915B", logo_asset_id: null };
     try {
       const res = await createProject.mutateAsync({
         name,

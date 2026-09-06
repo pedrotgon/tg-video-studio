@@ -82,6 +82,7 @@ function AppLayout() {
     return `/projects/${match[1]}/${match[2] ?? ""}`;
   })();
   const isAssistantPage = /^\/projects\/[^/]+\/assistant$/.test(pathname);
+  const isPerfilPage = pathname.includes("/perfil");
   const productSurfaces = useProductSurfaces(Boolean(username && validated));
   const requiredSurfaceCode: ProductSurfaceCode | null = routeProject
     ? isAssistantPage
@@ -235,22 +236,26 @@ function AppLayout() {
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <TgCreativeRail />
           <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-            <Header />
-            <MyBuddyCompanion />
-            <AccessoryUnlockPrompt />
-            <VersionUpdateDialog />
-            <PikoInspirationStation
-              open={pikoStationOpen}
-              onClose={() => setPikoStationOpen(false)}
-            />
+            {!isPerfilPage && <Header />}
+            {!isPerfilPage && <MyBuddyCompanion />}
+            {!isPerfilPage && <AccessoryUnlockPrompt />}
+            {!isPerfilPage && <VersionUpdateDialog />}
+            {!isPerfilPage && (
+              <PikoInspirationStation
+                open={pikoStationOpen}
+                onClose={() => setPikoStationOpen(false)}
+              />
+            )}
             <div className="flex min-h-0 flex-1 overflow-hidden">
               <main
                 id="main-content"
                 tabIndex={-1}
                 className={
-                  isAssistantPage
-                    ? "min-w-0 flex-1 overflow-y-auto px-6 pb-0 pt-6 focus:outline-none [scrollbar-gutter:stable]"
-                    : "min-w-0 flex-1 overflow-y-auto p-6 focus:outline-none [scrollbar-gutter:stable]"
+                  isPerfilPage
+                    ? "min-w-0 flex-1 overflow-y-auto p-0 focus:outline-none [scrollbar-gutter:stable]"
+                    : isAssistantPage
+                      ? "min-w-0 flex-1 overflow-y-auto px-6 pb-0 pt-6 focus:outline-none [scrollbar-gutter:stable]"
+                      : "min-w-0 flex-1 overflow-y-auto p-6 focus:outline-none [scrollbar-gutter:stable]"
                 }
               >
                 <motion.div
