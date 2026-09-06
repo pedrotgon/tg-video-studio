@@ -28,20 +28,7 @@ export const App: React.FC = () => {
     <div className="studio-shell">
       <Sidebar activeTab={activeTab} onSelectTab={changeTab} />
       <div className="studio-main">
-        <header className="studio-header">
-          <div className="brand-lockup">
-            <span className="brand-monogram">TG</span>
-            <span className="brand-copy">
-              <span className="brand-name">Video Studio</span>
-            <span className="brand-context">{activeTab === 'simple' ? 'Produção rápida' : 'Estúdio de criatividade'}</span>
-            </span>
-          </div>
-          <div className="header-actions">
-            <span className="engine-indicator">Motor rápido online</span>
-          </div>
-        </header>
-
-        <main className="flex-1 overflow-y-auto px-5 py-5 lg:px-7">
+        <main className="flex-1 overflow-y-auto px-5 py-6 lg:px-8">
           <div className={`mx-auto grid min-h-full max-w-[1400px] grid-cols-1 gap-5 ${simpleStep === 5 ? 'lg:grid-cols-12' : ''}`}>
             <section className={`space-y-6 ${simpleStep === 5 ? 'lg:col-span-7' : ''}`}>
               <SimpleVideoTab onGenerate={generateSimple} activeJob={activeJob} onStepChange={setSimpleStep} />

@@ -121,9 +121,8 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
   const canVisit = (number: number) => number === 1 || Boolean(selectedCopy);
 
   return <div className="mx-auto max-w-5xl space-y-5">
-    <div>
-      <p className="mb-1 text-xs font-semibold text-brand-gold">PRODUÇÃO RÁPIDA</p>
-      <h1 className="text-[26px] font-bold leading-tight text-brand-forest">Uma ideia. Dez possibilidades.</h1>
+    <div className="pt-1">
+      <h1 className="text-[24px] font-bold leading-tight text-brand-forest">Esteira de criação de conteúdo</h1>
       <p className="mt-1 text-sm text-[#5e727c]">Escolha uma copy e transforme em vídeo.</p>
     </div>
 

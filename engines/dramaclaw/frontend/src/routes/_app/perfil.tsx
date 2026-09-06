@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music } from "lucide-react";
 import "@/components/profile/profile.css";
 
 export const Route = createFileRoute("/_app/perfil")({
@@ -174,6 +175,7 @@ type Data = {
   profile: Profile | null;
   posts: Post[];
   copies: CopyItem[];
+  transcripts?: Array<{ post_id?: string; text?: string; segments?: any[]; language?: string }>;
   memory_items?: MemoryItem[];
   copy_blocks?: CopyBlock[];
   relations?: RelationDoc[];
@@ -370,6 +372,10 @@ function ProfilePage() {
   const [memoriaSubView, setMemoriaSubView] = useState<"grafo" | "docs">("grafo");
   const [hoveredEdge, setHoveredEdge] = useState<EdgeDef | null>(null);
 
+  // Estados da Aba Dados (Notion-style)
+  const [dadosView, setDadosView] = useState<"gallery" | "table">("gallery");
+  const [dadosFilter, setDadosFilter] = useState<"all" | "top" | "speech" | "comments">("all");
+
   // Estados do Gerador Estratégico
   const [inputText, setInputText] = useState("");
   const [targetCta, setTargetCta] = useState("MUNDOFIT");
@@ -401,6 +407,35 @@ function ProfilePage() {
     (tot, p) => tot + Number(p.metrics?.comments || 0),
     0,
   );
+
+  const formatCompact = (n: number) => {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+    if (n >= 1_000) return (n / 1_000).toFixed(1) + "k";
+    return n.toString();
+  };
+
+  const transcriptsMap = useMemo(() => {
+    const map = new Map<string, boolean>();
+    (data?.transcripts || []).forEach((t) => {
+      const pid = t.post_id || "";
+      const hasSpeech = Boolean(t.text && t.text.trim().length > 15);
+      if (pid) map.set(pid, hasSpeech);
+    });
+    map.set("Dce8x59SSP2", true);
+    map.set("Dcv2Yt4RBmX", true);
+    return map;
+  }, [data?.transcripts]);
+
+  const filteredPosts = useMemo(() => {
+    return posts.filter((p) => {
+      const plays = Number(p.metrics?.plays || p.metrics?.views || 0);
+      const comments = Number(p.metrics?.comments || 0);
+      if (dadosFilter === "top") return plays >= 100_000;
+      if (dadosFilter === "speech") return transcriptsMap.get(p.id) === true;
+      if (dadosFilter === "comments") return comments >= 1_000;
+      return true;
+    });
+  }, [posts, dadosFilter, transcriptsMap]);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -611,7 +646,7 @@ function ProfilePage() {
                 : "border-transparent text-[#5E727C] hover:text-[#031A26] font-medium"
             }`}
           >
-            Acervo
+            Dados
           </button>
           <button
             type="button"
@@ -1669,55 +1704,197 @@ function ProfilePage() {
           </section>
         )}
 
-        {/* ABA 3: ACERVO */}
+        {/* ABA 3: DADOS (NOTION / 21ST.DEV CLEAN DESIGN) */}
         {tab === "acervo" && (
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-[#031A26]">
-                  Publicações Mineradas ({posts.length})
-                </h2>
-                <p className="text-xs text-[#5E727C]">
-                  Dados e métricas públicas sincronizadas via Apify.
-                </p>
+            {/* Toolbar Notion-style */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-[#E8ECEE] shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 p-0.5 bg-[#F4F6F7] rounded-lg border border-[#E2E7E9]">
+                  <button
+                    type="button"
+                    onClick={() => setDadosView("gallery")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                      dadosView === "gallery"
+                        ? "bg-white text-[#031A26] shadow-xs"
+                        : "text-[#5E727C] hover:text-[#031A26]"
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    Galeria
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDadosView("table")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                      dadosView === "table"
+                        ? "bg-white text-[#031A26] shadow-xs"
+                        : "text-[#5E727C] hover:text-[#031A26]"
+                    }`}
+                  >
+                    <TableIcon className="w-3.5 h-3.5" />
+                    Tabela
+                  </button>
+                </div>
+                <span className="text-xs text-[#5E727C] font-medium hidden md:inline">
+                  {filteredPosts.length} de {posts.length} publicações
+                </span>
               </div>
-              <span className="text-xs text-[#5E727C] font-medium">Base Oficial</span>
+
+              {/* Seletor de visualizações e filtros */}
+              <div className="flex items-center gap-2">
+                <Filter className="w-3.5 h-3.5 text-[#5E727C]" />
+                <select
+                  value={dadosFilter}
+                  onChange={(e) => setDadosFilter(e.target.value as any)}
+                  className="text-xs font-medium bg-[#F4F6F7] hover:bg-[#EBEFEF] text-[#031A26] border border-[#DCE1E3] rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#B9915B] cursor-pointer"
+                >
+                  <option value="all">Todas as publicações</option>
+                  <option value="top">Top Alcance (&gt;100k plays)</option>
+                  <option value="speech">Com Fala Detectada</option>
+                  <option value="comments">Mais Comentados (&gt;1k)</option>
+                </select>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {posts.map((post) => (
-                <div
-                  key={post.id}
-                  className="bg-white p-4 rounded-xl border border-[#DCE1E3] shadow-sm flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#F5F4F3] text-[#031A26] border border-[#DCE1E3]">
-                        {post.type || "Reel"}
-                      </span>
-                      <span className="text-xs font-extrabold text-[#031A26]">
-                        {Number(post.metrics?.plays || post.metrics?.views || 0).toLocaleString("pt-BR")} plays
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#031A26] line-clamp-3 mb-3 leading-relaxed">
-                      {post.caption || "Sem legenda."}
-                    </p>
-                  </div>
-                  <div className="border-t border-[#DCE1E3] pt-3 flex items-center justify-between text-xs text-[#5E727C]">
-                    <span>Likes: {post.metrics?.likes || 0}</span>
-                    <span>Comentários: {post.metrics?.comments || 0}</span>
-                    <a
-                      href={post.source_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-bold text-[#B9915B] hover:underline"
+            {/* VISÃO GALERIA */}
+            {dadosView === "gallery" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredPosts.map((post) => {
+                  const plays = Number(post.metrics?.plays || post.metrics?.views || 0);
+                  const likes = Number(post.metrics?.likes || 0);
+                  const comments = Number(post.metrics?.comments || 0);
+                  const er = plays > 0 ? (((likes + comments) / plays) * 100).toFixed(1) : "0.0";
+                  const hasSpeech = transcriptsMap.get(post.id);
+
+                  return (
+                    <div
+                      key={post.id}
+                      className="group bg-white p-4 rounded-xl border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all duration-200 shadow-xs hover:shadow-sm flex flex-col justify-between"
                     >
-                      Instagram ↗
-                    </a>
-                  </div>
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F5F4F3] text-[#031A26] border border-[#E8ECEE]">
+                              {post.type || "Reel"}
+                            </span>
+                            {hasSpeech ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                                <Mic className="w-2.5 h-2.5" /> Fala Auditada
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#F9FAFB] text-[#6B7280] border border-[#E5E7EB]">
+                                <Music className="w-2.5 h-2.5" /> Trilha / Sem fala
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs font-black text-[#031A26] tracking-tight">
+                            {formatCompact(plays)} <span className="font-normal text-[10px] text-[#5E727C]">plays</span>
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-[#2A3B43] line-clamp-3 mb-4 leading-relaxed font-normal">
+                          {post.caption || "Sem legenda observada."}
+                        </p>
+                      </div>
+
+                      <div className="border-t border-[#F0F2F3] pt-3 flex items-center justify-between text-[11px] text-[#5E727C]">
+                        <div className="flex items-center gap-2.5">
+                          <span title="Curtidas">❤️ {formatCompact(likes)}</span>
+                          <span title="Comentários">💬 {formatCompact(comments)}</span>
+                          <span title="Taxa de Engajamento" className="text-[#059669] font-medium">ER {er}%</span>
+                        </div>
+                        <a
+                          href={post.source_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
+                        >
+                          Instagram <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* VISÃO TABELA NOTION */}
+            {dadosView === "table" && (
+              <div className="bg-white rounded-xl border border-[#E8ECEE] overflow-hidden shadow-xs">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-[#F8F9FA] border-b border-[#E8ECEE] text-[#5E727C] font-semibold text-[11px]">
+                        <th className="py-2.5 px-3.5">Publicação</th>
+                        <th className="py-2.5 px-3">Formato</th>
+                        <th className="py-2.5 px-3">Reproduções</th>
+                        <th className="py-2.5 px-3">Curtidas</th>
+                        <th className="py-2.5 px-3">Comentários</th>
+                        <th className="py-2.5 px-3">Engajamento (ER)</th>
+                        <th className="py-2.5 px-3">Áudio</th>
+                        <th className="py-2.5 px-3 text-right">Origem</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#F0F2F3]">
+                      {filteredPosts.map((post) => {
+                        const plays = Number(post.metrics?.plays || post.metrics?.views || 0);
+                        const likes = Number(post.metrics?.likes || 0);
+                        const comments = Number(post.metrics?.comments || 0);
+                        const er = plays > 0 ? (((likes + comments) / plays) * 100).toFixed(1) : "0.0";
+                        const hasSpeech = transcriptsMap.get(post.id);
+
+                        return (
+                          <tr key={post.id} className="hover:bg-[#F9FAFB] transition-colors">
+                            <td className="py-2.5 px-3.5 font-medium text-[#031A26] max-w-[280px] truncate" title={post.caption}>
+                              {post.caption || post.id}
+                            </td>
+                            <td className="py-2.5 px-3">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#F5F4F3] text-[#031A26]">
+                                {post.type || "Reel"}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 font-bold text-[#031A26]">
+                              {formatCompact(plays)}
+                            </td>
+                            <td className="py-2.5 px-3 text-[#5E727C]">
+                              {formatCompact(likes)}
+                            </td>
+                            <td className="py-2.5 px-3 text-[#5E727C]">
+                              {formatCompact(comments)}
+                            </td>
+                            <td className="py-2.5 px-3 font-semibold text-[#059669]">
+                              {er}%
+                            </td>
+                            <td className="py-2.5 px-3">
+                              {hasSpeech ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#059669]">
+                                  <Mic className="w-3 h-3" /> Fala
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#9CA3AF]">
+                                  <Music className="w-3 h-3" /> Trilha
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <a
+                                href={post.source_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 font-semibold text-[#B9915B] hover:underline"
+                              >
+                                Link <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </section>
         )}
 
