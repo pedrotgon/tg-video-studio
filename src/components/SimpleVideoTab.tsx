@@ -121,9 +121,18 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
   const canVisit = (number: number) => number === 1 || Boolean(selectedCopy);
 
   return <div className="mx-auto max-w-5xl space-y-5">
-    <div className="pt-1">
-      <h1 className="text-[24px] font-bold leading-tight text-brand-forest">Esteira de criação de conteúdo</h1>
-      <p className="mt-1 text-sm text-[#5e727c]">Escolha uma copy e transforme em vídeo.</p>
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+      <div>
+        <h1 className="text-[24px] font-bold leading-tight text-brand-forest">Esteira de criação de conteúdo</h1>
+        <p className="mt-1 text-sm text-[#5e727c]">Escolha uma copy e transforme em vídeo.</p>
+      </div>
+      <a
+        href="/criativo/perfil?project=Thaix_Santiago_Perfil_e_Copies"
+        className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-lg border border-[#dce1e3] bg-white px-3 py-1.5 text-xs font-semibold text-brand-forest hover:border-brand-gold hover:text-brand-gold transition-colors shadow-xs"
+      >
+        <span>Perfil &amp; Regras: Thaix Santiago</span>
+        <ChevronRight className="h-3.5 w-3.5 text-brand-gold" />
+      </a>
     </div>
 
     <ProductionStepper steps={steps} current={step} disabled={busy || isGenerating} canVisit={canVisit} onChange={go} />

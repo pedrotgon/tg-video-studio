@@ -23,6 +23,8 @@ type Post = {
   observed_at: string;
   media_file?: string;
   type?: string;
+  thumbnail_url?: string;
+  video_url?: string;
 };
 
 type Profile = {
@@ -196,12 +198,35 @@ const emptyProfile: Profile = {
   version: 1,
 };
 
-// 5 Documentos Markdown Oficiais (Memória da Cliente)
+// 6 Documentos Markdown Oficiais (Memória da Cliente)
 const VAULT_DOCS: Record<string, { title: string; category: string; content: string }> = {
+  about: {
+    title: "About Me: Thaix Santiago",
+    category: "About Me",
+    content: `# About Me: Thaix Santiago
+
+> Dossiê mestre de apresentação, posicionamento e regras de negócio da criadora.
+
+## Quem é Thaix Santiago
+Influenciadora e criadora de conteúdo fitness focada em emagrecimento feminino através do Ritbox de baixo impacto. Seu perfil oficial (@thaix.santiago) reúne 417 mil seguidoras ativas e mais de 12 milhões de visualizações somadas.
+
+## Proposta Única de Valor (UVP)
+Perda de peso sem sofrimento para mulheres adultas que não têm tempo nem paciência para a musculação tradicional. O diferencial competitivo inegociável é o treino 100% de baixo impacto, realizado na sala de casa, sem saltos e sem dor no joelho.
+
+## Pilares de Autoridade e Prova
+1. Top 1 Viral: 6.601.593 plays e 33.266 comentários (Post Da_JAVQSCPu).
+2. Top 2 Viral: 4.099.020 plays e 7.069 comentários (Post DauwjqVBoHh).
+3. Top 3 Viral: 613.828 plays e 2.113 comentários (Post DcXgIputsre).
+
+## Funil e Regras de Negócio
+- Palavra-chave Mestre: MUNDOFIT (aciona automação ManyChat com entrega da aula completa no Direct).
+- Formato das Copies: 20 a 40 segundos, frases curtas para teleprompter, gancho ativo nos primeiros 2 segundos.
+- Tom de Voz: Enérgico, acolhedor ("meninas", "vem comigo", "sem pular", "na sala de casa").`,
+  },
   identidade: {
-    title: "Identidade — Thaix Santiago",
+    title: "Identidade: Thaix Santiago",
     category: "Identidade",
-    content: `# Identidade — Thaix Santiago
+    content: `# Identidade: Thaix Santiago
 
 > Registro mestre de posicionamento, autoridade e proposta única da criadora.
 
@@ -220,9 +245,9 @@ Emagrecimento prático e descomplicado para mulheres reais que não têm tempo o
 3. Comunidade Engajada: Mais de 50.000 comentários gerados nos vídeos de convite para aulas.`,
   },
   persona: {
-    title: "Persona — Perfil e Dores Reais",
+    title: "Persona: Perfil e Dores Reais",
     category: "Persona",
-    content: `# Persona — Perfil e Dores Reais
+    content: `# Persona: Perfil e Dores Reais
 
 > Mapeamento da aluna ideal atendida pelo perfil e suas resistências cotidianas.
 
@@ -243,9 +268,9 @@ Emagrecimento prático e descomplicado para mulheres reais que não têm tempo o
 - Recuperar disposição diária e autoestima.`,
   },
   tom: {
-    title: "Tom — Voz e Estilo de Comunicação",
+    title: "Tom: Voz e Estilo de Comunicação",
     category: "Tom",
-    content: `# Tom — Voz e Estilo de Comunicação
+    content: `# Tom: Voz e Estilo de Comunicação
 
 > Diretrizes de linguagem, ritmo, entonação e postura comunicativa da Thaix.
 
@@ -265,9 +290,9 @@ Emagrecimento prático e descomplicado para mulheres reais que não têm tempo o
 - Introduções longas nos primeiros 3 segundos.`,
   },
   framework: {
-    title: "Framework — Engenharia 80/20 dos Virais",
+    title: "Framework: Engenharia 80/20 dos Virais",
     category: "Framework",
-    content: `# Framework — Engenharia 80/20 dos Virais
+    content: `# Framework: Engenharia 80/20 dos Virais
 
 > Estrutura anatômica validada nos 3 posts campeões (6.6M, 4.1M e 613k plays).
 
@@ -289,9 +314,9 @@ Emagrecimento prático e descomplicado para mulheres reais que não têm tempo o
 - Entrega Automatizada: ManyChat enviando a aula gratuita no Direct, iniciando o funil de aquisição.`,
   },
   regras: {
-    title: "Regras — Diretrizes Inegociáveis de Copywriting",
+    title: "Regras: Diretrizes Inegociáveis de Copywriting",
     category: "Regras",
-    content: `# Regras — Diretrizes Inegociáveis de Copywriting
+    content: `# Regras: Diretrizes Inegociáveis de Copywriting
 
 > Parâmetros obrigatórios para a geração de roteiros em nome de Thaix Santiago.
 
@@ -370,6 +395,7 @@ function ProfilePage() {
   const [selectedNodeId, setSelectedNodeId] = useState<string>("mem_prod_ad98");
   const [searchQuery, setSearchQuery] = useState("");
   const [memoriaSubView, setMemoriaSubView] = useState<"grafo" | "docs">("grafo");
+  const [selectedVaultDoc, setSelectedVaultDoc] = useState<string>("about");
   const [hoveredEdge, setHoveredEdge] = useState<EdgeDef | null>(null);
 
   // Estados da Aba Dados (Notion-style)
@@ -559,13 +585,16 @@ function ProfilePage() {
   }, [activeItem, edgesList]);
 
   const activeDoc = useMemo(() => {
-    if (!activeItem) return VAULT_DOCS.framework;
+    if (selectedVaultDoc && VAULT_DOCS[selectedVaultDoc]) {
+      return VAULT_DOCS[selectedVaultDoc];
+    }
+    if (!activeItem) return VAULT_DOCS.about;
     if (activeItem.tipo === "identidade") return VAULT_DOCS.identidade;
     if (activeItem.tipo === "audiencia") return VAULT_DOCS.persona;
     if (activeItem.tipo === "estrutura") return VAULT_DOCS.framework;
     if (activeItem.tipo === "producao") return VAULT_DOCS.regras;
-    return VAULT_DOCS.framework;
-  }, [activeItem?.tipo]);
+    return VAULT_DOCS.about;
+  }, [selectedVaultDoc, activeItem?.tipo]);
 
   function handleUseAd98InGenerator() {
     setInputText(
@@ -715,6 +744,118 @@ function ProfilePage() {
                   {data?.coverage_summary?.posts_total ?? posts.length}
                 </div>
                 <span className="text-xs text-[#5E727C]">{data?.coverage_summary?.useful_speech_total ?? 0} com fala autêntica</span>
+              </div>
+            </div>
+
+            {/* ABOUT ME & DOSSIÊ EXECUTIVO DA CRIADORA */}
+            <div className="bg-white p-6 rounded-xl border border-[#DCE1E3] shadow-xs">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-[#F0F2F3]">
+                <div className="flex items-center gap-4">
+                  <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-tr from-[#031A26] to-[#B9915B] flex items-center justify-center text-white font-extrabold text-xl shadow-sm shrink-0 border border-[#DCE1E3]">
+                    {posts[0]?.thumbnail_url && (
+                      <img
+                        src={posts[0].thumbnail_url}
+                        alt="Thaix Santiago"
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = "none";
+                        }}
+                      />
+                    )}
+                    <span className="absolute inset-0 flex items-center justify-center font-extrabold text-lg pointer-events-none text-white drop-shadow-xs">TS</span>
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-xl font-bold text-[#031A26]">About Me: Thaix Santiago</h2>
+                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                        Perfil Ativo • 417k seguidoras
+                      </span>
+                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#FCFBF9] text-[#B9915B] border border-[#B9915B]/30">
+                        12M+ visualizações
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#5E727C] mt-0.5">
+                      Criadora &amp; Especialista em Emagrecimento Feminino no Ritbox • Método Baixo Impacto
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTab("memoria");
+                      setMemoriaSubView("docs");
+                      setSelectedVaultDoc("about");
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#031A26] text-white hover:bg-[#031A26]/90 transition-colors shadow-xs"
+                  >
+                    <span>Dossiê Vault (.md)</span>
+                    <span>→</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTab("acervo")}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-[#F5F4F3] text-[#031A26] border border-[#DCE1E3] hover:border-[#B9915B] transition-colors"
+                  >
+                    <span>Dados ({posts.length})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTab("copies")}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-[#F5F4F3] text-[#031A26] border border-[#DCE1E3] hover:border-[#B9915B] transition-colors"
+                  >
+                    <span>10 Copies</span>
+                  </button>
+                  <a
+                    href="https://www.instagram.com/thaix.santiago/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-[#F5F4F3] text-[#031A26] border border-[#DCE1E3] hover:border-[#B9915B] transition-colors"
+                  >
+                    <span>@thaix.santiago</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-[#B9915B]" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-5 pt-5">
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#5E727C] mb-2">
+                    1. Proposta Única (UVP)
+                  </h3>
+                  <p className="text-xs text-[#031A26] leading-relaxed">
+                    Emagrecimento prático e divertido na sala de casa, aliando queima calórica ao ritmo da música com <strong>100% de baixo impacto</strong> (sem saltos, sem agredir joelhos ou coluna).
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#5E727C] mb-2">
+                    2. Persona &amp; Dores Reais
+                  </h3>
+                  <p className="text-xs text-[#031A26] leading-relaxed">
+                    Mulheres de 28 a 55 anos, mães, rotina sobrecarregada, aversão à academia tradicional e necessidade de treinar em 15 a 20 minutos com segurança e leveza.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#5E727C] mb-2">
+                    3. Funil &amp; Conversão ManyChat
+                  </h3>
+                  <p className="text-xs text-[#031A26] leading-relaxed">
+                    CTA mandatório com a palavra-chave <strong>MUNDOFIT</strong> para disparar automação ManyChat com entrega da aula completa gratuita no Direct. Roteiros teleprompter de 20 a 40s.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#5E727C] mb-2">
+                    4. Regras de Ouro Thiago Neiva
+                  </h3>
+                  <p className="text-xs text-[#031A26] leading-relaxed">
+                    Zero salto articular. Linguagem acolhedora de amiga ("meninas", "vem comigo"). Ação imediata nos primeiros 2 segundos com quebra de padrão musical.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -1642,7 +1783,18 @@ function ProfilePage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setMemoriaSubView("docs")}
+                        onClick={() => {
+                          if (activeItem) {
+                            if (activeItem.tipo === "identidade") setSelectedVaultDoc("identidade");
+                            else if (activeItem.tipo === "audiencia") setSelectedVaultDoc("persona");
+                            else if (activeItem.tipo === "estrutura") setSelectedVaultDoc("framework");
+                            else if (activeItem.tipo === "producao") setSelectedVaultDoc("regras");
+                            else setSelectedVaultDoc("about");
+                          } else {
+                            setSelectedVaultDoc("about");
+                          }
+                          setMemoriaSubView("docs");
+                        }}
                         className="w-full text-xs font-bold mt-2 border-[#DCE1E3] bg-white text-[#031A26]"
                       >
                         Ver Documento Vault Completo ({activeDoc.title})
@@ -1653,25 +1805,33 @@ function ProfilePage() {
               ) : (
                 /* Subview dos Documentos Vault (.md) */
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                    {Object.entries(VAULT_DOCS).map(([key, doc]) => (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => {
-                          const targetNode = memoryItems.find((m) => m.tipo === doc.category.toLowerCase());
-                          if (targetNode) setSelectedNodeId(targetNode.id);
-                        }}
-                        className="p-3 rounded-lg border text-left bg-white border-[#DCE1E3] hover:border-[#031A26] text-[#031A26] transition-all"
-                      >
-                        <span className="text-[10px] font-bold uppercase tracking-wider block text-[#B9915B] mb-1">
-                          {doc.category}
-                        </span>
-                        <span className="text-xs font-bold block truncate">
-                          {key}.md
-                        </span>
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
+                    {Object.entries(VAULT_DOCS).map(([key, doc]) => {
+                      const isSelected = selectedVaultDoc === key;
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setSelectedVaultDoc(key)}
+                          className={`p-3 rounded-lg border text-left transition-all ${
+                            isSelected
+                              ? "bg-[#031A26] text-white border-[#031A26] shadow-xs"
+                              : "bg-white text-[#031A26] border-[#DCE1E3] hover:border-[#B9915B]"
+                          }`}
+                        >
+                          <span
+                            className={`text-[10px] font-bold uppercase tracking-wider block mb-1 ${
+                              isSelected ? "text-[#B9915B]" : "text-[#5E727C]"
+                            }`}
+                          >
+                            {doc.category}
+                          </span>
+                          <span className="text-xs font-bold block truncate">
+                            {key}.md
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <div className="bg-[#F5F4F3] p-6 rounded-xl border border-[#DCE1E3]">
@@ -1770,35 +1930,73 @@ function ProfilePage() {
                   return (
                     <div
                       key={post.id}
-                      className="group bg-white p-4 rounded-xl border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all duration-200 shadow-xs hover:shadow-sm flex flex-col justify-between"
+                      className="group bg-white rounded-xl border border-[#E8ECEE] hover:border-[#B9915B]/50 transition-all duration-200 shadow-xs hover:shadow-md overflow-hidden flex flex-col justify-between"
                     >
                       <div>
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F5F4F3] text-[#031A26] border border-[#E8ECEE]">
-                              {post.type || "Reel"}
-                            </span>
-                            {hasSpeech ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
-                                <Mic className="w-2.5 h-2.5" /> Fala Auditada
+                        {post.thumbnail_url ? (
+                          <div className="relative w-full aspect-[4/3] bg-[#031A26]/5 overflow-hidden">
+                            <img
+                              src={post.thumbnail_url}
+                              alt={post.caption || "Reel"}
+                              referrerPolicy="no-referrer"
+                              loading="lazy"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLElement).style.display = "none";
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#031A26]/85 via-transparent to-black/20" />
+                            <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-xs border border-white/20">
+                                {post.type || "Reel"}
                               </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#F9FAFB] text-[#6B7280] border border-[#E5E7EB]">
-                                <Music className="w-2.5 h-2.5" /> Trilha / Sem fala
-                              </span>
-                            )}
+                              {hasSpeech ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 backdrop-blur-xs border border-emerald-500/30">
+                                  <Mic className="w-2.5 h-2.5" /> Fala Auditada
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-black/50 text-slate-300 backdrop-blur-xs border border-white/10">
+                                  <Music className="w-2.5 h-2.5" /> Trilha
+                                </span>
+                              )}
+                            </div>
+                            <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-white text-xs font-bold drop-shadow-xs">
+                              <span>▶ {formatCompact(plays)} plays</span>
+                              <span className="text-[11px] font-medium opacity-90">ER {er}%</span>
+                            </div>
                           </div>
-                          <span className="text-xs font-black text-[#031A26] tracking-tight">
-                            {formatCompact(plays)} <span className="font-normal text-[10px] text-[#5E727C]">plays</span>
-                          </span>
-                        </div>
+                        ) : null}
 
-                        <p className="text-xs text-[#2A3B43] line-clamp-3 mb-4 leading-relaxed font-normal">
-                          {post.caption || "Sem legenda observada."}
-                        </p>
+                        <div className="p-4">
+                          {!post.thumbnail_url && (
+                            <div className="flex items-center justify-between gap-2 mb-3">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F5F4F3] text-[#031A26] border border-[#E8ECEE]">
+                                  {post.type || "Reel"}
+                                </span>
+                                {hasSpeech ? (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                                    <Mic className="w-2.5 h-2.5" /> Fala Auditada
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#F9FAFB] text-[#6B7280] border border-[#E5E7EB]">
+                                    <Music className="w-2.5 h-2.5" /> Trilha / Sem fala
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-xs font-black text-[#031A26] tracking-tight">
+                                {formatCompact(plays)} <span className="font-normal text-[10px] text-[#5E727C]">plays</span>
+                              </span>
+                            </div>
+                          )}
+
+                          <p className="text-xs text-[#2A3B43] line-clamp-3 leading-relaxed font-normal">
+                            {post.caption || "Sem legenda observada."}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="border-t border-[#F0F2F3] pt-3 flex items-center justify-between text-[11px] text-[#5E727C]">
+                      <div className="px-4 pb-3 pt-2 border-t border-[#F0F2F3] flex items-center justify-between text-[11px] text-[#5E727C]">
                         <div className="flex items-center gap-2.5">
                           <span title="Curtidas">❤️ {formatCompact(likes)}</span>
                           <span title="Comentários">💬 {formatCompact(comments)}</span>
@@ -1846,8 +2044,23 @@ function ProfilePage() {
 
                         return (
                           <tr key={post.id} className="hover:bg-[#F9FAFB] transition-colors">
-                            <td className="py-2.5 px-3.5 font-medium text-[#031A26] max-w-[280px] truncate" title={post.caption}>
-                              {post.caption || post.id}
+                            <td className="py-2.5 px-3.5 font-medium text-[#031A26] max-w-[320px]">
+                              <div className="flex items-center gap-2.5">
+                                {post.thumbnail_url ? (
+                                  <img
+                                    src={post.thumbnail_url}
+                                    alt=""
+                                    referrerPolicy="no-referrer"
+                                    className="w-8 h-8 rounded object-cover border border-[#E8ECEE] shrink-0"
+                                    onError={(e) => {
+                                      (e.currentTarget as HTMLElement).style.display = "none";
+                                    }}
+                                  />
+                                ) : null}
+                                <span className="truncate" title={post.caption}>
+                                  {post.caption || post.id}
+                                </span>
+                              </div>
                             </td>
                             <td className="py-2.5 px-3">
                               <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#F5F4F3] text-[#031A26]">
