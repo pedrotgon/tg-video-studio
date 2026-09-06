@@ -47,6 +47,10 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true,
       },
+      '/tasks': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
     },
   },
 });

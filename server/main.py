@@ -383,8 +383,13 @@ async def get_simple_task(task_id: str):
     # `combined_videos` are only intermediate visual assemblies.
     videos = task.get("videos") or task.get("combined_videos") or []
     video_url = videos[-1] if videos else None
-    if video_url and video_url.startswith("/"):
-        video_url = urljoin(f"{MONEY_API}/", video_url.lstrip("/"))
+    if video_url:
+        if video_url.startswith("http://127.0.0.1:8080/"):
+            video_url = video_url.replace("http://127.0.0.1:8080", "")
+        elif video_url.startswith("http://localhost:8080/"):
+            video_url = video_url.replace("http://localhost:8080", "")
+        elif not video_url.startswith("/"):
+            video_url = f"/{video_url}"
     if state == -1:
         status = "error"
     elif state == 1:
