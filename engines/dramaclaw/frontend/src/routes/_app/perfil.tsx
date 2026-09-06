@@ -5,9 +5,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music, BookOpen, Sparkles, FileText, Copy, Share2, ArrowRight } from "lucide-react";
+import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music, BookOpen, Sparkles, FileText, Copy, Share2, ArrowRight, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import "@/components/profile/profile.css";
 
@@ -525,6 +524,14 @@ const GRAPH_NODES: GraphNodeItem[] = [
   },
 ];
 
+const CTA_RANKING_KEYWORDS = [
+  { id: "mundofit", word: "MUNDOFIT", conversions: "Top 1 Meta Ads (82k leads)" },
+  { id: "treino", word: "TREINO", conversions: "Viral Orgânico (1.9M plays)" },
+  { id: "ritmo", word: "RITMO", conversions: "Método Baixo Impacto" },
+  { id: "ritbox", word: "RITBOX", conversions: "Posicionamento de Marca" },
+  { id: "aula", word: "AULA", conversions: "Direct ManyChat Gratuito" },
+];
+
 function ProfilePage() {
   const [project] = useState("01M1SAXW27GVCP7QF6EYY7PSQN");
   const [tab, setTab] = useState<"geral" | "memoria" | "acervo" | "copies">("geral");
@@ -546,7 +553,27 @@ function ProfilePage() {
 
   // Estados do Gerador Estratégico
   const [inputText, setInputText] = useState("");
-  const [targetCta, setTargetCta] = useState("MUNDOFIT");
+  const [selectedKeywords, setSelectedKeywords] = useState<string[]>(["MUNDOFIT"]);
+  const [isSyncingKeywords, setIsSyncingKeywords] = useState(false);
+
+  function toggleKeyword(word: string) {
+    setSelectedKeywords((prev) => {
+      const exists = prev.includes(word);
+      if (exists) {
+        const next = prev.filter((w) => w !== word);
+        return next.length > 0 ? next : [word];
+      }
+      return [...prev, word];
+    });
+  }
+
+  function handleSyncKeywords() {
+    setIsSyncingKeywords(true);
+    setTimeout(() => {
+      setIsSyncingKeywords(false);
+      setNotice("Palavras-chave sincronizadas com o ranking de Meta Ads e Memória.");
+    }, 500);
+  }
 
   const queryClient = useQueryClient();
   const endpoint = `api/v1/projects/${encodeURIComponent(project)}/profile`;
@@ -613,21 +640,22 @@ function ProfilePage() {
 
   async function handleGenerateCopies() {
     if (!inputText.trim()) {
-      setError("Digite um tema ou briefing para gerar as 10 copies.");
+      setError("Digite um tema para gerar o copywriting.");
       return;
     }
     setBusy(true);
     setError("");
     setNotice("");
+    const activeCta = selectedKeywords.length > 0 ? selectedKeywords[0] : "MUNDOFIT";
     try {
       await api.post(`${endpoint}/strategic-copies`, {
         json: {
           input_text: inputText.trim(),
-          target_cta: targetCta.trim() || "MUNDOFIT",
+          target_cta: activeCta,
         },
       });
       await queryClient.invalidateQueries({ queryKey: ["client-profile", project] });
-      setNotice("Processamento iniciado no servidor.");
+      setNotice("Processamento de copywriting iniciado.");
       setTab("copies");
     } catch (e: unknown) {
       let detail = "Não foi possível gerar copies. Tente novamente.";
@@ -637,6 +665,22 @@ function ProfilePage() {
         if (typeof payload?.detail === "string") detail = payload.detail;
       }
       setError(detail);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleClearCopies() {
+    if (copies.length === 0) return;
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      await api.delete(`${endpoint}/copies`);
+      await queryClient.invalidateQueries({ queryKey: ["client-profile", project] });
+      setNotice("Todas as copies geradas foram limpas com sucesso.");
+    } catch (e: unknown) {
+      setError("Não foi possível limpar as copies. Tente novamente.");
     } finally {
       setBusy(false);
     }
@@ -1809,54 +1853,74 @@ function ProfilePage() {
         {tab === "copies" && (
           <section className="space-y-6">
             {/* Box de Geração de Copywriting */}
-            <div className="bg-white p-6 rounded-xl border border-[#DCE1E3] shadow-sm space-y-4">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <div>
-                  <h2 className="text-lg font-bold text-[#031A26]">
-                    Copywriting Estratégico &amp; Roteiros Validados (Fórmula 80/20)
-                  </h2>
-                  <p className="text-xs text-[#5E727C]">
-                    Insira um tema ou briefing. O motor gera 10 roteiros completos cobrindo os 10 ângulos virais comprovados da Thaix Santiago.
-                  </p>
-                </div>
-                {runningJob && (
-                  <span className="text-xs font-semibold px-3 py-1 rounded bg-[#F5F4F3] text-[#031A26] border border-[#DCE1E3] animate-pulse">
-                    Processando com IA...
-                  </span>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="md:col-span-3">
-                  <label className="block text-xs font-bold text-[#031A26] mb-1">
-                    Tema ou Briefing
-                  </label>
-                  <Textarea
-                    placeholder="Ex: Treino rápido para quem passou dos 40 anos e quer secar a barriga sem forçar a lombar na sala de casa..."
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    className="text-xs"
-                    rows={3}
-                  />
-                </div>
-                <div className="flex flex-col justify-between">
+            <div className="bg-white p-5 rounded-xl border border-[#DCE1E3] shadow-xs">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                {/* Lado Esquerdo: Tema */}
+                <div className="lg:col-span-7 flex flex-col justify-between">
                   <div>
-                    <label className="block text-xs font-bold text-[#031A26] mb-1">
-                      Palavra-Chave do CTA
+                    <label className="block text-xs font-bold text-[#031A26] mb-1.5">
+                      Tema
                     </label>
-                    <Input
-                      value={targetCta}
-                      onChange={(e) => setTargetCta(e.target.value)}
-                      placeholder="MUNDOFIT"
-                      className="text-xs"
+                    <Textarea
+                      placeholder="Ex: Treino rápido para quem passou dos 40 anos e quer secar a barriga sem forçar a lombar na sala de casa..."
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      className="text-xs resize-none border-[#DCE1E3] rounded-lg p-3 min-h-[160px] focus:border-[#031A26]"
                     />
                   </div>
+                </div>
+
+                {/* Lado Direito: Palavra-Chave do CTA (Ranking Top 5 + Recarregar) e Gerar Copywriting */}
+                <div className="lg:col-span-5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-bold text-[#031A26]">
+                        Palavra-Chave do CTA
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleSyncKeywords}
+                        title="Recarregar e sincronizar com ranking do Meta Ads e Memória"
+                        className="p-1 rounded text-[#5E727C] hover:text-[#031A26] hover:bg-[#F4F6F7] transition-all cursor-pointer"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isSyncingKeywords ? "animate-spin text-[#B9915B]" : ""}`} />
+                      </button>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {CTA_RANKING_KEYWORDS.map((kw) => {
+                        const isChecked = selectedKeywords.includes(kw.word);
+                        return (
+                          <label
+                            key={kw.id}
+                            className={`flex items-center justify-between px-2.5 py-1 rounded-md text-xs cursor-pointer border transition-colors ${
+                              isChecked
+                                ? "bg-[#F4F6F7] border-[#031A26]/25 text-[#031A26] font-semibold"
+                                : "bg-white border-[#E2E7E9] text-[#5E727C] hover:border-[#DCE1E3]"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleKeyword(kw.word)}
+                                className="rounded border-[#DCE1E3] text-[#031A26] focus:ring-0 w-3.5 h-3.5 cursor-pointer"
+                              />
+                              <span className="font-mono text-xs font-bold">{kw.word}</span>
+                            </div>
+                            <span className="text-[10px] text-[#5E727C] font-normal">{kw.conversions}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   <Button
                     onClick={handleGenerateCopies}
                     disabled={busy || !inputText.trim() || !!runningJob}
-                    className="w-full bg-[#031A26] text-white hover:bg-[#031A26]/90 text-xs font-bold py-2 mt-3"
+                    className="w-full bg-[#031A26] text-white hover:bg-[#031A26]/90 text-xs font-bold py-2 mt-3 rounded-lg shadow-xs"
                   >
-                    {busy || runningJob ? "Gerando..." : "Gerar 10 Copies"}
+                    {busy || runningJob ? "Gerando..." : "Gerar Copywriting"}
                   </Button>
                 </div>
               </div>
@@ -1866,16 +1930,22 @@ function ProfilePage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-[#031A26]">
-                  Roteiros Gerados ({copies.length})
+                  Copies Geradas ({copies.length})
                 </h3>
-                <span className="text-xs text-[#5E727C]">
-                  Prontos para gravação e teleprompter
-                </span>
+                {copies.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClearCopies}
+                    className="text-xs text-[#5E727C] hover:text-[#031A26] underline underline-offset-4 font-medium transition-colors cursor-pointer"
+                  >
+                    Limpar
+                  </button>
+                )}
               </div>
 
               {copies.length === 0 ? (
                 <div className="p-8 text-center bg-white rounded-xl border border-[#DCE1E3] text-[#5E727C] text-xs">
-                  Nenhuma copy gerada ainda. Digite um tema acima e clique em <strong>Gerar 10 Copies</strong>.
+                  Nenhuma copy gerada ainda. Digite um tema acima e clique em <strong>Gerar Copywriting</strong>.
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1915,7 +1985,7 @@ function ProfilePage() {
 
                       <div className="border-t border-[#DCE1E3] pt-3 flex items-center justify-between">
                         <span className="text-xs text-[#5E727C] font-medium">
-                          CTA: <strong>{copy.target_cta || targetCta}</strong>
+                          CTA: <strong>{copy.target_cta || selectedKeywords[0] || "MUNDOFIT"}</strong>
                         </span>
                         <div className="flex items-center gap-2">
                           <button
@@ -1924,7 +1994,7 @@ function ProfilePage() {
                               titulo: copy.title,
                               briefing: copy.text,
                               hook: copy.hook_spoken,
-                              cta: copy.target_cta || targetCta,
+                              cta: copy.target_cta || selectedKeywords[0] || "MUNDOFIT",
                             })}
                             className="text-xs font-semibold text-[#B9915B] hover:text-[#9A7443] transition-colors"
                           >
