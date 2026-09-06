@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music, BookOpen, Sparkles, FileText, Copy, Share2, ArrowRight, RefreshCw } from "lucide-react";
+import { LayoutGrid, Table as TableIcon, Filter, ExternalLink, Mic, Music, BookOpen, Sparkles, FileText, Copy, Share2, ArrowRight, RefreshCw, X, Info } from "lucide-react";
 import { toast } from "sonner";
 import "@/components/profile/profile.css";
 
@@ -338,6 +338,8 @@ interface GraphNodeItem {
   connections: string[];
   actionType?: "esteira" | "doc" | "postagens";
   actionPayload?: any;
+  x: number;
+  y: number;
 }
 
 const GRAPH_NODES: GraphNodeItem[] = [
@@ -350,6 +352,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     metric: "417k seguidoras",
     summary: "Especialista em emagrecimento feminino no Ritbox. Comunicação acolhedora ('Bora mulher'), sem cobranças tóxicas.",
     connections: ["node_uvp", "node_doc_about", "node_doc_persona", "node_post_ad98", "node_copy_ad98"],
+    x: 110,
+    y: 190,
   },
   {
     id: "node_uvp",
@@ -366,6 +370,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
       hook: "Se você não pode pular mas quer secar a barriga, faça este exercício na sua sala",
       cta: "MUNDOFIT",
     },
+    x: 110,
+    y: 370,
   },
 
   // PILAR 2: DOCUMENTOS DO VAULT
@@ -379,6 +385,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     connections: ["node_thaix", "node_doc_persona", "node_doc_regras"],
     actionType: "doc",
     actionPayload: "about",
+    x: 330,
+    y: 90,
   },
   {
     id: "node_doc_persona",
@@ -390,6 +398,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     connections: ["node_thaix", "node_doc_framework", "node_copy_gancho_culpa"],
     actionType: "doc",
     actionPayload: "persona",
+    x: 330,
+    y: 185,
   },
   {
     id: "node_doc_funil",
@@ -401,6 +411,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     connections: ["node_copy_mundofit", "node_doc_framework", "node_post_ad98"],
     actionType: "doc",
     actionPayload: "funil",
+    x: 330,
+    y: 280,
   },
   {
     id: "node_doc_framework",
@@ -412,6 +424,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     connections: ["node_uvp", "node_doc_regras", "node_copy_ad98", "node_copy_mundofit"],
     actionType: "doc",
     actionPayload: "framework",
+    x: 330,
+    y: 375,
   },
   {
     id: "node_doc_regras",
@@ -423,6 +437,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     connections: ["node_doc_framework", "node_uvp", "node_copy_ad98"],
     actionType: "doc",
     actionPayload: "regras",
+    x: 330,
+    y: 470,
   },
 
   // PILAR 3: POSTAGENS DO ACERVO
@@ -435,6 +451,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     summary: "Criativo com maior volume de interações da história do canal (33.266 comentários pedindo o treino).",
     connections: ["node_thaix", "node_uvp", "node_copy_ad98", "node_copy_mundofit"],
     actionType: "postagens",
+    x: 550,
+    y: 160,
   },
   {
     id: "node_post_82k",
@@ -445,6 +463,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     summary: "Reel dinâmico com prova visual de alunas emagrecendo com ritmos populares sem impacto.",
     connections: ["node_thaix", "node_uvp", "node_copy_ad98"],
     actionType: "postagens",
+    x: 550,
+    y: 290,
   },
   {
     id: "node_post_acervo",
@@ -455,6 +475,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
     summary: "Base observada com taxa média de engajamento de 0.44% e fala autêntica transcrita.",
     connections: ["node_thaix", "node_post_ad98", "node_post_82k"],
     actionType: "postagens",
+    x: 550,
+    y: 430,
   },
 
   // PILAR 4: COPYWRITING VALIDADO
@@ -473,6 +495,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
       hook: "Se você tem mais de 30 anos e não aguenta mais pular na sala, faça este movimento",
       cta: "MUNDOFIT",
     },
+    x: 770,
+    y: 110,
   },
   {
     id: "node_copy_mundofit",
@@ -489,22 +513,8 @@ const GRAPH_NODES: GraphNodeItem[] = [
       hook: "Quer treinar comigo na sala da sua casa sem pagar academia?",
       cta: "MUNDOFIT",
     },
-  },
-  {
-    id: "node_copy_gancho_culpa",
-    pillar: "copywriting",
-    title: "Gancho: 'Não É Culpa Sua'",
-    badge: "Gatilho Psicológico",
-    metric: "Alta Empatia",
-    summary: "Quebra de objeção que acolhe a aluna e transfere a responsabilidade para metodologias tradicionais ineficazes.",
-    connections: ["node_doc_persona", "node_thaix", "node_doc_framework"],
-    actionType: "esteira",
-    actionPayload: {
-      titulo: "Gancho: Não É Culpa Sua",
-      briefing: "Roteiro focado em acolhimento e quebra de culpa de dietas frustradas para mulheres sobrecarregadas.",
-      hook: "Se você já tentou de tudo e não conseguiu emagrecer, escuta isso: a culpa não é sua.",
-      cta: "MUNDOFIT",
-    },
+    x: 770,
+    y: 225,
   },
   {
     id: "node_copy_baixo_impacto",
@@ -521,6 +531,26 @@ const GRAPH_NODES: GraphNodeItem[] = [
       hook: "Para queimar gordura você não precisa destruir seus joelhos pulando em casa.",
       cta: "MUNDOFIT",
     },
+    x: 770,
+    y: 340,
+  },
+  {
+    id: "node_copy_gancho_culpa",
+    pillar: "copywriting",
+    title: "Gancho: 'Não É Culpa Sua'",
+    badge: "Gatilho Psicológico",
+    metric: "Alta Empatia",
+    summary: "Quebra de objeção que acolhe a aluna e transfere a responsabilidade para metodologias tradicionais ineficazes.",
+    connections: ["node_doc_persona", "node_thaix", "node_doc_framework"],
+    actionType: "esteira",
+    actionPayload: {
+      titulo: "Gancho: Não É Culpa Sua",
+      briefing: "Roteiro focado em acolhimento e quebra de culpa de dietas frustradas para mulheres sobrecarregadas.",
+      hook: "Se você já tentou de tudo e não conseguiu emagrecer, escuta isso: a culpa não é sua.",
+      cta: "MUNDOFIT",
+    },
+    x: 770,
+    y: 455,
   },
 ];
 
@@ -546,6 +576,7 @@ function ProfilePage() {
   const [selectedVaultDoc, setSelectedVaultDoc] = useState<string>("about");
   const [selectedGraphNode, setSelectedGraphNode] = useState<string>("node_thaix");
   const [graphPillarFilter, setGraphPillarFilter] = useState<GraphPillar>("todos");
+  const [sidePeekOpen, setSidePeekOpen] = useState(true);
 
   // Estados da Aba Dados (Notion-style)
   const [dadosView, setDadosView] = useState<"gallery" | "table">("gallery");
@@ -1121,12 +1152,20 @@ function ProfilePage() {
                 ? GRAPH_NODES
                 : GRAPH_NODES.filter((n) => n.pillar === graphPillarFilter);
 
-              const pillars: { id: "identidade" | "documentos" | "postagens" | "copywriting"; label: string }[] = [
-                { id: "identidade", label: "Identidade & DNA" },
-                { id: "documentos", label: "Documentos Canônicos" },
-                { id: "postagens", label: "Postagens Mineradas" },
-                { id: "copywriting", label: "Copywriting Validado" },
-              ];
+              // Calcula arestas únicas
+              const edgeSet = new Set<string>();
+              const edges: { source: GraphNodeItem; target: GraphNodeItem }[] = [];
+              GRAPH_NODES.forEach((source) => {
+                source.connections.forEach((targetId) => {
+                  const target = GRAPH_NODES.find((n) => n.id === targetId);
+                  if (!target) return;
+                  const key = [source.id, target.id].sort().join("---");
+                  if (!edgeSet.has(key)) {
+                    edgeSet.add(key);
+                    edges.push({ source, target });
+                  }
+                });
+              });
 
               return (
                 <div className="space-y-4">
@@ -1147,7 +1186,7 @@ function ProfilePage() {
                           key={f.id}
                           type="button"
                           onClick={() => setGraphPillarFilter(f.id as any)}
-                          className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                          className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                             graphPillarFilter === f.id
                               ? "bg-[#031A26] text-[#B9915B]"
                               : "bg-[#F4F6F7] text-[#5E727C] hover:text-[#031A26] hover:bg-[#EBEFEF]"
@@ -1157,152 +1196,341 @@ function ProfilePage() {
                         </button>
                       ))}
                     </div>
-                    <span className="text-[11px] text-[#5E727C]">
-                      Consolidação de regras de negócio, dados e acervo da criadora
-                    </span>
+                    {!sidePeekOpen && activeNode && (
+                      <button
+                        type="button"
+                        onClick={() => setSidePeekOpen(true)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#DCE1E3] text-xs font-semibold text-[#031A26] hover:border-[#B9915B] transition-colors shadow-2xs cursor-pointer"
+                      >
+                        <Info className="w-3.5 h-3.5 text-[#B9915B]" />
+                        <span>Abrir Painel Lateral ({activeNode.title})</span>
+                      </button>
+                    )}
                   </div>
 
-                  {/* Matriz dos 4 Pilares Interconectados */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {pillars.map((pillar) => {
-                      const nodesInPillar = displayedNodes.filter((n) => n.pillar === pillar.id);
-                      if (nodesInPillar.length === 0) return null;
+                  {/* Container Principal: Canvas com Fundo Pontilhado + Side-Peek à Direita */}
+                  <div className="relative flex flex-col lg:flex-row bg-white rounded-xl border border-[#DCE1E3] overflow-hidden shadow-xs">
+                    {/* Visual SVG Canvas com Dot Grid */}
+                    <div className="flex-1 min-w-0 p-3 flex flex-col justify-between bg-white relative">
+                      <div className="w-full overflow-x-auto">
+                        <svg
+                          viewBox="0 0 880 540"
+                          className="w-full h-auto min-w-[760px] select-none"
+                        >
+                          <defs>
+                            <pattern
+                              id="geogebra-dot-grid"
+                              width="24"
+                              height="24"
+                              patternUnits="userSpaceOnUse"
+                            >
+                              <circle cx="12" cy="12" r="1.3" fill="#D0D7DE" />
+                            </pattern>
+                          </defs>
 
-                      return (
-                        <div key={pillar.id} className="space-y-2.5">
-                          <div className="flex items-center justify-between px-1">
-                            <span className="text-xs font-bold text-[#031A26]">
-                              {pillar.label}
+                          {/* Fundo Pontilhado */}
+                          <rect width="100%" height="100%" fill="url(#geogebra-dot-grid)" rx="8" />
+
+                          {/* Cabeçalhos dos 4 Pilares no Topo do Canvas */}
+                          <g>
+                            <text x="110" y="28" textAnchor="middle" fill="#031A26" fontSize="11" fontWeight="800" letterSpacing="0.04em">
+                              1. IDENTIDADE & DNA
+                            </text>
+                            <text x="110" y="42" textAnchor="middle" fill="#5E727C" fontSize="9" fontWeight="600">
+                              2 NÓS CENTRAIS
+                            </text>
+
+                            <text x="330" y="28" textAnchor="middle" fill="#031A26" fontSize="11" fontWeight="800" letterSpacing="0.04em">
+                              2. DOCUMENTOS
+                            </text>
+                            <text x="330" y="42" textAnchor="middle" fill="#5E727C" fontSize="9" fontWeight="600">
+                              5 NÓS DO VAULT
+                            </text>
+
+                            <text x="550" y="28" textAnchor="middle" fill="#031A26" fontSize="11" fontWeight="800" letterSpacing="0.04em">
+                              3. POSTAGENS
+                            </text>
+                            <text x="550" y="42" textAnchor="middle" fill="#5E727C" fontSize="9" fontWeight="600">
+                              3 NÓS MINERADOS
+                            </text>
+
+                            <text x="770" y="28" textAnchor="middle" fill="#031A26" fontSize="11" fontWeight="800" letterSpacing="0.04em">
+                              4. COPYWRITING
+                            </text>
+                            <text x="770" y="42" textAnchor="middle" fill="#5E727C" fontSize="9" fontWeight="600">
+                              4 NÓS VALIDADOS
+                            </text>
+                          </g>
+
+                          {/* Linhas Verticais de Divisão entre os Pilares */}
+                          <line x1="220" y1="16" x2="220" y2="520" stroke="#E2E7E9" strokeDasharray="4 4" strokeWidth="1" />
+                          <line x1="440" y1="16" x2="440" y2="520" stroke="#E2E7E9" strokeDasharray="4 4" strokeWidth="1" />
+                          <line x1="660" y1="16" x2="660" y2="520" stroke="#E2E7E9" strokeDasharray="4 4" strokeWidth="1" />
+
+                          {/* Arestas / Linhas de Conexão */}
+                          {edges.map((edge, idx) => {
+                            const isSourceSelected = selectedGraphNode === edge.source.id;
+                            const isTargetSelected = selectedGraphNode === edge.target.id;
+                            const isActive = isSourceSelected || isTargetSelected;
+
+                            const x1 = edge.source.x;
+                            const y1 = edge.source.y;
+                            const x2 = edge.target.x;
+                            const y2 = edge.target.y;
+                            const cx1 = x1 + (x2 - x1) * 0.45;
+                            const cy1 = y1;
+                            const cx2 = x1 + (x2 - x1) * 0.55;
+                            const cy2 = y2;
+                            const d = `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
+
+                            return (
+                              <g key={idx}>
+                                {isActive && (
+                                  <path
+                                    d={d}
+                                    fill="none"
+                                    stroke="#B9915B"
+                                    strokeWidth="6"
+                                    strokeOpacity="0.25"
+                                  />
+                                )}
+                                <path
+                                  d={d}
+                                  fill="none"
+                                  stroke={isActive ? "#B9915B" : "#CBD5E1"}
+                                  strokeWidth={isActive ? 2.5 : 1.2}
+                                  strokeOpacity={isActive ? 1 : 0.45}
+                                  strokeDasharray={!isActive ? "3 3" : undefined}
+                                />
+                              </g>
+                            );
+                          })}
+
+                          {/* Nós do Grafo */}
+                          {displayedNodes.map((node) => {
+                            const isSelected = selectedGraphNode === node.id;
+                            const isConnected = activeNode.connections.includes(node.id);
+                            const isDimmed = !isSelected && !isConnected && selectedGraphNode !== "";
+
+                            return (
+                              <g
+                                key={node.id}
+                                onClick={() => {
+                                  setSelectedGraphNode(node.id);
+                                  setSidePeekOpen(true);
+                                }}
+                                className="cursor-pointer transition-all duration-200"
+                                opacity={isDimmed ? 0.35 : 1}
+                              >
+                                {/* Halo dourado ao redor do nó selecionado */}
+                                {isSelected && (
+                                  <circle
+                                    cx={node.x}
+                                    cy={node.y}
+                                    r="22"
+                                    fill="#B9915B"
+                                    fillOpacity="0.22"
+                                  />
+                                )}
+
+                                {/* Bolinha Principal do Nó */}
+                                <circle
+                                  cx={node.x}
+                                  cy={node.y}
+                                  r={isSelected ? 14 : isConnected ? 12 : 10}
+                                  fill={isSelected ? "#031A26" : isConnected ? "#FCFBF9" : "#FFFFFF"}
+                                  stroke={isSelected ? "#B9915B" : isConnected ? "#B9915B" : "#5E727C"}
+                                  strokeWidth={isSelected ? 3 : isConnected ? 2.5 : 1.8}
+                                />
+
+                                {/* Ponto Interno Central */}
+                                <circle
+                                  cx={node.x}
+                                  cy={node.y}
+                                  r={isSelected ? 4 : isConnected ? 3 : 2}
+                                  fill={isSelected || isConnected ? "#B9915B" : "#5E727C"}
+                                />
+
+                                {/* Card de Legenda abaixo do nó */}
+                                <g transform={`translate(${node.x}, ${node.y + 16})`}>
+                                  <rect
+                                    x="-68"
+                                    y="0"
+                                    width="136"
+                                    height="30"
+                                    rx="6"
+                                    fill="#FFFFFF"
+                                    stroke={isSelected ? "#B9915B" : isConnected ? "#B9915B" : "#E2E7E9"}
+                                    strokeWidth={isSelected ? 1.8 : 1}
+                                  />
+                                  <text
+                                    x="0"
+                                    y="13"
+                                    textAnchor="middle"
+                                    fontSize="10"
+                                    fontWeight="700"
+                                    fill="#031A26"
+                                  >
+                                    {node.title.length > 20 ? `${node.title.slice(0, 18)}...` : node.title}
+                                  </text>
+                                  <text
+                                    x="0"
+                                    y="24"
+                                    textAnchor="middle"
+                                    fontSize="8"
+                                    fontWeight="600"
+                                    fill={isSelected || isConnected ? "#B9915B" : "#5E727C"}
+                                  >
+                                    {node.metric || node.badge}
+                                  </text>
+                                </g>
+                              </g>
+                            );
+                          })}
+                        </svg>
+                      </div>
+
+                      {/* Legenda na base do canvas */}
+                      <div className="pt-2 px-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#5E727C] border-t border-[#E2E7E9] mt-2">
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#031A26] border border-[#B9915B]" />
+                            Nó Selecionado
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#FCFBF9] border border-[#B9915B]" />
+                            Conectado
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <span className="inline-block w-4 h-0.5 bg-[#B9915B]" />
+                            Relação Ativa
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-[#B9915B]">
+                          Clique em qualquer nó para abrir o painel lateral com evidências e ações
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Side-Peek Lateral estilo Notion */}
+                    {sidePeekOpen && activeNode && (
+                      <aside className="w-full lg:w-[360px] bg-[#FAFAFA] border-t lg:border-t-0 lg:border-l border-[#E2E7E9] p-5 flex flex-col justify-between overflow-y-auto shrink-0">
+                        <div className="space-y-4">
+                          {/* Header do Side-Peek */}
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#031A26] text-[#B9915B] uppercase tracking-wider">
+                              {activeNode.pillar === "identidade" ? "Identidade & DNA" :
+                               activeNode.pillar === "documentos" ? "Documento Canônico" :
+                               activeNode.pillar === "postagens" ? "Postagem Minerada" : "Copywriting Validado"}
                             </span>
-                            <span className="text-[10px] font-semibold text-[#5E727C] bg-[#F4F6F7] px-1.5 py-0.5 rounded">
-                              {nodesInPillar.length} nós
-                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setSidePeekOpen(false)}
+                              className="p-1 rounded-md text-[#5E727C] hover:text-[#031A26] hover:bg-[#EBEFEF] transition-colors cursor-pointer"
+                              title="Fechar painel lateral"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
                           </div>
 
-                          <div className="space-y-2.5">
-                            {nodesInPillar.map((node) => {
-                              const isSelected = selectedGraphNode === node.id;
-                              const isConnected = activeNode.connections.includes(node.id);
+                          {/* Título e Métrica */}
+                          <div>
+                            <h3 className="text-base font-bold text-[#031A26] leading-tight">
+                              {activeNode.title}
+                            </h3>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-white text-[#031A26] border border-[#E2E7E9]">
+                                {activeNode.badge}
+                              </span>
+                              {activeNode.metric && (
+                                <span className="text-xs text-[#5E727C] font-mono">
+                                  {activeNode.metric}
+                                </span>
+                              )}
+                            </div>
+                          </div>
 
-                              return (
-                                <button
-                                  key={node.id}
-                                  type="button"
-                                  onClick={() => setSelectedGraphNode(node.id)}
-                                  className={`w-full text-left p-3.5 rounded-xl border transition-all flex flex-col justify-between gap-2 shadow-2xs hover:shadow-xs ${
-                                    isSelected
-                                      ? "bg-white border-[#031A26] ring-2 ring-[#031A26]/10"
-                                      : isConnected
-                                      ? "bg-[#FCFBF9] border-[#B9915B] shadow-2xs"
-                                      : "bg-white border-[#E8ECEE] hover:border-[#B9915B]/40 opacity-70 hover:opacity-100"
-                                  }`}
-                                >
-                                  <div>
-                                    <div className="flex items-center justify-between gap-1.5 mb-1.5">
-                                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9]">
-                                        {node.badge}
-                                      </span>
-                                      {isConnected && (
-                                        <span className="text-[10px] font-bold text-[#B9915B] bg-[#FCFBF9] px-1.5 py-0.5 rounded border border-[#B9915B]/40">
-                                          Conectado
-                                        </span>
-                                      )}
-                                      {node.metric && (
-                                        <span className="text-[10px] font-bold text-[#031A26]">
-                                          {node.metric}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <h4 className="text-xs font-bold text-[#031A26] leading-snug">
-                                      {node.title}
-                                    </h4>
-                                    <p className="text-[11px] text-[#5E727C] mt-1 line-clamp-2 leading-relaxed">
-                                      {node.summary}
-                                    </p>
-                                  </div>
-                                </button>
-                              );
-                            })}
+                          {/* Resumo e Evidência */}
+                          <div className="p-3.5 rounded-lg bg-white border border-[#E2E7E9] text-xs text-[#031A26] leading-relaxed shadow-2xs">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C] block mb-1">
+                              Resumo & Evidência
+                            </span>
+                            {activeNode.summary}
+                          </div>
+
+                          {/* Conexões do Nó no Grafo */}
+                          <div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E727C] block mb-2">
+                              Conexões no Grafo ({activeNode.connections.length})
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {activeNode.connections.map((cId) => {
+                                const target = GRAPH_NODES.find((gn) => gn.id === cId);
+                                if (!target) return null;
+                                return (
+                                  <button
+                                    key={cId}
+                                    type="button"
+                                    onClick={() => setSelectedGraphNode(target.id)}
+                                    className="flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-[#DCE1E3] hover:border-[#B9915B] text-xs text-[#031A26] font-medium transition-colors shadow-2xs hover:shadow-xs group cursor-pointer"
+                                  >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#B9915B]" />
+                                    <span>{target.title}</span>
+                                    <span className="text-[10px] text-[#5E727C] group-hover:text-[#B9915B]">→</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
 
-                  {/* Dossiê de Conexões do Nó Selecionado */}
-                  <div className="bg-white p-5 rounded-xl border border-[#DCE1E3] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="space-y-1.5 max-w-2xl">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-[#031A26] text-[#B9915B]">
-                          {activeNode.badge}
-                        </span>
-                        <h3 className="text-base font-bold text-[#031A26]">
-                          {activeNode.title}
-                        </h3>
-                        {activeNode.metric && (
-                          <span className="text-xs font-semibold text-[#5E727C]">
-                            ({activeNode.metric})
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-[#031A26] leading-relaxed">
-                        {activeNode.summary}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        <span className="text-[11px] font-bold text-[#5E727C] mr-1">
-                          Conexões Estratégicas:
-                        </span>
-                        {activeNode.connections.map((cId) => {
-                          const target = GRAPH_NODES.find((gn) => gn.id === cId);
-                          if (!target) return null;
-                          return (
-                            <button
-                              key={cId}
-                              type="button"
-                              onClick={() => setSelectedGraphNode(cId)}
-                              className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9] hover:border-[#B9915B] hover:text-[#B9915B] transition-colors"
+                        {/* Ações Rápidas na Base do Side-Peek */}
+                        <div className="pt-4 border-t border-[#E2E7E9] space-y-2 mt-4">
+                          {activeNode.actionType === "esteira" && activeNode.actionPayload && (
+                            <Button
+                              onClick={() => handleUseInEsteira(activeNode.actionPayload)}
+                              className="w-full bg-[#031A26] text-white hover:bg-[#031A26]/90 text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                             >
-                              {target.title} ↗
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+                              <span>Usar na Esteira</span>
+                              <ArrowRight className="w-3.5 h-3.5 text-[#B9915B]" />
+                            </Button>
+                          )}
 
-                    <div className="flex items-center gap-2 shrink-0 self-start md:self-auto">
-                      {activeNode.actionType === "esteira" && activeNode.actionPayload && (
-                        <button
-                          type="button"
-                          onClick={() => handleUseInEsteira(activeNode.actionPayload)}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-[#031A26] text-[#B9915B] hover:bg-[#031A26]/90 transition-colors shadow-xs"
-                        >
-                          <span>Usar na Esteira</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                      {activeNode.actionType === "doc" && activeNode.actionPayload && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedVaultDoc(activeNode.actionPayload);
-                            setMemoriaSubView("docs");
-                          }}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-[#031A26] text-white hover:bg-[#031A26]/90 transition-colors shadow-xs"
-                        >
-                          <BookOpen className="w-3.5 h-3.5 text-[#B9915B]" />
-                          <span>Ler Documento</span>
-                        </button>
-                      )}
-                      {activeNode.actionType === "postagens" && (
-                        <button
-                          type="button"
-                          onClick={() => setTab("acervo")}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-[#F4F6F7] text-[#031A26] border border-[#E2E7E9] hover:border-[#B9915B] transition-colors"
-                        >
-                          <span>Ver no Acervo</span>
-                        </button>
-                      )}
-                    </div>
+                          {activeNode.actionType === "doc" && activeNode.actionPayload && (
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedVaultDoc(activeNode.actionPayload);
+                                setMemoriaSubView("docs");
+                              }}
+                              className="w-full border-[#DCE1E3] hover:border-[#031A26] text-[#031A26] text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer"
+                            >
+                              <BookOpen className="w-3.5 h-3.5 text-[#B9915B]" />
+                              <span>Ler Documento no Wiki</span>
+                            </Button>
+                          )}
+
+                          {activeNode.actionType === "postagens" && (
+                            <Button
+                              variant="outline"
+                              onClick={() => setTab("acervo")}
+                              className="w-full border-[#DCE1E3] hover:border-[#031A26] text-[#031A26] text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5 text-[#B9915B]" />
+                              <span>Ver nas Postagens</span>
+                            </Button>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(activeNode.summary, activeNode.id)}
+                            className="w-full text-center text-xs text-[#5E727C] hover:text-[#031A26] py-1 transition-colors cursor-pointer"
+                          >
+                            {copiedId === activeNode.id ? "Evidência Copiada!" : "Copiar resumo do nó"}
+                          </button>
+                        </div>
+                      </aside>
+                    )}
                   </div>
                 </div>
               );
