@@ -8,8 +8,13 @@ import { GenerationJob, SimpleVideoConfig, TabType } from './types';
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('simple');
   const [activeJob, setActiveJob] = useState<GenerationJob | null>(null);
+  const [simpleStep, setSimpleStep] = useState(1);
 
   const changeTab = (tab: TabType) => {
+    if (tab === 'profile') {
+      window.location.assign('/criativo/perfil?project=Thaix_Santiago_Perfil_e_Copies');
+      return;
+    }
     if (tab === 'complex') {
       window.location.assign('/criativo/');
       return;
@@ -37,11 +42,11 @@ export const App: React.FC = () => {
         </header>
 
         <main className="flex-1 overflow-y-auto px-5 py-5 lg:px-7">
-          <div className="mx-auto grid min-h-full max-w-[1400px] grid-cols-1 gap-5 lg:grid-cols-12">
-            <section className="space-y-6 lg:col-span-7">
-              <SimpleVideoTab onGenerate={generateSimple} activeJob={activeJob} />
+          <div className={`mx-auto grid min-h-full max-w-[1400px] grid-cols-1 gap-5 ${simpleStep === 5 ? 'lg:grid-cols-12' : ''}`}>
+            <section className={`space-y-6 ${simpleStep === 5 ? 'lg:col-span-7' : ''}`}>
+              <SimpleVideoTab onGenerate={generateSimple} activeJob={activeJob} onStepChange={setSimpleStep} />
             </section>
-            <section className="min-h-[500px] lg:col-span-5"><div className="sticky top-0 h-[calc(100vh-105px)]"><VideoPlayerPreview job={activeJob} onReset={() => setActiveJob(null)} /></div></section>
+            {simpleStep === 5 && <section className="min-h-[500px] lg:col-span-5"><div className="sticky top-0 h-[calc(100vh-105px)]"><VideoPlayerPreview job={activeJob} onReset={() => { setActiveJob(null); setSimpleStep(1); }} /></div></section>}
           </div>
         </main>
 

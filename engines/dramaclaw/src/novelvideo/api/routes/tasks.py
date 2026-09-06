@@ -36,6 +36,9 @@ router = APIRouter()
 _SSE_REVERIFY_INTERVAL_S = 30.0
 _TASK_NOT_FOUND_GRACE_S = 10.0
 _TASK_TYPE_LABELS = {
+    "profile_transcribe": "Transcrever publicação",
+    "profile_analyze": "Analisar comunicação da cliente",
+    "profile_copies": "Gerar copies da cliente",
     "ingest_fast": "Importação rápida",
     "build_characters": "Criar pessoas",
     "build_scenes": "Criar ambientes",

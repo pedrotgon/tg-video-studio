@@ -1,0 +1,156 @@
+[
+  {
+    "id": 1,
+    "start": 0.0,
+    "end": 3.78,
+    "text": "Eu quero ver você no sábio, sábio, sábio, sábio",
+    "avg_logprob": -0.32,
+    "no_speech_prob": 0.367,
+    "words": [
+      {
+        "word": " Eu",
+        "start": 0.0,
+        "end": 0.3,
+        "probability": 0.73
+      },
+      {
+        "word": " quero",
+        "start": 0.3,
+        "end": 0.68,
+        "probability": 0.976
+      },
+      {
+        "word": " ver",
+        "start": 0.68,
+        "end": 1.02,
+        "probability": 0.963
+      },
+      {
+        "word": " você",
+        "start": 1.02,
+        "end": 1.34,
+        "probability": 0.933
+      },
+      {
+        "word": " no",
+        "start": 1.34,
+        "end": 1.6,
+        "probability": 0.434
+      },
+      {
+        "word": " sábio,",
+        "start": 1.6,
+        "end": 2.18,
+        "probability": 0.478
+      },
+      {
+        "word": " sábio,",
+        "start": 2.18,
+        "end": 2.54,
+        "probability": 0.995
+      },
+      {
+        "word": " sábio,",
+        "start": 2.54,
+        "end": 3.02,
+        "probability": 0.998
+      },
+      {
+        "word": " sábio",
+        "start": 3.02,
+        "end": 3.78,
+        "probability": 0.994
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "start": 17.06,
+    "end": 22.0,
+    "text": "Eu quero ver você no sábio, sábio, sábio",
+    "avg_logprob": -0.32,
+    "no_speech_prob": 0.367,
+    "words": [
+      {
+        "word": " Eu",
+        "start": 17.06,
+        "end": 17.86,
+        "probability": 0.171
+      },
+      {
+        "word": " quero",
+        "start": 17.86,
+        "end": 18.66,
+        "probability": 0.992
+      },
+      {
+        "word": " ver",
+        "start": 18.66,
+        "end": 19.04,
+        "probability": 0.997
+      },
+      {
+        "word": " você",
+        "start": 19.04,
+        "end": 19.44,
+        "probability": 0.99
+      },
+      {
+        "word": " no",
+        "start": 19.44,
+        "end": 19.64,
+        "probability": 0.994
+      },
+      {
+        "word": " sábio,",
+        "start": 19.64,
+        "end": 20.24,
+        "probability": 0.998
+      },
+      {
+        "word": " sábio,",
+        "start": 20.24,
+        "end": 21.12,
+        "probability": 0.995
+      },
+      {
+        "word": " sábio",
+        "start": 21.12,
+        "end": 22.0,
+        "probability": 0.993
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "start": 35.34,
+    "end": 36.74,
+    "text": "Música",
+    "avg_logprob": -0.94,
+    "no_speech_prob": 0.841,
+    "words": [
+      {
+        "word": " Música",
+        "start": 35.34,
+        "end": 36.74,
+        "probability": 0.09
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "start": 36.74,
+    "end": 37.3,
+    "text": "Música",
+    "avg_logprob": -0.94,
+    "no_speech_prob": 0.841,
+    "words": [
+      {
+        "word": " Música",
+        "start": 36.74,
+        "end": 37.3,
+        "probability": 0.887
+      }
+    ]
+  }
+]

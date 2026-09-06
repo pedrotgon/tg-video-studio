@@ -135,7 +135,11 @@ class SQLiteProjectRegistry:
             return None
         db = await self._connect()
         try:
-            row = await _fetchone(db, "SELECT * FROM projects WHERE id = ?", (project_id,))
+            row = await _fetchone(
+                db,
+                "SELECT * FROM projects WHERE id = ? OR (name = ? AND purged_at IS NULL)",
+                (project_id, project_id),
+            )
         finally:
             await db.close()
         return _row_to_record(row) if row else None

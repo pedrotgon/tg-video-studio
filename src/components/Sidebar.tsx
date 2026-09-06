@@ -1,10 +1,11 @@
 import React from 'react';
-import { Clapperboard, Star, Zap } from 'lucide-react';
+import { Clapperboard, Star, UserRound, Zap } from 'lucide-react';
 import { TabType } from '../types';
 
 interface SidebarProps { activeTab: TabType; onSelectTab: (tab: TabType) => void; }
 
 const items: Array<{ id: TabType; label: string; detail: string; icon: typeof Zap }> = [
+  { id: 'profile', label: 'Perfil', detail: 'Cliente', icon: UserRound },
   { id: 'simple', label: 'Simples', detail: '1 clique', icon: Zap },
   { id: 'complex', label: 'Criativo', detail: 'Estúdio', icon: Star },
 ];

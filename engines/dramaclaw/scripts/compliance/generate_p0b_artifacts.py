@@ -53,6 +53,10 @@ THIRD_PARTY_PATH_OVERRIDES: tuple[tuple[str, str, str, str], ...] = (
 
 
 MANUAL_LICENSES = {
+    "protobuf": (
+        "BSD-3-Clause",
+        "package metadata identifies the 3-Clause BSD License",
+    ),
     "da2": (
         "Apache-2.0",
         "manual review: https://github.com/EnVision-Research/DA-2/blob/main/LICENSE",

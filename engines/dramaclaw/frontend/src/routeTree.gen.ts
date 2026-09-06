@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as WatchWorkRouteImport } from './routes/watch.$work'
+import { Route as AppPerfilRouteImport } from './routes/_app/perfil'
 import { Route as AppCreditsRouteImport } from './routes/_app/credits'
 import { Route as AppProjectsProjectTasksRouteImport } from './routes/_app/projects.$project/tasks'
 import { Route as AppProjectsProjectStylesRouteImport } from './routes/_app/projects.$project/styles'
@@ -75,6 +76,11 @@ const WatchWorkRoute = WatchWorkRouteImport.update({
   id: '/watch/$work',
   path: '/watch/$work',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppPerfilRoute = AppPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppCreditsRoute = AppCreditsRouteImport.update({
   id: '/credits',
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/download': typeof DownloadLazyRoute
   '/credits': typeof AppCreditsRoute
+  '/perfil': typeof AppPerfilRoute
   '/watch/$work': typeof WatchWorkRoute
   '/projects/$project/assistant': typeof AppProjectsProjectAssistantRoute
   '/projects/$project/episodes': typeof AppProjectsProjectEpisodesRouteWithChildren
@@ -237,6 +244,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/download': typeof DownloadLazyRoute
   '/credits': typeof AppCreditsRoute
+  '/perfil': typeof AppPerfilRoute
   '/watch/$work': typeof WatchWorkRoute
   '/': typeof AppIndexRoute
   '/projects/$project/assistant': typeof AppProjectsProjectAssistantRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/download': typeof DownloadLazyRoute
   '/_app/credits': typeof AppCreditsRoute
+  '/_app/perfil': typeof AppPerfilRoute
   '/watch/$work': typeof WatchWorkRoute
   '/_app/': typeof AppIndexRoute
   '/_app/projects/$project/assistant': typeof AppProjectsProjectAssistantRoute
@@ -286,6 +295,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/download'
     | '/credits'
+    | '/perfil'
     | '/watch/$work'
     | '/projects/$project/assistant'
     | '/projects/$project/episodes'
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/download'
     | '/credits'
+    | '/perfil'
     | '/watch/$work'
     | '/'
     | '/projects/$project/assistant'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/download'
     | '/_app/credits'
+    | '/_app/perfil'
     | '/watch/$work'
     | '/_app/'
     | '/_app/projects/$project/assistant'
@@ -392,6 +404,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/watch/$work'
       preLoaderRoute: typeof WatchWorkRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/perfil': {
+      id: '/_app/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AppPerfilRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/credits': {
       id: '/_app/credits'
@@ -546,6 +565,7 @@ const AppProjectsProjectEpisodesRouteWithChildren =
 
 interface AppRouteChildren {
   AppCreditsRoute: typeof AppCreditsRoute
+  AppPerfilRoute: typeof AppPerfilRoute
   AppIndexRoute: typeof AppIndexRoute
   AppProjectsProjectAssistantRoute: typeof AppProjectsProjectAssistantRoute
   AppProjectsProjectEpisodesRoute: typeof AppProjectsProjectEpisodesRouteWithChildren
@@ -558,6 +578,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppCreditsRoute: AppCreditsRoute,
+  AppPerfilRoute: AppPerfilRoute,
   AppIndexRoute: AppIndexRoute,
   AppProjectsProjectAssistantRoute: AppProjectsProjectAssistantRoute,
   AppProjectsProjectEpisodesRoute: AppProjectsProjectEpisodesRouteWithChildren,

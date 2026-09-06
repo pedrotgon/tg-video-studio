@@ -1,4 +1,4 @@
-import { ComplexVideoConfig, GenerationJob, SimpleVideoConfig } from '../types';
+import { ComplexVideoConfig, CopyQualification, GenerationJob, SimpleCopy, SimpleVideoConfig, VerifiedMemoryReference } from '../types';
 
 const messageFromResponse = async (response: Response) => {
   try {
@@ -11,11 +11,66 @@ const messageFromResponse = async (response: Response) => {
 
 const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
-export const generateSimpleScript = async (videoSubject: string): Promise<string> => {
+export const generateSimpleCopies = async (
+  query: string,
+  projectId: string,
+  answers: Record<string, string> = {},
+  onProgress?: (message: string) => void,
+): Promise<{ copies: SimpleCopy[]; memory: VerifiedMemoryReference | null }> => {
+  onProgress?.('Consultando a Memória e validando a fonte…');
+  const create = await fetch('/api/simple/copies', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, projectId, targetCta: 'MUNDOFIT', answers }),
+  });
+  if (!create.ok) throw new Error(await messageFromResponse(create));
+  const created = await create.json() as { id?: string; memory?: VerifiedMemoryReference | null };
+  if (!created.id) throw new Error('O gerador não retornou uma tarefa de copies.');
+  onProgress?.(created.memory ? `Referência ${created.memory.alias} confirmada no Acervo.` : 'Tema livre: nenhuma evidência da Memória foi vinculada.');
+  for (;;) {
+    await wait(1500);
+    const response = await fetch(`/api/simple/copies/${encodeURIComponent(created.id)}?projectId=${encodeURIComponent(projectId)}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(await messageFromResponse(response));
+    const task = await response.json() as { status: string; error?: string; copies?: SimpleCopy[] };
+    if (task.status === 'completed') {
+      if (!task.copies || task.copies.length !== 10) throw new Error('A IA não retornou exatamente 10 copies distintas.');
+      return { copies: task.copies, memory: created.memory || null };
+    }
+    if (['failed', 'cancelled', 'error'].includes(task.status)) throw new Error(task.error || 'A geração de copies falhou.');
+    onProgress?.('Gerando 10 variações de fala…');
+  }
+};
+
+export const qualifySimpleCopy = async (
+  query: string,
+  projectId: string,
+): Promise<CopyQualification> => {
+  const response = await fetch('/api/simple/copies/qualify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, projectId, targetCta: 'MUNDOFIT' }),
+  });
+  if (!response.ok) throw new Error(await messageFromResponse(response));
+  const result = await response.json() as CopyQualification;
+  if (!Array.isArray(result.questions) || result.questions.length < 3 || result.questions.length > 5) {
+    throw new Error('A IA não retornou uma qualificação válida.');
+  }
+  const invalid = result.questions.some((item) =>
+    !item.question.trim()
+    || [...item.question].length > 20
+    || item.options.length < 2
+    || item.options.length > 4
+    || item.options.some((option) => !option.label.trim() || [...option.label].length > 10)
+  );
+  if (invalid) throw new Error('A IA ultrapassou o limite de brevidade da qualificação.');
+  return result;
+};
+
+export const generateSimpleScript = async (videoSubject: string, tone: SimpleVideoConfig['tone'] = 'direto'): Promise<string> => {
   const response = await fetch('/api/simple/script', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ videoSubject }),
+    body: JSON.stringify({ videoSubject, tone }),
   });
   if (!response.ok) throw new Error(await messageFromResponse(response));
   const data = await response.json();

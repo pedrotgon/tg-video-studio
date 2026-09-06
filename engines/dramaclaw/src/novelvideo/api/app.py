@@ -49,7 +49,7 @@ def _request_body_limit(request: Request) -> int:
     content_type = request.headers.get("content-type", "").lower()
     if (
         request.url.path.startswith("/api/v1/projects/")
-        and request.url.path.endswith("/upload")
+        and (request.url.path.endswith("/upload") or ("/profile/posts/" in request.url.path and request.url.path.endswith("/media")))
         and "multipart/form-data" in content_type
     ):
         return MAX_UPLOAD_REQUEST_BODY_BYTES

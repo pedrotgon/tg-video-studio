@@ -214,8 +214,8 @@ export function Header() {
   };
 
   return (
-    <div className="relative z-20 shrink-0 bg-background/58 text-sidebar-foreground backdrop-blur-xl">
-      <header className="relative flex h-[48px] items-center justify-between gap-3 px-4">
+    <div className="relative z-20 shrink-0 border-b border-border bg-card/94 text-foreground shadow-[0_1px_0_rgba(3,26,38,0.04)] backdrop-blur-xl">
+      <header className="relative flex h-16 items-center justify-between gap-3 px-5">
         <div className="flex min-w-0 flex-1 items-center">
           <TooltipProvider delay={80}>
             <Tooltip>
@@ -228,12 +228,22 @@ export function Header() {
                   />
                 }
               >
-                <img
-                  src={`${import.meta.env.BASE_URL}brand/dramaclaw-wordmark.png`}
-                  alt=""
-                  aria-hidden="true"
-                  className="h-[22.7px] w-auto max-w-[113px] object-contain"
-                />
+                <span className="flex items-center gap-2.5">
+                  <span
+                    aria-hidden="true"
+                    className="grid size-8 place-items-center rounded-lg bg-primary text-[10px] font-extrabold tracking-[0.08em] text-primary-foreground"
+                  >
+                    TG
+                  </span>
+                  <span className="grid text-left leading-tight">
+                    <span className="text-[13px] font-bold tracking-[-0.02em] text-foreground">
+                      TG Criativo
+                    </span>
+                    <span className="text-[10px] font-medium text-muted-foreground">
+                      Campanhas em vídeo
+                    </span>
+                  </span>
+                </span>
               </TooltipTrigger>
               <TooltipContent
                 side="bottom"
@@ -261,7 +271,7 @@ export function Header() {
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                className="relative size-[32px] text-sidebar-foreground/82 transition-colors duration-150 ease-[var(--ease-out-quint)] hover:bg-white/[0.05] hover:text-white aria-expanded:bg-white/[0.05] aria-expanded:text-white"
+                className="relative size-[32px] text-foreground/62 transition-colors duration-150 ease-[var(--ease-out-quint)] hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground"
                 aria-label={
                   hasSettingsWarning ? t("header.settingsWithWarning") : t("header.settings")
                 }
@@ -284,7 +294,7 @@ export function Header() {
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="group/notification relative size-[32px] text-sidebar-foreground/82 transition-colors duration-150 ease-[var(--ease-out-quint)] hover:bg-white/[0.05] hover:text-white aria-expanded:bg-white/[0.05] aria-expanded:text-white"
+            className="group/notification relative size-[32px] text-foreground/62 transition-colors duration-150 ease-[var(--ease-out-quint)] hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground"
             aria-label={t("header.notifications")}
             aria-expanded={notificationOpen}
             onClick={openNotifications}
@@ -302,7 +312,7 @@ export function Header() {
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="companion-capsule-entry -ml-0.5 -mr-0.5 size-[32px] transition-colors duration-150 ease-[var(--ease-out-quint)] hover:bg-white/[0.06] aria-expanded:bg-white/[0.06]"
+            className="companion-capsule-entry -ml-0.5 -mr-0.5 size-[32px] transition-colors duration-150 ease-[var(--ease-out-quint)] hover:bg-muted aria-expanded:bg-muted"
             onClick={() => setCompanionOpen(true)}
             aria-label={t("myBuddy.companion.entry")}
           >
@@ -331,7 +341,7 @@ export function Header() {
               className="size-[28px] rounded-full p-0 hover:bg-transparent"
               aria-label={t("header.account.open")}
             >
-              <span className="flex size-[26px] items-center justify-center overflow-hidden rounded-full border border-white/[0.10] bg-white/[0.07] text-[11px] font-normal text-white/72">
+              <span className="flex size-[26px] items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[11px] font-semibold text-foreground/72">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="" className="size-full object-cover" />
                 ) : (

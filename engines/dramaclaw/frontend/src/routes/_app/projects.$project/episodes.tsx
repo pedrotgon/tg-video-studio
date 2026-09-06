@@ -990,6 +990,7 @@ function EpisodesPage() {
   return (
     <HeaderCollapseProvider>
     <div className="-m-6 flex h-[calc(100%+3rem)] flex-col overflow-hidden">
+      {!selectedEpisode && <a className="border-b px-6 py-3 text-sm font-medium underline" href={`/criativo/perfil?project=${encodeURIComponent(project)}&tab=copies`}>Copies da cliente — usar Perfil e estrutura aprovada →</a>}
       {selectedEpisode ? (
         <CollapsibleHeaderRegion>{topBar}</CollapsibleHeaderRegion>
       ) : (

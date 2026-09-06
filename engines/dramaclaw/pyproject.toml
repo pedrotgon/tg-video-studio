@@ -59,6 +59,7 @@ dependencies = [
 novelvideo = "novelvideo.cli:app"
 
 [project.optional-dependencies]
+profile = ["faster-whisper>=1.2,<2"]
 world = [
     "sharp @ git+https://github.com/apple/ml-sharp.git",
     "da2 @ git+https://github.com/EnVision-Research/DA-2.git#subdirectory=src",

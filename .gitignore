@@ -45,3 +45,9 @@ engines/**/frontend/node_modules/
 .vscode/
 graphify-out/
 state/
+*.db-wal
+*.db-shm
+*.sqlite-wal
+*.sqlite-shm
+*.part
+cookies*.txt

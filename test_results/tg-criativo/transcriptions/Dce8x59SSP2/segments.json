@@ -1,0 +1,426 @@
+[
+  {
+    "id": 1,
+    "start": 0.0,
+    "end": 4.86,
+    "text": "E é o que descobriu o melhor canal no YouTube que faz a gente emagrecer muito se divertindo em casa.",
+    "avg_logprob": -0.31,
+    "no_speech_prob": 0.009,
+    "words": [
+      {
+        "word": " E",
+        "start": 0.0,
+        "end": 0.16,
+        "probability": 0.377
+      },
+      {
+        "word": " é",
+        "start": 0.16,
+        "end": 0.24,
+        "probability": 0.567
+      },
+      {
+        "word": " o",
+        "start": 0.24,
+        "end": 0.28,
+        "probability": 0.95
+      },
+      {
+        "word": " que",
+        "start": 0.28,
+        "end": 0.38,
+        "probability": 0.99
+      },
+      {
+        "word": " descobriu",
+        "start": 0.38,
+        "end": 0.9,
+        "probability": 0.897
+      },
+      {
+        "word": " o",
+        "start": 0.9,
+        "end": 0.96,
+        "probability": 0.407
+      },
+      {
+        "word": " melhor",
+        "start": 0.96,
+        "end": 1.12,
+        "probability": 0.974
+      },
+      {
+        "word": " canal",
+        "start": 1.12,
+        "end": 1.5,
+        "probability": 0.994
+      },
+      {
+        "word": " no",
+        "start": 1.5,
+        "end": 1.7,
+        "probability": 0.582
+      },
+      {
+        "word": " YouTube",
+        "start": 1.7,
+        "end": 2.02,
+        "probability": 0.511
+      },
+      {
+        "word": " que",
+        "start": 2.02,
+        "end": 2.38,
+        "probability": 0.707
+      },
+      {
+        "word": " faz",
+        "start": 2.38,
+        "end": 2.6,
+        "probability": 0.993
+      },
+      {
+        "word": " a",
+        "start": 2.6,
+        "end": 2.74,
+        "probability": 0.872
+      },
+      {
+        "word": " gente",
+        "start": 2.74,
+        "end": 2.92,
+        "probability": 0.996
+      },
+      {
+        "word": " emagrecer",
+        "start": 2.92,
+        "end": 3.42,
+        "probability": 0.983
+      },
+      {
+        "word": " muito",
+        "start": 3.42,
+        "end": 3.74,
+        "probability": 0.928
+      },
+      {
+        "word": " se",
+        "start": 3.74,
+        "end": 3.92,
+        "probability": 0.918
+      },
+      {
+        "word": " divertindo",
+        "start": 3.92,
+        "end": 4.44,
+        "probability": 0.997
+      },
+      {
+        "word": " em",
+        "start": 4.44,
+        "end": 4.56,
+        "probability": 0.996
+      },
+      {
+        "word": " casa.",
+        "start": 4.56,
+        "end": 4.86,
+        "probability": 0.998
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "start": 8.22,
+    "end": 13.02,
+    "text": "Diz que eliminam um quilo toda semana, e realmente fez a aula e derrete muito.",
+    "avg_logprob": -0.31,
+    "no_speech_prob": 0.009,
+    "words": [
+      {
+        "word": " Diz",
+        "start": 8.22,
+        "end": 8.74,
+        "probability": 0.787
+      },
+      {
+        "word": " que",
+        "start": 8.74,
+        "end": 8.9,
+        "probability": 0.993
+      },
+      {
+        "word": " eliminam",
+        "start": 8.9,
+        "end": 9.38,
+        "probability": 0.786
+      },
+      {
+        "word": " um",
+        "start": 9.38,
+        "end": 9.56,
+        "probability": 0.632
+      },
+      {
+        "word": " quilo",
+        "start": 9.56,
+        "end": 9.64,
+        "probability": 0.819
+      },
+      {
+        "word": " toda",
+        "start": 9.64,
+        "end": 9.88,
+        "probability": 0.992
+      },
+      {
+        "word": " semana,",
+        "start": 9.88,
+        "end": 10.42,
+        "probability": 0.944
+      },
+      {
+        "word": " e",
+        "start": 10.8,
+        "end": 10.98,
+        "probability": 0.924
+      },
+      {
+        "word": " realmente",
+        "start": 10.98,
+        "end": 11.38,
+        "probability": 0.995
+      },
+      {
+        "word": " fez",
+        "start": 11.38,
+        "end": 11.74,
+        "probability": 0.712
+      },
+      {
+        "word": " a",
+        "start": 11.74,
+        "end": 11.92,
+        "probability": 0.99
+      },
+      {
+        "word": " aula",
+        "start": 11.92,
+        "end": 12.2,
+        "probability": 0.968
+      },
+      {
+        "word": " e",
+        "start": 12.2,
+        "end": 12.34,
+        "probability": 0.961
+      },
+      {
+        "word": " derrete",
+        "start": 12.34,
+        "end": 12.58,
+        "probability": 0.954
+      },
+      {
+        "word": " muito.",
+        "start": 12.58,
+        "end": 13.02,
+        "probability": 0.978
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "start": 13.34,
+    "end": 17.66,
+    "text": "E ela ensina o treino baixo impacto para quem é iniciante e está muito acidental.",
+    "avg_logprob": -0.31,
+    "no_speech_prob": 0.009,
+    "words": [
+      {
+        "word": " E",
+        "start": 13.34,
+        "end": 13.44,
+        "probability": 0.805
+      },
+      {
+        "word": " ela",
+        "start": 13.44,
+        "end": 13.6,
+        "probability": 0.99
+      },
+      {
+        "word": " ensina",
+        "start": 13.6,
+        "end": 13.94,
+        "probability": 0.974
+      },
+      {
+        "word": " o",
+        "start": 13.94,
+        "end": 14.1,
+        "probability": 0.585
+      },
+      {
+        "word": " treino",
+        "start": 14.1,
+        "end": 14.36,
+        "probability": 0.92
+      },
+      {
+        "word": " baixo",
+        "start": 14.36,
+        "end": 14.64,
+        "probability": 0.508
+      },
+      {
+        "word": " impacto",
+        "start": 14.64,
+        "end": 15.12,
+        "probability": 0.978
+      },
+      {
+        "word": " para",
+        "start": 15.12,
+        "end": 15.4,
+        "probability": 0.953
+      },
+      {
+        "word": " quem",
+        "start": 15.4,
+        "end": 15.64,
+        "probability": 0.984
+      },
+      {
+        "word": " é",
+        "start": 15.64,
+        "end": 15.78,
+        "probability": 0.991
+      },
+      {
+        "word": " iniciante",
+        "start": 15.78,
+        "end": 16.3,
+        "probability": 0.964
+      },
+      {
+        "word": " e",
+        "start": 16.3,
+        "end": 16.58,
+        "probability": 0.923
+      },
+      {
+        "word": " está",
+        "start": 16.58,
+        "end": 16.8,
+        "probability": 0.976
+      },
+      {
+        "word": " muito",
+        "start": 16.8,
+        "end": 17.06,
+        "probability": 0.993
+      },
+      {
+        "word": " acidental.",
+        "start": 17.06,
+        "end": 17.66,
+        "probability": 0.601
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "start": 28.28,
+    "end": 32.46,
+    "text": "Comenta o que vou te mandar no privado para você experimentar aí de casa.",
+    "avg_logprob": -0.369,
+    "no_speech_prob": 0.086,
+    "words": [
+      {
+        "word": " Comenta",
+        "start": 28.28,
+        "end": 28.8,
+        "probability": 0.707
+      },
+      {
+        "word": " o",
+        "start": 28.8,
+        "end": 29.08,
+        "probability": 0.205
+      },
+      {
+        "word": " que",
+        "start": 29.08,
+        "end": 29.28,
+        "probability": 0.981
+      },
+      {
+        "word": " vou",
+        "start": 29.28,
+        "end": 29.48,
+        "probability": 0.745
+      },
+      {
+        "word": " te",
+        "start": 29.48,
+        "end": 29.6,
+        "probability": 0.854
+      },
+      {
+        "word": " mandar",
+        "start": 29.6,
+        "end": 29.86,
+        "probability": 0.974
+      },
+      {
+        "word": " no",
+        "start": 29.86,
+        "end": 30.1,
+        "probability": 0.893
+      },
+      {
+        "word": " privado",
+        "start": 30.1,
+        "end": 30.58,
+        "probability": 0.969
+      },
+      {
+        "word": " para",
+        "start": 30.58,
+        "end": 30.84,
+        "probability": 0.818
+      },
+      {
+        "word": " você",
+        "start": 30.84,
+        "end": 31.12,
+        "probability": 0.751
+      },
+      {
+        "word": " experimentar",
+        "start": 31.12,
+        "end": 31.8,
+        "probability": 0.989
+      },
+      {
+        "word": " aí",
+        "start": 31.8,
+        "end": 31.98,
+        "probability": 0.503
+      },
+      {
+        "word": " de",
+        "start": 31.98,
+        "end": 32.1,
+        "probability": 0.986
+      },
+      {
+        "word": " casa.",
+        "start": 32.1,
+        "end": 32.46,
+        "probability": 0.996
+      }
+    ]
+  }
+]

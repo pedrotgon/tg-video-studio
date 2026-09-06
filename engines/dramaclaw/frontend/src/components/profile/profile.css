@@ -1,0 +1,200 @@
+/* SPDX-License-Identifier: Elastic-2.0 */
+.tg-profile {
+  max-width: 1400px;
+  margin: auto;
+  padding: 32px;
+  color: var(--tg-ink, #16231d);
+}
+.tg-profile header,
+.tg-profile-identity,
+.tg-profile-fields,
+.tg-profile-tabs,
+.tg-profile-job {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.tg-profile header {
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.tg-profile h1 {
+  font-size: 30px;
+  font-weight: 750;
+}
+.tg-profile h2 {
+  font-size: 20px;
+  font-weight: 650;
+}
+.tg-profile h3 {
+  font-weight: 650;
+}
+.tg-profile p {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+.tg-profile-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+.tg-profile a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.tg-profile label {
+  display: block;
+  font-size: 13px;
+  margin: 14px 0;
+}
+.tg-profile select {
+  display: block;
+  max-width: 100%;
+  padding: 10px;
+  border: 1px solid var(--tg-border, #e3e1da);
+  border-radius: 8px;
+  background: white;
+}
+.tg-profile label input,
+.tg-profile label textarea {
+  margin-top: 6px;
+}
+.tg-profile textarea {
+  min-height: 100px;
+}
+.tg-profile input[type="checkbox"] {
+  margin-right: 8px;
+}
+.tg-profile-identity {
+  padding: 26px 0;
+}
+.tg-profile-identity strong {
+  font-size: 24px;
+}
+.tg-profile-identity p {
+  font-size: 13px;
+  color: var(--tg-muted, #66736b);
+}
+.tg-profile-avatar {
+  display: grid;
+  place-items: center;
+  background: var(--tg-forest, #19382b);
+  color: var(--tg-champagne, #c5a880);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  font-size: 24px;
+}
+.tg-profile-tabs {
+  border-bottom: 1px solid var(--tg-border, #e3e1da);
+  margin-bottom: 24px;
+  gap: 8px;
+}
+.tg-profile-tabs button {
+  padding: 12px 18px;
+  border-bottom: 3px solid transparent;
+}
+.tg-profile-tabs button[aria-current] {
+  border-color: var(--tg-champagne, #c5a880);
+  font-weight: 650;
+}
+.tg-profile-card {
+  padding: 24px;
+  background: white;
+  border: 1px solid var(--tg-border, #e3e1da);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.tg-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.tg-profile video,
+.tg-profile-media-empty {
+  width: 100%;
+  height: 300px;
+  object-fit: contain;
+  background: #f0eee9;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.tg-profile-media-empty {
+  display: grid;
+  place-items: center;
+  color: #66736b;
+}
+.tg-profile-caption,
+.tg-profile-copy p,
+.tg-profile-marked {
+  white-space: pre-wrap;
+}
+.tg-profile details {
+  border-top: 1px solid #e3e1da;
+  margin-top: 20px;
+  padding-top: 16px;
+}
+.tg-profile summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.tg-profile dl {
+  display: flex;
+  gap: 20px;
+}
+.tg-profile dt,
+.tg-profile small {
+  font-size: 12px;
+  color: #66736b;
+}
+.tg-profile-error {
+  background: #fff1ee;
+  padding: 16px;
+  border: 1px solid #b54747;
+  border-radius: 8px;
+}
+.tg-profile-copy {
+  border-top: 1px solid #e3e1da;
+  margin-top: 24px;
+  padding-top: 20px;
+}
+.tg-profile-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid #e3e1da;
+  padding: 10px 0;
+}
+.tg-profile-block > span {
+  flex: 1;
+  white-space: pre-wrap;
+}
+.tg-profile-marked {
+  margin: 20px 0;
+  line-height: 2;
+}
+.tg-profile mark {
+  color: #16231d;
+  background: #f0eee9;
+}
+.tg-profile mark[data-label="Gancho"] {
+  background: #f4dda1;
+}
+.tg-profile mark[data-label="História"] {
+  background: #c8dff3;
+}
+.tg-profile mark[data-label="Prova"] {
+  background: #cbe6d3;
+}
+.tg-profile mark[data-label="CTA"] {
+  background: #e4d5ef;
+}
+.tg-profile mark[data-label="Objeção"] {
+  background: #f5d2c1;
+}
+.tg-profile button:focus-visible,
+.tg-profile select:focus-visible,
+.tg-profile summary:focus-visible {
+  outline: 2px solid #19382b;
+  outline-offset: 3px;
+}

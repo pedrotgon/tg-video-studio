@@ -21,15 +21,15 @@
    TG Criativo canonical surface — loaded last
    ═══════════════════════════════════════════════════════════════════════════ */
 :root {
-  --tg-forest: #19382B;
-  --tg-forest-hover: #234C3B;
-  --tg-champagne: #C5A880;
-  --tg-page: #F7F7F5;
+  --tg-forest: #031A26;
+  --tg-forest-hover: #0B3345;
+  --tg-champagne: #B9915B;
+  --tg-page: #F5F4F3;
   --tg-surface: #FFFFFF;
-  --tg-cloud: #F0EEE9;
-  --tg-text: #19382B;
-  --tg-muted: #5F7268;
-  --tg-border: #DED9D0;
+  --tg-cloud: #EBEAE8;
+  --tg-text: #031A26;
+  --tg-muted: #5E727C;
+  --tg-border: #DCE1E3;
   --tg-success: #238A5A;
   --tg-warning: #B7791F;
   --tg-danger: #B54747;
@@ -54,7 +54,7 @@
   --sidebar-foreground: #FFFFFF;
   --sidebar-primary: var(--tg-champagne);
   --sidebar-accent: var(--tg-forest-hover);
-  --sidebar-border: rgba(197, 168, 128, .28);
+  --sidebar-border: rgba(185, 145, 91, .28);
   --sidebar-ring: var(--tg-champagne);
   color-scheme: light;
 }
@@ -92,67 +92,99 @@ html.dark {
 .tg-creative-rail {
   z-index: 30;
   display: flex;
-  width: 76px;
-  flex: 0 0 76px;
+  width: 64px;
+  flex: 0 0 64px;
   flex-direction: column;
   align-items: center;
-  background: var(--tg-forest);
-  color: #FFFFFF;
-  padding: 14px 10px;
+  padding: 16px 0;
+  background: #031A26;
+  color: #F5F4F3;
+  border-right: 1px solid #123444;
 }
 
-.tg-creative-rail__mark,
-.tg-creative-rail__signature {
+.tg-creative-rail__mark {
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  border: 1px solid rgba(197, 168, 128, .48);
-  border-radius: 12px;
-  color: var(--tg-champagne);
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-size: 13px;
-  font-weight: 800;
+  color: #B9915B;
+  margin-bottom: 26px;
   text-decoration: none;
+  border: none;
+  border-radius: 8px;
 }
 
 .tg-creative-rail__nav {
   display: flex;
   flex: 1;
+  width: 100%;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding-top: 28px;
+  gap: 8px;
+  padding-top: 0;
 }
 
 .tg-creative-rail__item {
-  display: flex;
-  width: 56px;
-  min-height: 58px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  color: rgba(255, 255, 255, .72);
-  font-size: 10px;
-  font-weight: 700;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: rgba(245, 244, 243, .78);
+  background: transparent;
   text-decoration: none;
-  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  transition: color .2s ease, background .2s ease;
 }
 
-.tg-creative-rail__item svg { width: 19px; height: 19px; }
+.tg-creative-rail__item svg {
+  width: 21px;
+  height: 21px;
+}
+
 .tg-creative-rail__item:hover,
-.tg-creative-rail__item:focus-visible,
-.tg-creative-rail__item--active {
-  border-color: rgba(197, 168, 128, .55);
-  background: var(--tg-forest-hover);
-  color: var(--tg-champagne);
+.tg-creative-rail__item:focus-visible {
+  color: #B9915B;
+  background: rgba(255, 255, 255, .06);
   outline: none;
 }
 
-.tg-creative-rail__signature { margin-top: auto; }
+.tg-creative-rail__item--active {
+  color: #B9915B !important;
+  background: #0B3345 !important;
+  border: none !important;
+}
+
+.tg-creative-rail__item--active::after {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 4px;
+  height: 28px;
+  transform: translateY(-50%);
+  border-radius: 0 4px 4px 0;
+  background: #B9915B;
+  box-shadow: 0 0 12px rgba(185, 145, 91, .45);
+}
+
+.tg-creative-rail__signature {
+  margin-top: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: #0B3345;
+  border: 2px solid rgba(185, 145, 91, .5);
+  font: 700 12px 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: normal;
+  text-decoration: none;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .tg-creative-rail__item { transition: none; }
@@ -1971,16 +2003,16 @@ button:hover .st-keyframe-video-play {
 
 /* TG Criativo final cascade: canonical light tokens follow every upstream rule. */
 :root {
-  --tg-forest: #19382B;
-  --tg-forest-light: #2A5541;
-  --tg-champagne: #C5A880;
-  --tg-champagne-light: #D8C3A5;
-  --tg-off-white: #F7F5F0;
+  --tg-forest: #031A26;
+  --tg-forest-light: #0B3345;
+  --tg-champagne: #B9915B;
+  --tg-champagne-light: #D2A66C;
+  --tg-off-white: #F5F4F3;
   --tg-white: #FFFFFF;
-  --tg-ink: #16231D;
-  --tg-muted: #66736B;
-  --tg-border: #E3E1DA;
-  --tg-radius: 12px;
+  --tg-ink: #031A26;
+  --tg-muted: #5E727C;
+  --tg-border: #DCE1E3;
+  --tg-radius: 10px;
   --background: var(--tg-off-white);
   --foreground: var(--tg-ink);
   --card: var(--tg-white);
@@ -2029,4 +2061,39 @@ html.dark {
   --border: var(--tg-border);
   --input: var(--tg-border);
   --ring: var(--tg-champagne);
+}
+
+/* The upstream light selector has higher specificity than :root. Keep the
+   final TG Studio palette explicit so every inherited component resolves to
+   the same navy, gold and cloud-dancer values as the Simples experience. */
+html.light,
+html:not(.dark) {
+  --background: var(--tg-off-white);
+  --foreground: var(--tg-ink);
+  --card: var(--tg-white);
+  --card-foreground: var(--tg-ink);
+  --popover: var(--tg-white);
+  --popover-foreground: var(--tg-ink);
+  --primary: var(--tg-forest);
+  --primary-foreground: var(--tg-white);
+  --secondary: #EDF0F1;
+  --secondary-foreground: var(--tg-ink);
+  --muted: #EEF1F2;
+  --muted-foreground: var(--tg-muted);
+  --accent: var(--tg-champagne);
+  --accent-foreground: var(--tg-ink);
+  --border: var(--tg-border);
+  --input: var(--tg-border);
+  --ring: var(--tg-champagne);
+  --sidebar: var(--tg-forest);
+  --sidebar-foreground: var(--tg-white);
+  --sidebar-primary: var(--tg-champagne);
+  --sidebar-primary-foreground: var(--tg-forest);
+  --sidebar-accent: var(--tg-forest-light);
+  --sidebar-accent-foreground: var(--tg-white);
+  --sidebar-border: rgba(185, 145, 91, .28);
+  --sidebar-ring: var(--tg-champagne);
+  --accent-rgb: 185 145 91;
+  --font-family-ui-default: 'DM Sans', system-ui, sans-serif;
+  --font-family-ui-macos: 'DM Sans', system-ui, sans-serif;
 }
