@@ -1,4 +1,4 @@
-export type TabType = 'simple' | 'complex' | 'profile';
+export type TabType = 'simple' | 'complex' | 'profile' | 'animation';
 
 export interface SimpleVideoConfig {
   videoSubject: string;

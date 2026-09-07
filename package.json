@@ -7,24 +7,30 @@
     "dev": "vite",
     "studio": "bash scripts/start-studio.sh",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:stop-motion": "tsx --test tests/stop-motion.test.ts"
   },
   "dependencies": {
     "agent-browser": "^0.34.0",
     "clsx": "^2.1.1",
+    "gifenc": "^1.0.3",
     "lucide-react": "^0.462.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwind-merge": "^2.5.5"
+    "tailwind-merge": "^2.5.5",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/three": "^0.185.4",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
+    "fake-indexeddb": "^6.2.5",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
+    "tsx": "^4.23.13",
     "typescript": "^5.6.3",
     "vite": "^5.4.10"
   }
