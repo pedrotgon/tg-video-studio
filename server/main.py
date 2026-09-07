@@ -8,10 +8,15 @@ import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+try:
+    from .tg_projects import router as tg_projects_router
+except ImportError:
+    from tg_projects import router as tg_projects_router
 
 MONEY_API = "http://127.0.0.1:8080"
 DRAMA_API = "http://127.0.0.1:8780"
 app = FastAPI(title="TG Video Studio Gateway", version="2.0.0")
+app.include_router(tg_projects_router)
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 

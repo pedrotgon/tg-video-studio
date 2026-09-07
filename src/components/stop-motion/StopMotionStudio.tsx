@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Camera, Check, ChevronDown, Copy, Download, Film, FolderOpen, ImagePlus, Mic, Pause, Play, Plus, Redo2, Save, Trash2, Undo2, X } from 'lucide-react';
 import { Actor, ActorKind, catalog, cloneScene, duration, Frame, frameAtTime, MAX_ACTORS, MAX_FRAMES, motionFrames, moveFrame, newActor, newProject, neutralPose, parseProject, Pose, Project } from './model';
 import { Stage } from './stage';
-import { loadProject, saveProject } from './storage';
+import { loadProject as loadLocalProject, saveProject as saveLocalProject } from './storage';
+import type { ProjectStorage } from '../../services/tg-projects';
 import { download, exportGif, exportVideo, filename } from './export';
 import './studio.css';
 
@@ -19,7 +20,10 @@ async function readMedia(file: File, kind: 'image' | 'audio'): Promise<string> {
   const bitmap = await createImageBitmap(file);
   try { const canvas = document.createElement('canvas'), scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height)); canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale); canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height); const normalized = canvas.toDataURL('image/webp', .9); if (normalized.length > 7_000_000) throw new Error('Escolha uma imagem menor.'); return normalized; } finally { bitmap.close(); }
 }
-export default function StopMotionStudio() {
+export default function StopMotionStudio({ storage, onBack }: { storage?: ProjectStorage; onBack?: () => void }) {
+  const loadProject = storage?.load ?? loadLocalProject;
+  const saveProject = storage?.save ?? saveLocalProject;
+  const savedLabel = storage ? 'Salvo no projeto TG' : 'Salvo neste dispositivo';
   const [project, setProject] = useState<Project>(newProject);
   const [loaded, setLoaded] = useState(false), [autosave, setAutosave] = useState(true);
   const [saved, setSaved] = useState('Abrindo projeto…'), [notice, setNotice] = useState('');
@@ -44,11 +48,11 @@ export default function StopMotionStudio() {
 
   useEffect(() => () => { const latest = persistence.current; if (latest.loaded && latest.autosave) saving.current = saving.current.catch(() => {}).then(() => saveProject(latest.project)).catch(() => {}); }, []);
 
-  useEffect(() => { let active = true; loadProject().then(savedProject => { if (!active) return; if (savedProject) setProject(savedProject); setSaved(savedProject ? 'Salvo neste dispositivo' : 'Novo projeto'); }).catch(error => { if (active) { setNotice(message(error)); setSaved('Salvamento automático pausado'); setAutosave(false); } }).finally(() => { if (active) setLoaded(true); }); return () => { active = false; }; }, []);
+  useEffect(() => { let active = true; loadProject().then(savedProject => { if (!active) return; if (savedProject) setProject(savedProject); setSaved(savedProject ? savedLabel : 'Novo projeto'); }).catch(error => { if (active) { setNotice(message(error)); setSaved('Salvamento automático pausado'); setAutosave(false); } }).finally(() => { if (active) setLoaded(true); }); return () => { active = false; }; }, []);
   useEffect(() => {
     if (!loaded || !autosave) return;
     let active = true; setSaved('Alterações pendentes…');
-    const timer = setTimeout(() => { saving.current = saving.current.catch(() => {}).then(() => saveProject(project)); saving.current.then(() => { if (active) setSaved('Salvo neste dispositivo'); }).catch(error => { if (active) { setSaved('Falha ao salvar'); setNotice(message(error)); } }); }, 600);
+    const timer = setTimeout(() => { saving.current = saving.current.catch(() => {}).then(() => saveProject(project)); saving.current.then(() => { if (active) setSaved(savedLabel); }).catch(error => { if (active) { setSaved('Falha ao salvar'); setNotice(message(error)); } }); }, 600);
     return () => { active = false; clearTimeout(timer); };
   }, [project, loaded, autosave]);
   useEffect(() => {
@@ -119,7 +123,7 @@ export default function StopMotionStudio() {
     };
     window.addEventListener('keydown', keydown); return () => window.removeEventListener('keydown', keydown);
   });
-  useEffect(() => { const warn = (event: BeforeUnloadEvent) => { if (busy || saved !== 'Salvo neste dispositivo') event.preventDefault(); }; window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn); }, [busy, saved]);
+  useEffect(() => { const warn = (event: BeforeUnloadEvent) => { if (busy || saved !== savedLabel) event.preventDefault(); }; window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn); }, [busy, saved, savedLabel]);
   useEffect(() => { if (!busy) return; const abortOnHide = () => { if (document.hidden) { abortRef.current?.abort(); setNotice('A exportação foi cancelada porque a aba ficou oculta. Mantenha o estúdio aberto ao exportar vídeo.'); } }; document.addEventListener('visibilitychange', abortOnHide); return () => document.removeEventListener('visibilitychange', abortOnHide); }, [busy]);
 
   const addActor = (kind: ActorKind) => { if (project.scene.actors.length >= MAX_ACTORS) { setNotice('O limite é de 12 personagens por palco.'); return; } const added = newActor(kind, project.scene.actors.length); commit(p => ({ ...p, scene: { ...p.scene, actors: [...p.scene.actors, added] } })); setSelected(added.id); setMobilePanel('pose'); };
@@ -127,7 +131,7 @@ export default function StopMotionStudio() {
   const runExport = async (format: 'gif' | 'webm') => {
     setPlaying(false); setBusy(format); setProgress(0); setNotice('');
     const abort = new AbortController(); abortRef.current = abort;
-    try { const blob = await (format === 'gif' ? exportGif : exportVideo)(project, setProgress, abort.signal); download(blob, `${filename(project.title)}.${format}`); setNotice(format === 'gif' ? 'GIF exportado. Esse formato não inclui som.' : 'Vídeo exportado com o áudio importado, quando disponível.'); }
+    try { const blob = await (format === 'gif' ? exportGif : exportVideo)(project, setProgress, abort.signal); download(blob, `${filename(project.title)}.${format}`); await storage?.exported?.(blob, format); setNotice(storage ? 'Arquivo baixado e guardado no histórico do criativo.' : format === 'gif' ? 'GIF exportado. Esse formato não inclui som.' : 'Vídeo exportado com o áudio importado, quando disponível.'); }
     catch (error) { setNotice(abort.signal.aborted ? 'Exportação cancelada. O projeto foi preservado.' : message(error)); }
     finally { abortRef.current = null; setBusy(null); }
   };
@@ -141,13 +145,19 @@ export default function StopMotionStudio() {
     setImporting(true);
     try { const data = await readMedia(file, kind); commit(p => kind === 'image' ? { ...p, backdrop: data } : { ...p, audio: data, audioName: file.name.slice(0, 160) }); } catch (error) { setNotice(message(error)); } finally { setImporting(false); }
   };
-  const saveNow = async () => { try { saving.current = saving.current.catch(() => {}).then(() => saveProject(project)); await saving.current; setSaved('Salvo neste dispositivo'); setAutosave(true); } catch (error) { setNotice(message(error)); } };
+  const saveNow = async () => { try { saving.current = saving.current.catch(() => {}).then(() => saveProject(project)); await saving.current; setSaved(savedLabel); setAutosave(true); } catch (error) { setNotice(message(error)); } };
+  const leave = async () => {
+    setImporting(true);
+    try { saving.current = saving.current.catch(() => {}).then(() => saveProject(project)); await saving.current; persistence.current.autosave = false; onBack?.(); }
+    catch (error) { setNotice(message(error)); setImporting(false); }
+  };
 
   return <div className="sm-studio" aria-busy={!loaded || !!busy}>
     <header className="sm-header">
+      {onBack && <button disabled={locked} onClick={leave}>← Criativos</button>}
       <div className="sm-brand"><span className="sm-brand-icon"><Film size={23} /></span><div><p>TG / ANIMAÇÃO</p><h1>Stop motion</h1></div></div>
       <div className="sm-project-name"><input aria-label="Nome do projeto" maxLength={120} value={project.title} disabled={locked} onChange={e => commit(p => ({ ...p, title: e.target.value }))} /><span><Check size={12} />{saved}</span></div>
-      <div className="sm-actions"><button onClick={undo} disabled={locked || !past.current.length} aria-label="Desfazer" title="Desfazer (Ctrl+Z)"><Undo2 size={17} /></button><button onClick={redo} disabled={locked || !future.current.length} aria-label="Refazer"><Redo2 size={17} /></button><button disabled={locked} onClick={saveNow} title="Salvar neste dispositivo"><Save size={16} /><span>Salvar</span></button><button disabled={!loaded || !!busy} onClick={() => download(new Blob([JSON.stringify(project)], { type: 'application/json' }), `${filename(project.title)}.tg-motion.json`)}><Download size={16} /><span>Projeto</span></button><label className={`sm-button ${locked ? 'disabled' : ''}`}><FolderOpen size={16} /><span>Abrir</span><input type="file" accept=".json" disabled={locked} onChange={e => { void importProject(e.target.files?.[0]); e.target.value = ''; }} /></label></div>
+      <div className="sm-actions"><button onClick={undo} disabled={locked || !past.current.length} aria-label="Desfazer" title="Desfazer (Ctrl+Z)"><Undo2 size={17} /></button><button onClick={redo} disabled={locked || !future.current.length} aria-label="Refazer"><Redo2 size={17} /></button><button disabled={locked} onClick={saveNow} title={storage ? 'Salvar no projeto TG' : 'Salvar neste dispositivo'}><Save size={16} /><span>Salvar</span></button><button aria-label="Baixar projeto JSON" disabled={!loaded || !!busy} onClick={() => download(new Blob([JSON.stringify(project)], { type: 'application/json' }), `${filename(project.title)}.tg-motion.json`)}><Download size={16} /><span>Projeto</span></button><label className={`sm-button ${locked ? 'disabled' : ''}`}><FolderOpen size={16} /><span>Abrir</span><input aria-label="Abrir projeto JSON" type="file" accept=".json" disabled={locked} onChange={e => { void importProject(e.target.files?.[0]); e.target.value = ''; }} /></label></div>
     </header>
     {notice && <div className="sm-notice" role="status">{notice}<button onClick={() => setNotice('')} aria-label="Fechar aviso"><X size={16} /></button></div>}
     <div className="sm-mobile-tabs"><button aria-pressed={mobilePanel === 'cast'} onClick={() => setMobilePanel('cast')}>Elenco e cenário</button><button aria-pressed={mobilePanel === 'pose'} onClick={() => setMobilePanel('pose')}>Pose e produção</button></div>
