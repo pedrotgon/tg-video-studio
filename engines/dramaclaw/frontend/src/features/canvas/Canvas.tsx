@@ -3678,7 +3678,7 @@ export function Canvas({
   );
 
   const handleNodeDragStart = useCallback(
-    (event: MouseEvent | TouchEvent, node: CanvasNode, draggedNodes: CanvasNode[]) => {
+    (event: any, node: CanvasNode, draggedNodes: CanvasNode[]) => {
       // 组内成员拖动：记下「所有被拖成员」（多选时第三参带全量）所属的组 id，松手时
       // 逐组按成员最终落点 fitGroupToChildren 重新包住（libtv 式，拖动期间不动框）。
       // 只看被抓节点会漏掉多选里其它组的成员 —— 它们没有 extent:'parent' 钳制，
@@ -3799,7 +3799,7 @@ export function Canvas({
   );
 
   const handleNodeDrag = useCallback(
-    (_event: MouseEvent | TouchEvent, node: CanvasNode) => {
+    (_event: any, node: CanvasNode) => {
       // 联动拖动:把 partner(源节点或输出组)按被拖节点的位移同步移动。移动组时
       // 其子节点(相对坐标)会自动跟随,无需额外处理。
       const linked = linkedDragRef.current;
@@ -3880,7 +3880,7 @@ export function Canvas({
   );
 
   const handleNodeDragStop = useCallback(
-    (_event: MouseEvent | TouchEvent, node: CanvasNode) => {
+    (_event: any, node: CanvasNode) => {
       useSnapAlignStore.getState().clearGuides();
       snapAlignIndexRef.current = null;
       // 联动拖动收尾:partner 的最终位置已在拖动期间(dragging:true)写入,松手时
