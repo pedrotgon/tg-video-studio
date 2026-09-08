@@ -20,6 +20,12 @@ export function nativeMotionStorage(id: string): ProjectStorage {
       project.backdrop = await new Promise<string>((resolve,reject) => { const reader = new FileReader(); reader.onload=()=>resolve(String(reader.result)); reader.onerror=reject; image.blob().then(blob=>reader.readAsDataURL(blob)).catch(reject); });
       return project;
     },
+    async exported(blob, format) {
+      if (format !== 'webm') return;
+      const form = new FormData(); form.append('file', blob, 'animation.webm');
+      const response = await fetch(`${path}/export`, {method:'POST',body:form});
+      if (!response.ok) throw new Error('Vídeo exportado, mas não salvo no projeto. Tente novamente.');
+    },
     async save(project) {
       const response = await fetch(path, {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(project)});
       if (!response.ok) throw new Error('Não foi possível salvar no projeto. Baixe uma cópia e tente novamente.');

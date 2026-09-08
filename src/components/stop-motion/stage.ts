@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { createFarm } from './farm';
 import { Actor, Project, Scene } from './model';
 
 const radians = THREE.MathUtils.degToRad;
@@ -8,6 +9,7 @@ export class Stage {
   private world = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(35, 16 / 9, .1, 100);
   private actors = new THREE.Group();
+  private farm = createFarm();
   private sphere = new THREE.SphereGeometry(1, 20, 14);
   private cylinder = new THREE.CylinderGeometry(1, 1, 1, 24);
   private ear = new THREE.ConeGeometry(1, 1, 3);
@@ -22,7 +24,7 @@ export class Stage {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(1);
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.world.add(new THREE.HemisphereLight('#ffffff', '#8a8278', 2.6));
     const light = new THREE.DirectionalLight('#fff5e5', 3.2);
@@ -30,7 +32,8 @@ export class Stage {
     light.shadow.mapSize.set(1024, 1024);
     Object.assign(light.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7 });
     light.shadow.bias = -.001;
-    this.world.add(light, this.actors);
+    this.world.add(light, this.actors, this.farm);
+    this.farm.visible = false;
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.ShadowMaterial({ opacity: .16 }));
     floor.rotation.x = -Math.PI / 2; floor.position.y = -.015; floor.receiveShadow = true;
     this.world.add(floor);
@@ -113,7 +116,7 @@ export class Stage {
     }
     return root;
   }
-  render(scene: Scene, settings: Pick<Project, 'ratio' | 'background'>, previous?: Scene, selected?: string, width = 960): HTMLCanvasElement {
+  render(scene: Scene, settings: Pick<Project, 'ratio' | 'background' | 'environment'>, previous?: Scene, selected?: string, width = 960): HTMLCanvasElement {
     const aspect = settings.ratio === '16:9' ? 16 / 9 : settings.ratio === '9:16' ? 9 / 16 : 1;
     const height = Math.round(width / aspect);
     if (this.canvas.width !== width || this.canvas.height !== height) { this.canvas.width = width; this.canvas.height = height; }
@@ -124,6 +127,7 @@ export class Stage {
     const distance = (aspect < 1 ? 12 : 8.8) / scene.camera.zoom, angle = radians(scene.camera.angle), elevation = radians(scene.camera.elevation);
     this.camera.position.set(Math.sin(angle) * distance, 1.4 + Math.sin(elevation) * distance, Math.cos(angle) * Math.cos(elevation) * distance);
     this.camera.lookAt(0, 1.3, 0); this.camera.updateProjectionMatrix(); this.camera.updateMatrixWorld();
+    this.farm.visible = settings.environment === 'farm';
     this.actors.clear();
     if (previous) previous.actors.forEach(actor => this.actors.add(this.actor(actor, true)));
     scene.actors.forEach(actor => {

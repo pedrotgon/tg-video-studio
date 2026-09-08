@@ -654,6 +654,24 @@ async def create_project(
     }
 
 
+@router.post("/projects/{project}/stop-motion/export")
+async def save_stop_motion_export(project: str, file: UploadFile = File(...), user: dict = Depends(require_scope("projects:write"))):
+    ctx = await resolve_project_context(user=user, project_id=project, required_role="editor")
+    require_project_home_node(ctx, operation="save stop motion video")
+    data = await file.read(4_500_001)
+    if len(data) > 4_500_000:
+        raise HTTPException(status_code=413, detail="Video exceeds 4.5 MB")
+    if not data.startswith(bytes.fromhex("1a45dfa3")):
+        raise HTTPException(status_code=422, detail="Expected a WebM video")
+    import tempfile
+    folder = Path(ctx.output_dir) / "videos" / "stop-motion"
+    folder.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=folder, suffix=".webm", delete=False) as output:
+        output.write(data)
+        saved = Path(output.name)
+    return {"ok": True, "data": {"filename": saved.name}}
+
+
 @router.get("/projects/{project}/stop-motion")
 async def get_stop_motion(project: str, user: dict = Depends(get_api_user)):
     ctx = await resolve_project_context(user=user, project_id=project, required_role="viewer")

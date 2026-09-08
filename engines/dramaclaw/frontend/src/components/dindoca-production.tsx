@@ -17,26 +17,26 @@ export function DindocaProduction({project, config, onSettings}: {project:string
           <h1 className="max-w-xl font-serif text-4xl leading-[1.05] lg:text-6xl">Tem sabor que<br/>abraça a gente.</h1>
           <p className="my-5 max-w-lg text-base leading-relaxed opacity-80">O universo criativo da Dindoca: uma casa acolhedora, dois anfitriões curiosos e os sabores do interior no centro da mesa.</p>
           <div className="my-6 flex flex-wrap gap-2">
-            <a className="rounded-lg bg-[#19382b] px-5 py-3 text-sm font-semibold text-white" href="/dindoca/bento-e-dora-3d.mp4" download>Baixar animação 3D</a>
+            <a className="rounded-lg bg-[#19382b] px-5 py-3 text-sm font-semibold text-white" href="/dindoca/dindoca-fazenda.mp4" download>Baixar filme da fazenda</a>
             <a className="rounded-lg border border-[#19382b]/30 px-5 py-3 text-sm" href={`${base}/episodes`}>Abrir esteira de produção →</a>
           </div>
           <div className="grid grid-cols-3 gap-3 border-y border-[#19382b]/15 py-5 text-sm">
-            <div><strong className="block text-2xl">02</strong>Mascotes</div><div><strong className="block text-2xl">03</strong>Planos de criativos</div><div><strong className="block text-2xl">18s</strong>Filme conceito</div>
+            <div><strong className="block text-2xl">02</strong>Mascotes</div><div><strong className="block text-2xl">03</strong>Planos de criativos</div><div><strong className="block text-2xl">18s</strong>Cena animada</div>
           </div>
           <div className="mt-6 rounded-xl bg-white/70 p-5">
             <p className="text-xs font-semibold tracking-widest">PRIMEIRO FILME · SUA MESA MERECE CARINHO</p>
             <p className="mt-3 font-serif text-xl leading-relaxed">“{config.campaign?.own_script}”</p>
-            <p className="mt-3 text-xs opacity-70">Narração em português, legendas e movimento de câmera. Arte conceitual com estética de massinha; os mascotes ainda não têm animação corporal neste filme.</p>
+            <p className="mt-3 text-xs opacity-70">Cena 3D com casa, varanda, mesa e mascotes em movimento. Narração em português. O roteiro completo permanece disponível na esteira.</p>
           </div>
         </section>
         <section className="mx-auto w-full max-w-[340px]">
           <div className="mb-3 flex gap-2 text-xs"><button className={`rounded-full border border-[#19382b]/20 px-3 py-2 ${film==='concept'?'bg-[#19382b] text-white':''}`} aria-pressed={film==='concept'} onClick={()=>setFilm('concept')}>Filme narrado</button><button className={`rounded-full border border-[#19382b]/20 px-3 py-2 ${film==='motion'?'bg-[#19382b] text-white':''}`} aria-pressed={film==='motion'} onClick={()=>setFilm('motion')}>Animação 3D</button></div>
-          <video key={film} controls playsInline preload="metadata" poster={film==='concept'?'/dindoca/casa-de-fazenda.png':undefined} className="aspect-[9/16] w-full rounded-2xl bg-[#19382b] shadow-xl" src={film==='concept'?'/dindoca/dindoca-filme-conceito.mp4':'/dindoca/bento-e-dora-3d.mp4'}>{film==='concept'&&<track kind="captions" src="/dindoca/legendas.vtt" srcLang="pt-BR" label="Português"/>}</video>
-          <p className="mt-2 text-center text-xs opacity-60">{film==='concept'?'Conceito visual • Produtos ilustrados com IA':'Teste de movimento • 12s • Sem narração'}</p>
+          <video key={film} controls playsInline preload="metadata" poster={film==='concept'?'/dindoca/casa-de-fazenda.png':undefined} className="aspect-[9/16] w-full rounded-2xl bg-[#19382b] shadow-xl" src={film==='concept'?'/dindoca/dindoca-filme-conceito.mp4':'/dindoca/dindoca-fazenda.mp4'}>{film==='concept'&&<track kind="captions" src="/dindoca/legendas.vtt" srcLang="pt-BR" label="Português"/>}</video>
+          <p className="mt-2 text-center text-xs opacity-60">{film==='concept'?'Conceito visual • Produtos ilustrados com IA':'Fazenda 3D • 18s • Narração em português'}</p>
         </section>
       </div>
       <section className="mt-10 grid gap-4 md:grid-cols-3">
-        {[['Bento · o anfitrião','Bode de argila creme, lenço verde e humor gentil. Apresenta os sabores da casa.'],['Dora · a companhia da mesa','Galinha amarelo mel, curiosa e alegre. Convida a família para experimentar.'],['Cozinha da fazenda','Madeira, janela verde, cerâmica e luz da manhã. Queijo coalho, goiabada e farinha em destaque.']].map(([title,copy])=><article key={title} className="rounded-xl border border-[#19382b]/15 p-5"><h2 className="font-serif text-xl">{title}</h2><p className="mt-3 text-sm leading-relaxed opacity-75">{copy}</p></article>)}
+        {[['Bento · o anfitrião','Bode de argila creme, lenço verde e humor gentil. Apresenta os sabores da casa.'],['Dora · a companhia da mesa','Galinha amarelo mel, curiosa e alegre. Convida a família para experimentar.'],['Casa e varanda da fazenda','Casa com janelas verdes, varanda, pomar e mesa com queijo e goiabada. Cenário reutilizável no editor.']].map(([title,copy])=><article key={title} className="rounded-xl border border-[#19382b]/15 p-5"><h2 className="font-serif text-xl">{title}</h2><p className="mt-3 text-sm leading-relaxed opacity-75">{copy}</p></article>)}
       </section>
       <div className="my-6 flex flex-wrap gap-4 text-sm underline underline-offset-4"><a href={`${base}/characters`}>Personagens e cenários</a><a href={`${base}/freezone`}>Abrir ambiente criativo</a><button onClick={()=>setEditor(!editor)}>{editor?'Fechar editor de stop motion':'Abrir editor de stop motion'}</button><button onClick={onSettings}>Configurações e briefing completo</button></div>
       {editor && <iframe title="Editor de stop motion do projeto Dindoca" src={`/?motionProject=${encodeURIComponent(project)}&embedded=1#animation`} className="h-[850px] w-full rounded-xl border border-[#19382b]/20"/>}

@@ -73,7 +73,7 @@ export default function StopMotionStudio({ storage, onBack }: { storage?: Projec
   useEffect(() => {
     if (!stageReady || playing || busy) return;
     let active = true, timer = 0, index = 0;
-    const settings = project.ratio + project.background + project.backdrop;
+    const settings = project.ratio + project.background + project.backdrop + project.environment;
     const ids = new Set(project.frames.map(f => f.id)); for (const id of thumbCache.current.keys()) if (!ids.has(id)) thumbCache.current.delete(id);
     const tick = () => {
       if (!active || !stageRef.current) return;
@@ -131,7 +131,7 @@ export default function StopMotionStudio({ storage, onBack }: { storage?: Projec
   const runExport = async (format: 'gif' | 'webm') => {
     setPlaying(false); setBusy(format); setProgress(0); setNotice('');
     const abort = new AbortController(); abortRef.current = abort;
-    try { const blob = await (format === 'gif' ? exportGif : exportVideo)(project, setProgress, abort.signal); download(blob, `${filename(project.title)}.${format}`); await storage?.exported?.(blob, format); setNotice(storage?.exported ? 'Arquivo baixado e guardado no histórico do criativo.' : format === 'gif' ? 'GIF exportado. Esse formato não inclui som.' : 'Vídeo baixado. O projeto editável permanece salvo separadamente.'); }
+    try { const blob = await (format === 'gif' ? exportGif : exportVideo)(project, setProgress, abort.signal); download(blob, `${filename(project.title)}.${format}`); await storage?.exported?.(blob, format); setNotice(format === 'gif' ? 'GIF exportado. Esse formato não inclui som.' : storage?.exported ? 'Vídeo exportado e salvo no projeto.' : 'Vídeo baixado. O projeto editável permanece salvo separadamente.'); }
     catch (error) { setNotice(abort.signal.aborted ? 'Exportação cancelada. O projeto foi preservado.' : message(error)); }
     finally { abortRef.current = null; setBusy(null); }
   };
@@ -165,7 +165,7 @@ export default function StopMotionStudio({ storage, onBack }: { storage?: Projec
       <aside className={`sm-panel sm-cast ${mobilePanel === 'cast' ? 'sm-mobile-active' : ''}`}>
         <fieldset disabled={locked}><legend>Seu elenco</legend><p className="sm-hint">Adicione ao palco. Reutilize em cada quadro.</p><div className="sm-catalog">{catalog.map(item => <button key={item.kind} onClick={() => addActor(item.kind)}><span className="sm-swatch" style={{ background: item.color }} /><span><strong>{item.name}</strong><small>{item.label}</small></span><Plus size={15} /></button>)}</div>
         <h2>No palco <span>{project.scene.actors.length}/{MAX_ACTORS}</span></h2><div className="sm-cast-list">{project.scene.actors.map(a => <button key={a.id} className={a.id === selected ? 'selected' : ''} onClick={() => { setSelected(a.id); setMobilePanel('pose'); }}><span className="sm-dot" style={{ background: a.color }} /><span>{a.name || 'Sem nome'}</span><ChevronDown size={14} /></button>)}{!project.scene.actors.length && <p className="sm-hint">Escolha um personagem acima.</p>}</div>
-        <h2>Cenário</h2><label className="sm-field">Fundo<input type="color" value={project.background} onChange={e => commit(p => ({ ...p, background: e.target.value }))} /></label><label className="sm-button sm-wide"><ImagePlus size={16} />Importar imagem<input type="file" accept="image/png,image/jpeg,image/webp" disabled={locked} onChange={e => { void importMedia(e.target.files?.[0], 'image'); e.target.value = ''; }} /></label>{project.backdrop && <button className="sm-link" onClick={() => commit(p => ({ ...p, backdrop: '' }))}>Remover cenário importado</button>}
+        <h2>Cenário</h2><label className="sm-field"><span>Casa de fazenda 3D</span><input type="checkbox" checked={project.environment === 'farm'} onChange={e => commit(p => ({ ...p, environment: e.target.checked ? 'farm' : undefined }))} /></label><label className="sm-field">Fundo<input type="color" value={project.background} onChange={e => commit(p => ({ ...p, background: e.target.value }))} /></label><label className="sm-button sm-wide"><ImagePlus size={16} />Importar imagem<input type="file" accept="image/png,image/jpeg,image/webp" disabled={locked} onChange={e => { void importMedia(e.target.files?.[0], 'image'); e.target.value = ''; }} /></label>{project.backdrop && <button className="sm-link" onClick={() => commit(p => ({ ...p, backdrop: '' }))}>Remover cenário importado</button>}
         <label className="sm-field">Formato<select value={project.ratio} onChange={e => commit(p => ({ ...p, ratio: e.target.value as Project['ratio'] }))}><option>16:9</option><option>9:16</option><option>1:1</option></select></label>
         <details><summary>Câmera</summary><Slider label="Ângulo" min={-70} max={70} value={project.scene.camera.angle} onChange={angle => commit(p => ({ ...p, scene: { ...p.scene, camera: { ...p.scene.camera, angle } } }))} /><Slider label="Altura" min={0} max={55} value={project.scene.camera.elevation} onChange={elevation => commit(p => ({ ...p, scene: { ...p.scene, camera: { ...p.scene.camera, elevation } } }))} /><Slider label="Zoom" min={.6} max={1.8} step={.05} value={project.scene.camera.zoom} onChange={zoom => commit(p => ({ ...p, scene: { ...p.scene, camera: { ...p.scene.camera, zoom } } }))} /></details>
         </fieldset>

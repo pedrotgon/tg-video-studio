@@ -5,11 +5,12 @@ import { cloneScene, duration, frameAtTime, MAX_FRAMES, motionFrames, moveFrame,
 import { loadProject, saveProject } from '../src/components/stop-motion/storage';
 
 test('Dindoca mascots survive save/import and pose generation', () => {
-  const project = newProject(); project.scene.actors = [newActor('goat'), newActor('hen')];
+  const project = newProject(); project.environment = 'farm'; project.scene.actors = [newActor('goat'), newActor('hen')];
   for (const actor of project.scene.actors) project.frames.push(...motionFrames(project.scene, actor.id, 'wave'));
   const reopened = parseProject(JSON.parse(JSON.stringify(project)));
   assert.deepEqual(reopened.scene.actors.map(a => a.kind), ['goat', 'hen']);
   assert.equal(reopened.frames.length, 24);
+  assert.equal(reopened.environment, 'farm');
   assert.equal(reopened.frames[23].scene.actors[1].name, 'Dora');
 });
 

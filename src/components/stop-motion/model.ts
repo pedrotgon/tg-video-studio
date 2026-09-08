@@ -5,7 +5,7 @@ export type Pose = { leftArm: number; rightArm: number; leftLeg: number; rightLe
 export type Actor = { id: string; kind: ActorKind; name: string; color: string; x: number; z: number; y: number; rotation: number; scale: number; pose: Pose; description: string };
 export type Scene = { actors: Actor[]; camera: { angle: number; elevation: number; zoom: number } };
 export type Frame = { id: string; scene: Scene; hold: number };
-export type Project = { version: 1; title: string; brief: string; client: string; fps: number; ratio: '16:9' | '9:16' | '1:1'; background: string; backdrop: string; audio: string; audioName: string; scene: Scene; frames: Frame[] };
+export type Project = { version: 1; environment?: 'farm'; title: string; brief: string; client: string; fps: number; ratio: '16:9' | '9:16' | '1:1'; background: string; backdrop: string; audio: string; audioName: string; scene: Scene; frames: Frame[] };
 export const neutralPose = (): Pose => ({ leftArm: 8, rightArm: -8, leftLeg: 0, rightLeg: 0, head: 0, mouth: 0 });
 export const cloneScene = (scene: Scene): Scene => ({ camera: { ...scene.camera }, actors: scene.actors.map(a => ({ ...a, pose: { ...a.pose } })) });
 export const catalog: { kind: ActorKind; name: string; color: string; label: string }[] = [
@@ -72,5 +72,5 @@ export function parseProject(value: unknown): Project {
   if (!Array.isArray(p.frames) || p.frames.length > MAX_FRAMES) throw new Error('Limite de 240 quadros por projeto.');
   const frames = p.frames.map((entry): Frame => { const f = obj(entry); const hold = num(f.hold, 1, 24); if (!Number.isInteger(hold)) throw new Error('Duração de quadro inválida.'); return { id: str(f.id, 100), scene: scene(f.scene), hold }; });
   if (new Set(frames.map(f => f.id)).size !== frames.length) throw new Error('Identificadores de quadros duplicados.');
-  return { version: 1, title: str(p.title, 120), brief: str(p.brief, 4000), client: str(p.client, 160), fps: num(p.fps, 1, 24), ratio: p.ratio as Project['ratio'], background: color(p.background), backdrop: data(p.backdrop, 'image'), audio: data(p.audio, 'audio'), audioName: str(p.audioName, 160), scene: scene(p.scene), frames };
+  return { version: 1, ...(p.environment === 'farm' ? { environment: 'farm' as const } : {}), title: str(p.title, 120), brief: str(p.brief, 4000), client: str(p.client, 160), fps: num(p.fps, 1, 24), ratio: p.ratio as Project['ratio'], background: color(p.background), backdrop: data(p.backdrop, 'image'), audio: data(p.audio, 'audio'), audioName: str(p.audioName, 160), scene: scene(p.scene), frames };
 }
