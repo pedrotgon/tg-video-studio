@@ -8,6 +8,7 @@ const items: Array<{ id: TabType; label: string; detail: string; icon: typeof Za
   { id: 'profile', label: 'Perfil', detail: 'Cliente', icon: UserRound },
   { id: 'simple', label: 'Simples', detail: '1 clique', icon: Zap },
   { id: 'complex', label: 'Criativo', detail: 'Estúdio', icon: Star },
+  { id: 'animation', label: 'Animação', detail: 'Stop motion', icon: Clapperboard },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => (

@@ -16,6 +16,11 @@ export interface CommercialBrCampaign {
   forbidden_terms?: string[];
   own_script?: string;
   tone?: string;
+  business_brief?: {
+    administrator?: string; founded?: number; employees?: number;
+    products?: string; strengths?: string; improvements?: string;
+    mission?: string; vision?: string; competitors?: string;
+  };
 }
 
 export interface CommercialBrOutput {

@@ -1,6 +1,6 @@
 export const MAX_FRAMES = 240;
 export const MAX_ACTORS = 12;
-export type ActorKind = 'person' | 'rabbit' | 'cat' | 'cup';
+export type ActorKind = 'person' | 'rabbit' | 'cat' | 'cup' | 'goat' | 'hen';
 export type Pose = { leftArm: number; rightArm: number; leftLeg: number; rightLeg: number; head: number; mouth: number };
 export type Actor = { id: string; kind: ActorKind; name: string; color: string; x: number; z: number; y: number; rotation: number; scale: number; pose: Pose; description: string };
 export type Scene = { actors: Actor[]; camera: { angle: number; elevation: number; zoom: number } };
@@ -9,6 +9,8 @@ export type Project = { version: 1; title: string; brief: string; client: string
 export const neutralPose = (): Pose => ({ leftArm: 8, rightArm: -8, leftLeg: 0, rightLeg: 0, head: 0, mouth: 0 });
 export const cloneScene = (scene: Scene): Scene => ({ camera: { ...scene.camera }, actors: scene.actors.map(a => ({ ...a, pose: { ...a.pose } })) });
 export const catalog: { kind: ActorKind; name: string; color: string; label: string }[] = [
+  { kind: 'goat', name: 'Bento', color: '#e4d1ad', label: 'Bode' },
+  { kind: 'hen', name: 'Dora', color: '#e8ad43', label: 'Galinha' },
   { kind: 'person', name: 'Lia', color: '#d78948', label: 'Pessoa' },
   { kind: 'rabbit', name: 'Nino', color: '#efe5d1', label: 'Coelho' },
   { kind: 'cat', name: 'Juca', color: '#d69b60', label: 'Gato' },

@@ -74,6 +74,7 @@ export default defineConfig(({ mode }) => {
     // tree still uses root-relative route definitions; TanStack Router applies
     // this basepath while Vite emits assets with the same public prefix.
     base: "/criativo/",
+    css: { postcss: { plugins: [] } },
     plugins: [
       TanStackRouterVite(),
       react(),

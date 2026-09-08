@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 
 import { useProject, useUpdateProject } from "@/lib/queries/projects";
+import { DindocaProduction } from "@/components/dindoca-production";
 import {
   useChapters,
   useKnowledgeGraph,
@@ -986,6 +987,12 @@ function ChapterPreviewSkeleton() {
 
 function IngestPage() {
   const { project } = Route.useParams();
+  const { data } = useProject(project);
+  const [settings, setSettings] = useState(false);
+  useEffect(() => setSettings(false), [project]);
+  if (!settings && data?.data?.campaign?.name === 'Dindoca Casa de Fazenda') {
+    return <DindocaProduction project={project} config={data.data} onSettings={() => setSettings(true)} />;
+  }
   return <IngestPageContent project={project} />;
 }
 

@@ -51,3 +51,10 @@ state/
 *.sqlite-shm
 *.part
 cookies*.txt
+
+# Runtime support code and intentional Dindoca campaign deliverables.
+!engines/dramaclaw/src/novelvideo/storage/
+!engines/dramaclaw/src/novelvideo/storage/*.py
+!public/dindoca/*.png
+!public/dindoca/*.mp3
+!public/dindoca/*.mp4

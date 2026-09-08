@@ -127,8 +127,8 @@ html.dark {
 .tg-creative-rail__item {
   position: relative;
   width: 44px;
-  height: 44px;
-  min-height: 44px;
+  height: 58px;
+  min-height: 58px;
   padding: 0;
   border: 0;
   border-radius: 8px;
@@ -139,6 +139,8 @@ html.dark {
   text-decoration: none;
   transition: color .2s ease, background .2s ease;
 }
+
+.tg-creative-rail__label { font-size: 10px; line-height: 1; align-self: start; }
 
 .tg-creative-rail__item svg {
   width: 21px;

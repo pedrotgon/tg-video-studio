@@ -70,7 +70,9 @@ h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif; letter
   transform: translateY(-50%); border-radius: 0 4px 4px 0; background: var(--gold);
   box-shadow: 0 0 12px rgba(185,145,91,.45);
 }
-.studio-sidebar strong, .studio-sidebar small { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+.studio-sidebar strong { display: block; font-size: 9px; line-height: 1; font-weight: 500; }
+.studio-sidebar nav button { height: 58px; display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; }
+.studio-sidebar small { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 .sidebar-tg {
   width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center;
   color: white; background: #0b3345; border: 2px solid rgba(185,145,91,.5);

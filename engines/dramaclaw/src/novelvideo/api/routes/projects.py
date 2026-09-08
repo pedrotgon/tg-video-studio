@@ -1,5 +1,6 @@
 """项目 CRUD 端点。"""
 
+import json
 import logging
 import shutil
 import sqlite3
@@ -651,6 +652,32 @@ async def create_project(
             else None,
         },
     }
+
+
+@router.get("/projects/{project}/stop-motion")
+async def get_stop_motion(project: str, user: dict = Depends(get_api_user)):
+    ctx = await resolve_project_context(user=user, project_id=project, required_role="viewer")
+    require_project_home_node(ctx, operation="read stop motion")
+    path = Path(ctx.state_dir) / "stop-motion.json"
+    return {"ok": True, "data": json.loads(path.read_text(encoding="utf-8")) if path.exists() else None}
+
+
+@router.put("/projects/{project}/stop-motion")
+async def save_stop_motion(project: str, body: dict, user: dict = Depends(require_scope("projects:write"))):
+    ctx = await resolve_project_context(user=user, project_id=project, required_role="editor")
+    require_project_home_node(ctx, operation="save stop motion")
+    if body.get("version") != 1 or not isinstance(body.get("frames"), list) or len(body["frames"]) > 240:
+        raise HTTPException(status_code=422, detail="Invalid stop motion project")
+    content = json.dumps(body, ensure_ascii=False)
+    if len(content.encode("utf-8")) > 4_500_000:
+        raise HTTPException(status_code=413, detail="Project exceeds 4.5 MB; export large media separately")
+    import tempfile
+    path = Path(ctx.state_dir) / "stop-motion.json"
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent, delete=False, suffix=".json") as file:
+        file.write(content)
+        temp = Path(file.name)
+    temp.replace(path)
+    return {"ok": True}
 
 
 @router.get("/projects/{project}")

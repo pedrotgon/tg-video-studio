@@ -131,7 +131,7 @@ export default function StopMotionStudio({ storage, onBack }: { storage?: Projec
   const runExport = async (format: 'gif' | 'webm') => {
     setPlaying(false); setBusy(format); setProgress(0); setNotice('');
     const abort = new AbortController(); abortRef.current = abort;
-    try { const blob = await (format === 'gif' ? exportGif : exportVideo)(project, setProgress, abort.signal); download(blob, `${filename(project.title)}.${format}`); await storage?.exported?.(blob, format); setNotice(storage ? 'Arquivo baixado e guardado no histórico do criativo.' : format === 'gif' ? 'GIF exportado. Esse formato não inclui som.' : 'Vídeo exportado com o áudio importado, quando disponível.'); }
+    try { const blob = await (format === 'gif' ? exportGif : exportVideo)(project, setProgress, abort.signal); download(blob, `${filename(project.title)}.${format}`); await storage?.exported?.(blob, format); setNotice(storage?.exported ? 'Arquivo baixado e guardado no histórico do criativo.' : format === 'gif' ? 'GIF exportado. Esse formato não inclui som.' : 'Vídeo baixado. O projeto editável permanece salvo separadamente.'); }
     catch (error) { setNotice(abort.signal.aborted ? 'Exportação cancelada. O projeto foi preservado.' : message(error)); }
     finally { abortRef.current = null; setBusy(null); }
   };

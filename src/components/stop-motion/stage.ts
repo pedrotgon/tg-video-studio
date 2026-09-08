@@ -78,24 +78,48 @@ export class Stage {
       ball(head, '#382d2c', [0, .26, -.09], [.5, .25, .4]);
       for (const side of [-1, 1]) ball(head, skin, [side * .46, 0, 0], [.09, .13, .12]);
     }
+    if (actor.kind === 'goat') {
+      for (const side of [-1, 1]) {
+        const horn = shape(head, this.ear, '#947352', [side * .26, .53, -.08], [.13, .45, .14]); horn.rotation.z = side * -.22;
+        const ear = ball(head, skin, [side * .52, .12, -.01], [.29, .12, .13]); ear.rotation.z = side * .25;
+        ball(head, '#c9a783', [side * .55, .14, .1], [.17, .05, .03]);
+      }
+      ball(head, '#eadabb', [0, -.16, .35], [.28, .21, .14]);
+      ball(head, '#70533e', [0, -.13, .48], [.12, .065, .04]);
+      const beard = shape(head, this.ear, '#d5c3a1', [0, -.49, .16], [.17, .28, .13]); beard.rotation.z = Math.PI;
+      shape(root, this.ring, '#36563f', [0, 1.64, 0], [.39, .12, .34]).rotation.x = Math.PI / 2;
+      const scarf = ball(root, '#36563f', [.16, 1.43, .33], [.12, .28, .055]); scarf.rotation.z = -.4;
+    }
+    if (actor.kind === 'hen') {
+      for (const offset of [-.19, 0, .19]) ball(head, '#b74734', [offset, .45 + (offset === 0 ? .09 : 0), 0], [.115, .18, .12]);
+      const beak = shape(head, this.ear, '#de792e', [0, -.12, .47], [.16, .2 + actor.pose.mouth * .13, .15]); beak.rotation.x = Math.PI / 2;
+      ball(head, '#b74734', [0, -.34, .3], [.095, .13, .07]);
+      for (const side of [-1, 0, 1]) {
+        const feather = ball(root, '#c68b32', [side * .14, 1.45, -.36], [.14, .35, .1]); feather.rotation.x = -.6;
+      }
+    }
     for (const side of [-1, 1]) {
       ball(head, '#ffffff', [side * .17, .05, actor.kind === 'cup' ? .39 : .36], [.095, .112, .045]);
       ball(head, '#172d36', [side * .17, .05, actor.kind === 'cup' ? .43 : .4], [.043, .061, .023]);
     }
-    ball(head, '#633f38', [0, -.18, actor.kind === 'cup' ? .405 : .39], [.09, .018 + actor.pose.mouth * .08, .026]);
+    if (actor.kind !== 'hen') ball(head, '#633f38', [0, -.24, actor.kind === 'cup' ? .405 : actor.kind === 'goat' ? .48 : .39], [.09, .018 + actor.pose.mouth * .08, .026]);
     for (const side of [-1, 1]) {
       const arm = new THREE.Group(); arm.position.set(side * .43, 1.55, 0); arm.rotation.z = radians(side < 0 ? -actor.pose.leftArm : -actor.pose.rightArm); root.add(arm);
-      ball(arm, actor.kind === 'person' ? actor.color : skin, [0, -.26, 0], [.12, .34, .12]); ball(arm, skin, [0, -.58, .015], [.14, .15, .14]);
+      ball(arm, actor.kind === 'person' ? actor.color : skin, [0, -.26, 0], actor.kind === 'hen' ? [.2, .36, .1] : [.12, .34, .12]);
+      if (actor.kind !== 'hen') ball(arm, skin, [0, -.58, .015], [.14, .15, .14]);
       const leg = new THREE.Group(); leg.position.set(side * .22, .77, 0); leg.rotation.x = radians(side < 0 ? actor.pose.leftLeg : actor.pose.rightLeg); root.add(leg);
       ball(leg, actor.kind === 'person' ? '#29434e' : skin, [0, -.28, 0], [.145, .32, .15]);
-      ball(leg, actor.kind === 'person' ? '#26333c' : skin, [0, -.66, .12], [.19, .11, .26]);
+      ball(leg, actor.kind === 'person' ? '#26333c' : actor.kind === 'goat' ? '#70533e' : actor.kind === 'hen' ? '#de792e' : skin, [0, -.66, .12], [.19, .11, .26]);
     }
     return root;
   }
   render(scene: Scene, settings: Pick<Project, 'ratio' | 'background'>, previous?: Scene, selected?: string, width = 960): HTMLCanvasElement {
     const aspect = settings.ratio === '16:9' ? 16 / 9 : settings.ratio === '9:16' ? 9 / 16 : 1;
     const height = Math.round(width / aspect);
-    if (this.canvas.width !== width || this.canvas.height !== height) { this.canvas.width = width; this.canvas.height = height; this.renderer.setSize(width, height, false); }
+    if (this.canvas.width !== width || this.canvas.height !== height) { this.canvas.width = width; this.canvas.height = height; }
+    // React StrictMode can recreate the renderer while reusing the output canvas.
+    // Check both surfaces: otherwise a fresh 300x150 renderer appears in a corner.
+    if (this.renderer.domElement.width !== width || this.renderer.domElement.height !== height) this.renderer.setSize(width, height, false);
     this.camera.aspect = aspect;
     const distance = (aspect < 1 ? 12 : 8.8) / scene.camera.zoom, angle = radians(scene.camera.angle), elevation = radians(scene.camera.elevation);
     this.camera.position.set(Math.sin(angle) * distance, 1.4 + Math.sin(elevation) * distance, Math.cos(angle) * Math.cos(elevation) * distance);

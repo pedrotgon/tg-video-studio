@@ -454,16 +454,16 @@ function CreateProjectCard({ onCreate }: { onCreate: () => void }) {
       type="button"
       onClick={onCreate}
       className={cn(
-        "group flex h-full w-full flex-col items-center justify-center rounded-lg border border-white/10 bg-transparent p-3 text-center text-muted-foreground transition-all duration-300 ease-out",
+        "group flex h-full w-full flex-col items-center justify-center rounded-lg border border-border bg-card p-3 text-center text-foreground transition-all duration-300 ease-out",
         PROJECT_CARD_MIN_HEIGHT_CLASS,
-        "hover:border-white/15 hover:bg-white/[0.03] hover:shadow-lg hover:shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+        "hover:border-primary/40 hover:bg-muted hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
       )}
     >
       <Plus
-        className="mb-3 size-7 stroke-[1px] text-white/70 transition-colors group-hover:text-foreground"
+        className="mb-3 size-7 stroke-[1px] text-foreground transition-colors"
         aria-hidden="true"
       />
-      <span className="text-sm font-normal text-white/70 transition-colors group-hover:text-foreground">
+      <span className="text-sm font-normal text-foreground">
         {t("project.createCard")}
       </span>
     </button>
