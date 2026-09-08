@@ -289,6 +289,20 @@ class ProfileStore:
                     }
         return None
 
+    def generation_memory(self, query: str) -> dict:
+        """Retrieve persisted evidence, retaining the requested reference as primary."""
+        primary = self.get_context_bundle(query)
+        post_ids = sorted(p["id"] for p in self.list("post"))
+        references = [self.get_context_bundle(post_id) for post_id in post_ids[:20]]
+        return {
+            "primary_reference": primary,
+            "voice_and_structure_references": references,
+            "approved_structures": [s for s in self.list("structure") if s.get("approved")][:20],
+            "approved_examples": [c for c in self.list("copy") if c.get("status") == "approved"][:10],
+            "evidence_ids": sorted({e for ref in [primary, *references] for e in ref.get("evidence_ids", [])}),
+            "instruction": "Use a referência principal para o conteúdo; as demais para ritmo e estrutura. Rascunhos não são validação humana. Não atribua fala a legendas nem músicas.",
+        }
+
     def get_context_bundle(
         self, query: str, include_hypotheses: bool = False, max_hops: int = 2
     ) -> dict:

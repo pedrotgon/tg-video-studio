@@ -12,6 +12,10 @@ export interface SimpleVideoConfig {
 }
 
 export interface SimpleCopy {
+  text_origin?: string;
+  hook_visual?: string;
+  caption?: string;
+  source_ids?: string[];
   model?: string;
   id: string;
   title: string;

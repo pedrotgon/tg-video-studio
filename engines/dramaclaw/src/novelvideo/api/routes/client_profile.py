@@ -114,77 +114,44 @@ class CopyInput(BaseModel):
 
 
 def validate_qualifier_payload(payload: dict) -> list[dict]:
-    raw_questions = payload.get("questions") if isinstance(payload, dict) else None
-    if not isinstance(raw_questions, list):
-        raw_questions = []
-
-    sanitized: list[dict] = []
+    questions = payload.get("questions")
+    if not isinstance(questions, list) or not 3 <= len(questions) <= 5:
+        raise ValueError("qualification question count")
     seen_ids: set[str] = set()
-
-    for idx, question in enumerate(raw_questions):
+    for question in questions:
         if not isinstance(question, dict):
-            continue
-        qid = str(question.get("id") or f"q_{idx}").strip()
-        if not qid or qid in seen_ids:
-            qid = f"q_{idx}_{len(seen_ids)}"
-        seen_ids.add(qid)
-
-        title = str(question.get("question") or "").strip()
-        if not title:
-            title = f"Direção {idx + 1}?"
-        if len(title) > 20:
-            title = title[:20].rstrip(" ,.-")
-            if not title.endswith("?"):
-                title = title[:19] + "?"
-
-        raw_options = question.get("options")
-        if not isinstance(raw_options, list) or len(raw_options) < 2:
-            raw_options = [{"id": "opt_1", "label": "Sim"}, {"id": "opt_2", "label": "Não"}]
-
-        sanitized_opts: list[dict] = []
-        seen_opt_ids: set[str] = set()
-        for o_idx, opt in enumerate(raw_options[:4]):
-            if not isinstance(opt, dict):
-                continue
-            oid = str(opt.get("id") or f"opt_{o_idx}").strip()
-            if not oid or oid in seen_opt_ids:
-                oid = f"opt_{o_idx}_{len(seen_opt_ids)}"
-            seen_opt_ids.add(oid)
-            label = str(opt.get("label") or f"Opção {o_idx + 1}").strip()
-            if len(label) > 10:
-                label = label[:10].strip()
-            sanitized_opts.append({"id": oid, "label": label})
-
-        if len(sanitized_opts) < 2:
-            sanitized_opts.append({"id": f"opt_{len(sanitized_opts)}", "label": "Geral"})
-
-        sanitized.append({
-            "id": qid,
-            "question": title,
-            "options": sanitized_opts,
-        })
-        if len(sanitized) == 5:
-            break
-
-    defaults = [
-        {"id": "objetivo", "question": "Qual objetivo?", "options": [{"id": "converter", "label": "Converter"}, {"id": "engajar", "label": "Engajar"}, {"id": "viralizar", "label": "Viralizar"}]},
-        {"id": "abordagem", "question": "Qual abordagem?", "options": [{"id": "pratica", "label": "Prática"}, {"id": "desafio", "label": "Desafio"}, {"id": "direta", "label": "Direta"}]},
-        {"id": "formato", "question": "Qual formato?", "options": [{"id": "sem_pulo", "label": "Sem pulo"}, {"id": "ritmo", "label": "Ritmado"}, {"id": "em_casa", "label": "Em casa"}]},
-    ]
-    for d in defaults:
-        if len(sanitized) >= 3:
-            break
-        if d["id"] not in seen_ids:
-            sanitized.append(d)
-            seen_ids.add(d["id"])
-
-    return sanitized[:5]
+            raise ValueError("invalid qualification question")
+        question_id = question.get("id")
+        title = question.get("question")
+        options = question.get("options")
+        if not isinstance(question_id, str) or not question_id or question_id in seen_ids:
+            raise ValueError("invalid qualification id")
+        if not isinstance(title, str) or not title.strip() or len(title) > 20:
+            raise ValueError("qualification question too long")
+        if not isinstance(options, list) or not 2 <= len(options) <= 4:
+            raise ValueError("invalid qualification options")
+        option_ids: set[str] = set()
+        for option in options:
+            if not isinstance(option, dict):
+                raise ValueError("invalid qualification option")
+            option_id = option.get("id")
+            label = option.get("label")
+            if not isinstance(option_id, str) or not option_id or option_id in option_ids:
+                raise ValueError("invalid qualification option id")
+            if not isinstance(label, str) or not label.strip() or len(label) > 10:
+                raise ValueError("qualification option too long")
+            option_ids.add(option_id)
+        seen_ids.add(question_id)
+    return questions
 
 
 async def context(project, user, role="editor"):
-    ctx = await resolve_project_context(
-        user=user, project_id=project, required_role=role
-    )
+    try:
+        ctx = await resolve_project_context(user=user, project_id=project, required_role=role)
+    except HTTPException as exc:
+        if exc.status_code != 404:
+            raise
+        ctx = await resolve_project_context(user=user, project_name=project, required_role=role)
     require_project_home_node(ctx, operation="TG Perfil")
     return ctx, ProfileStore(ctx.state_dir)
 
@@ -714,15 +681,26 @@ async def qualify_copy(
                 "pedido": body.query,
                 "cta_disponivel": body.target_cta,
                 "perfil": generation_context(profile),
-                "contexto_verificado": generation_context(body.context_bundle),
+                "contexto_verificado": generation_context(store.generation_memory(body.query)),
             },
             ensure_ascii=False,
         )
     )
     try:
-        model, text = await generate_fast_text(ctx.project_id, prompt, max_output_tokens=8192, prefer_high=True)
+        model, text = await generate_fast_text(ctx.project_id, prompt, max_output_tokens=8192)
         parsed = parse_json(text)
-        questions = validate_qualifier_payload(parsed)
+        try:
+            questions = validate_qualifier_payload(parsed)
+        except ValueError:
+            questions = validate_qualifier_payload({"questions": [
+                {"id": "objetivo", "question": "Qual objetivo?", "options": [
+                    {"id": "participar", "label": "Participar"}, {"id": "conhecer", "label": "Conhecer"}]},
+                {"id": "formato", "question": "Qual formato?", "options": [
+                    {"id": "falado", "label": "Falado"}, {"id": "misto", "label": "Misto"}]},
+                {"id": "abordagem", "question": "Qual abordagem?", "options": [
+                    {"id": "convite", "label": "Convite"}, {"id": "desafio", "label": "Desafio"}, {"id": "pergunta", "label": "Pergunta"}]},
+            ]})
+            model = "editorial_form"
     except ValueError as exc:
         message = str(exc)
         if message.startswith("BLOQUEIO EXTERNO:"):
@@ -757,6 +735,8 @@ async def generate_strategic(
             "10. Conversão direta com a palavra-chave autorizada",
         ]
 
+        memory = generation_context(store.generation_memory(body.source_post_id or body.input_text))
+
         schema = (
             '{"copies":[{"title":"...","angle":"...","hook_visual":"...","hook_spoken":"...","body":"...","cta":"...","caption":"...","text":"..."}]}'
         )
@@ -785,12 +765,13 @@ async def generate_strategic(
                     "profile": generation_context(profile),
                     "input_reference": generation_context(body.input_text),
                     "source_post_id": body.source_post_id,
+                    "memory": memory,
                 },
                 ensure_ascii=False,
             )
         )
         if body.fast:
-            model, text = await generate_fast_text(ctx.project_id, prompt, prefer_high=True)
+            model, text = await generate_fast_text(ctx.project_id, prompt)
         else:
             model, text = await generate_text(ctx.project_id, prompt)
         parsed = parse_json(text)
@@ -804,6 +785,7 @@ async def generate_strategic(
 
         results = []
         for c in candidates:
+            c["cta"] = f"Comente {body.target_cta}."
             full_text = c.get("text") or f"{c.get('hook_spoken', '')}\n\n{c.get('body', '')}\n\n{c.get('cta', '')}"
             results.append(
                 {
@@ -824,8 +806,18 @@ async def generate_strategic(
                     "briefing": body.input_text[:500],
                 }
             )
-        ids = [store.save("copy", uuid4().hex, r)["id"] for r in results]
-        return {"copy_ids": ids}
+        ids = []
+        with store.transaction() as db:
+            for result in results:
+                copy_id = uuid4().hex
+                ids.append(store.save_in_tx(db, "copy", copy_id, result)["id"])
+                if body.source_post_id:
+                    store.save_in_tx(db, "relation", uuid4().hex, {
+                        "source_id": copy_id, "target_id": body.source_post_id,
+                        "relation_type": "COPY_DERIVED_FROM_POST", "status": "observed",
+                        "source_ids": [body.source_post_id],
+                    })
+        return {"copy_ids": ids, "context_bundle": memory}
 
     return start_job(ctx, store, "copies", work)
 

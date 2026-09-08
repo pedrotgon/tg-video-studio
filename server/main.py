@@ -204,6 +204,21 @@ async def health_check():
     return {"status": "online" if money and drama else "partial", "engines": {"money_printer_turbo": money, "drama_claw": drama}}
 
 
+@app.get("/api/simple/copies/latest")
+async def latest_simple_copies(projectId: str):
+    data = await profile_data(projectId)
+    by_id = {copy["id"]: copy for copy in data.get("copies") or []}
+    for job in data.get("jobs") or []:
+        if job.get("status") != "completed":
+            continue
+        ids = (job.get("result") or {}).get("copy_ids") or []
+        copies = [by_id[id] for id in ids if id in by_id]
+        if len(copies) == 10 and all(c.get("status") in {"draft", "approved"} for c in copies):
+            source = copies[0].get("source_post_id") or ""
+            return {"copies": copies, "memory": resolve_verified_memory(data, source)}
+    return {"copies": [], "memory": None}
+
+
 @app.post("/api/simple/copies", status_code=202)
 async def generate_simple_copies(body: SimpleCopiesRequest):
     if len(body.answers) > 5 or any(len(key) > 80 or len(value) > 80 for key, value in body.answers.items()):

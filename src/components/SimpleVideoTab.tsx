@@ -57,6 +57,28 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
   useEffect(() => { if (activeJob) go(5); }, [activeJob?.id]);
 
   useEffect(() => {
+    let cancelled = false;
+    setBusy(true);
+    fetch(`/api/simple/copies/latest?projectId=${encodeURIComponent(PROFILE_PROJECT_ID)}`)
+      .then(async response => {
+        if (!response.ok) throw new Error('Não foi possível recuperar o último lote.');
+        return response.json();
+      })
+      .then(result => {
+        if (cancelled || !result.copies?.length) return;
+        setCopies(result.copies);
+        setMemory(result.memory);
+        setModel(result.copies[0].model || '');
+        setQuery(result.memory?.alias || '');
+        setCopyPhase('results');
+        setMessage('Últimas 10 copies recuperadas do Perfil. Revise antes de publicar.');
+      })
+      .catch(cause => { if (!cancelled) setError(cause.message); })
+      .finally(() => { if (!cancelled) setBusy(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
     try {
       const incoming = (localStorage.getItem('tg_esteira_theme') || '').trim();
       if (incoming && !query) {
@@ -208,6 +230,9 @@ export const SimpleVideoTab: React.FC<Props> = ({ onGenerate, activeJob, onStepC
                 <p key={sIdx} className="m-0 leading-relaxed">{sentence}</p>
               ))}
             </div>
+            {item.hook_visual && <p className="mt-2 text-xs"><strong>Abertura visual:</strong> {item.hook_visual}</p>}
+            {item.caption && <p className="mt-2 whitespace-pre-wrap text-xs"><strong>Legenda:</strong>{"\n"}{item.caption}</p>}
+            {item.source_ids && item.source_ids.length > 0 && <p className="mt-2 text-[10px] text-[#6f8088]">Fontes: {item.source_ids.join(', ')}</p>}
           </details>
         </article>)}
       </div>}
