@@ -10,6 +10,7 @@ import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from memory_store import memory_summary, profile_data
 
 MONEY_API = "http://127.0.0.1:8080"
 app = FastAPI(title="TG Video Studio Gateway", version="2.0.0")
@@ -54,12 +55,6 @@ def normalized_key(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", value.lower())
 
 
-PROFILE_DATA = {"posts": [
-    {"id": "DcUjm2eyjbC", "alias": "Música e desafio", "source_url": "https://www.instagram.com/p/DcUjm2eyjbC/", "caption": "Porque na música, a gente emagrece se divertindo. Você consegue fazer essa música inteira? Acesse a aula completa liberada no YouTube. Comente QUERO.", "metrics": {}},
-    {"id": "Dce8x59SSP2", "alias": "Descoberta do canal", "source_url": "https://www.instagram.com/p/Dce8x59SSP2/", "caption": "Descoberta do canal, adequação ao iniciante e convite para experimentar.", "metrics": {"plays": 82000}},
-    {"id": "Dcv2Yt4RBmX", "alias": "Rotina e nutrição", "source_url": "https://www.instagram.com/p/Dcv2Yt4RBmX/", "caption": "História de rotina: expectativa, dificuldade, processo, aprendizado e convite.", "metrics": {}},
-    {"id": "DauwjqVBoHh", "alias": "Baixo impacto", "source_url": "https://www.instagram.com/p/DauwjqVBoHh/", "caption": "Treino de baixo impacto, aula gratuita e palavra-chave MUNDOFIT.", "metrics": {"plays": 4099020}},
-], "memory_items": [], "relations": []}
 COPY_JOBS: dict[str, dict] = {}
 
 
@@ -195,6 +190,11 @@ async def health_check():
     return {"status": "online" if money else "partial", "engines": {"money_printer_turbo": money}}
 
 
+@app.get("/api/profile/memory")
+async def get_profile_memory():
+    return memory_summary()
+
+
 COPY_ANGLES = [
     "desafio participativo", "curiosidade", "convite direto", "companhia",
     "primeiro contato", "pergunta direta", "demonstração prática",
@@ -231,7 +231,7 @@ async def build_copy_job(job_id: str, body: SimpleCopiesRequest, memory: dict | 
 async def generate_simple_copies(body: SimpleCopiesRequest):
     if len(body.answers) > 5 or any(len(key) > 80 or len(value) > 80 for key, value in body.answers.items()):
         raise HTTPException(status_code=422, detail="A qualificação contém respostas inválidas.")
-    memory = resolve_verified_memory(PROFILE_DATA, body.query)
+    memory = resolve_verified_memory(profile_data(), body.query)
     job_id = uuid4().hex
     COPY_JOBS[job_id] = {"status": "running"}
     asyncio.create_task(build_copy_job(job_id, body, memory))
@@ -240,7 +240,7 @@ async def generate_simple_copies(body: SimpleCopiesRequest):
 
 @app.post("/api/simple/copies/qualify")
 async def qualify_simple_copy(body: SimpleCopiesRequest):
-    memory = resolve_verified_memory(PROFILE_DATA, body.query)
+    memory = resolve_verified_memory(profile_data(), body.query)
     questions = [
         {"id": "objetivo", "question": "Qual objetivo?", "options": [{"id": "participar", "label": "Participar"}, {"id": "conhecer", "label": "Conhecer"}]},
         {"id": "formato", "question": "Qual formato?", "options": [{"id": "falado", "label": "Falado"}, {"id": "misto", "label": "Misto"}]},
@@ -251,7 +251,7 @@ async def qualify_simple_copy(body: SimpleCopiesRequest):
 
 @app.post("/api/simple/memory/resolve")
 async def resolve_simple_memory(body: SimpleCopiesRequest):
-    memory = resolve_verified_memory(PROFILE_DATA, body.query)
+    memory = resolve_verified_memory(profile_data(), body.query)
     return {"memory": memory, "mode": "verified_memory" if memory else "free_topic"}
 
 
