@@ -12,7 +12,7 @@ export const App: React.FC = () => {
 
   const changeTab = (tab: TabType) => {
     if (tab === 'profile') {
-      window.location.assign('/criativo/perfil?project=Thaix_Santiago_Perfil_e_Copies');
+      window.location.assign('/criativo/perfil?project=01M1SAXW27GVCP7QF6EYY7PSQN');
       return;
     }
     if (tab === 'complex') {

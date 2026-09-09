@@ -109,7 +109,12 @@ class QualifyCopyInput(BaseModel):
 class CopyInput(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     text: str = Field(min_length=1, max_length=30000)
-    status: Literal["draft", "approved"]
+    status: Literal["draft", "adjusted", "approved", "recorded", "published", "rejected"]
+    hook_visual: str = Field(default="", max_length=10000)
+    caption: str = Field(default="", max_length=10000)
+    cta: str = Field(default="", max_length=1000)
+    review_note: str = Field(default="", max_length=10000)
+    performance_note: str = Field(default="", max_length=10000)
     version: int
 
 
@@ -501,7 +506,7 @@ async def edit_copy(
     return {
         "ok": True,
         "data": save(
-            store, "copy", copy_id, {**previous, **body.model_dump()}, body.version
+            store, "copy", copy_id, {**previous, **body.model_dump(exclude_unset=True)}, body.version
         ),
     }
 
@@ -744,6 +749,9 @@ async def generate_strategic(
     async def work():
         from novelvideo.profile_provider import generate_text, generate_fast_text, generation_context
 
+        from novelvideo.copy_reference import published_copy_reference
+        reference = published_copy_reference(required(store, "post", body.source_post_id), store.list("transcript")) if body.source_post_id else {}
+
         angles = [
             "1. Pergunta direta",
             "2. Convite para experimentar",
@@ -785,6 +793,7 @@ async def generate_strategic(
                     "profile": generation_context(profile),
                     "input_reference": generation_context(body.input_text),
                     "source_post_id": body.source_post_id,
+                    "published_reference": generation_context(reference),
                 },
                 ensure_ascii=False,
             )

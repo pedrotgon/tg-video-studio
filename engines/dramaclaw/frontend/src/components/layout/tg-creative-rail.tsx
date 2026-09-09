@@ -22,7 +22,7 @@ export function TgCreativeRail() {
           title="Perfil — Cliente"
         >
           <UserRound size={21} aria-hidden="true" />
-          <span className="sr-only">Perfil</span>
+          <span className="text-[10px] font-medium">Perfil</span>
         </a>
         <a
           className="tg-creative-rail__item"
@@ -30,7 +30,7 @@ export function TgCreativeRail() {
           title="Simples — 1 clique"
         >
           <Zap size={21} aria-hidden="true" />
-          <span className="sr-only">Simples</span>
+          <span className="text-[10px] font-medium">Simples</span>
         </a>
         <a
           className={`tg-creative-rail__item${profileActive ? "" : " tg-creative-rail__item--active"}`}
@@ -39,7 +39,7 @@ export function TgCreativeRail() {
           title="Criativo — Estúdio"
         >
           <Star size={21} aria-hidden="true" />
-          <span className="sr-only">Criativo</span>
+          <span className="text-[10px] font-medium">Criativo</span>
         </a>
       </nav>
       <div className="tg-creative-rail__signature" title="Teixeira Gonçalves">

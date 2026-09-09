@@ -51,3 +51,7 @@ state/
 *.sqlite-shm
 *.part
 cookies*.txt
+
+# Python source, not runtime storage
+!engines/dramaclaw/src/novelvideo/storage/
+!engines/dramaclaw/src/novelvideo/storage/*.py

@@ -1,0 +1,10 @@
+import { useState } from 'react';
+type Client = { name: string; handle: string; bio: string; facts: string; method: string; version: number; followers_display: string; source_observed_at: string };
+export function ClientEditor({ profile, endpoint, onSaved }: { profile: Client; endpoint: string; onSaved: () => void }) {
+  const [draft,setDraft] = useState(profile);
+  const [editing,setEditing] = useState(false);
+  const [busy,setBusy] = useState(false);
+  const [message,setMessage] = useState('');
+  async function save() { setBusy(true); try { const r=await fetch(`/${endpoint}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(draft)}); if(!r.ok) throw new Error(r.status===409?'O perfil mudou. Reabra a edição para carregar a versão atual.':'Não foi possível salvar.'); setEditing(false); onSaved(); setMessage('Perfil salvo.'); } catch(e) { setMessage(String(e)); } finally { setBusy(false); } }
+  return <section className="my-4 rounded-xl border border-[#E3E1DA] bg-white p-5"><h2 className="font-semibold">Perfil vivo · {profile.name}</h2><p className="my-2 text-sm text-[#66736B]">Registre a linguagem, os limites e as ofertas confirmadas. Inclua fonte e data nas orientações; pendências devem permanecer identificadas.</p><button type="button" className="rounded border px-3 py-2 text-sm" onClick={()=>{setDraft(profile);setEditing(!editing);}}>{editing?'Cancelar edição':'Editar conhecimento da cliente'}</button>{editing&&<div className="mt-3 space-y-3">{([['name','Nome'],['bio','Sobre a cliente'],['facts','Fatos e ofertas confirmadas — fonte e data'],['method','Linguagem, método, limites e orientações da equipe']] as const).map(([field,label])=><label className="block text-sm" key={field}>{label}<textarea rows={field==='name'?1:4} className="mt-1 w-full rounded border p-2" value={draft[field]} onChange={e=>setDraft({...draft,[field]:e.target.value})}/></label>)}<button disabled={busy} onClick={save} className="rounded bg-[#19382B] px-3 py-2 text-white">{busy?'Salvando…':'Salvar perfil'}</button></div>}{message&&<p role="status" className="mt-2 text-sm">{message}</p>}</section>;
+}
