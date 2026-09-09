@@ -1,4 +1,4 @@
-import { ComplexVideoConfig, CopyQualification, GenerationJob, SimpleCopy, SimpleVideoConfig, VerifiedMemoryReference } from '../types';
+import { CopyQualification, GenerationJob, SimpleCopy, SimpleVideoConfig, VerifiedMemoryReference } from '../types';
 
 const messageFromResponse = async (response: Response) => {
   try {
@@ -113,24 +113,6 @@ export const generateSimpleVideo = async (config: SimpleVideoConfig, onProgress:
     }
   } catch (error) {
     const failed: GenerationJob = { ...initial, status: 'error', currentStepMessage: 'Não foi possível gerar o vídeo.', error: error instanceof Error ? error.message : String(error) };
-    onProgress(failed);
-    return failed;
-  }
-};
-
-export const generateComplexVideo = async (config: ComplexVideoConfig, onProgress: (job: GenerationJob) => void): Promise<GenerationJob> => {
-  const initial: GenerationJob = { id: `creative-${Date.now()}`, type: 'complex', title: config.title, status: 'generating_script', progress: 25, currentStepMessage: 'Preparando sua produção…', createdAt: new Date().toISOString() };
-  onProgress(initial);
-  try {
-    const safeProjectName = config.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 120);
-    const response = await fetch('/api/complex/projects', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...config, title: safeProjectName }) });
-    if (!response.ok) throw new Error(await messageFromResponse(response));
-    const data = await response.json();
-    const completed: GenerationJob = { ...initial, ...data, type: 'complex', title: config.title, status: 'completed', progress: 100 };
-    onProgress(completed);
-    return completed;
-  } catch (error) {
-    const failed: GenerationJob = { ...initial, status: 'error', currentStepMessage: 'Não foi possível criar o projeto.', error: error instanceof Error ? error.message : String(error) };
     onProgress(failed);
     return failed;
   }

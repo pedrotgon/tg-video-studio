@@ -1,4 +1,4 @@
-export type TabType = 'simple' | 'complex' | 'profile';
+export type TabType = 'simple' | 'profile';
 
 export interface SimpleVideoConfig {
   videoSubject: string;
@@ -48,24 +48,6 @@ export interface CopyQualification {
   questions: CopyQualifierQuestion[];
   memory: VerifiedMemoryReference | null;
   model?: string;
-}
-
-export interface ComplexScene {
-  id: string;
-  sceneNumber: number;
-  description: string;
-  dialogue: string;
-  character: string;
-  visualPrompt: string;
-  durationSeconds: number;
-}
-
-export interface ComplexVideoConfig {
-  title: string;
-  storyPremise: string;
-  genre: 'documentary' | 'drama' | 'commercial' | 'short_story' | 'game_story';
-  characters: Array<{ name: string; visualDescription: string; voice: string }>;
-  scenes: ComplexScene[];
 }
 
 export interface GenerationJob {

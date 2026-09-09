@@ -28,8 +28,6 @@ trap stop_all EXIT INT TERM
 
 start_service "money-api" "$STUDIO_ROOT/engines/moneyprinter" .venv/bin/python main.py
 start_service "money-web" "$STUDIO_ROOT/engines/moneyprinter" bash webui.sh
-start_service "drama-api" "$STUDIO_ROOT/engines/dramaclaw" env ST_EDITION=ce .venv/bin/novelvideo api --port 8780
-start_service "drama-web" "$STUDIO_ROOT/engines/dramaclaw/frontend" npm run dev -- --host 0.0.0.0
 start_service "gateway" "$STUDIO_ROOT/server" uv run python main.py
 start_service "tg-web" "$STUDIO_ROOT" npm run dev -- --host 0.0.0.0
 

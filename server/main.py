@@ -1,16 +1,17 @@
-"""Gateway real do TG Video Studio para MoneyPrinterTurbo e DramaClaw."""
+"""Gateway do TG Video Studio para o modo Simples."""
 
-from urllib.parse import quote, urljoin
+from urllib.parse import urljoin
+import asyncio
 import json
 import re
 import unicodedata
+from uuid import uuid4
 import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 MONEY_API = "http://127.0.0.1:8080"
-DRAMA_API = "http://127.0.0.1:8780"
 app = FastAPI(title="TG Video Studio Gateway", version="2.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
@@ -38,14 +39,6 @@ class SimpleCopiesRequest(BaseModel):
     answers: dict[str, str] = Field(default_factory=dict)
 
 
-class ComplexVideoRequest(BaseModel):
-    title: str = Field(min_length=1, max_length=160)
-    storyPremise: str = Field(min_length=1, max_length=8000)
-    genre: str = "drama"
-    characters: list[dict] = []
-    scenes: list[dict] = []
-
-
 async def get_json(url: str) -> dict:
     try:
         async with httpx.AsyncClient(timeout=8) as client:
@@ -61,9 +54,13 @@ def normalized_key(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", value.lower())
 
 
-async def profile_data(project_id: str) -> dict:
-    result = await get_json(f"{DRAMA_API}/api/v1/projects/{project_id}/profile")
-    return result.get("data") or {}
+PROFILE_DATA = {"posts": [
+    {"id": "DcUjm2eyjbC", "alias": "Música e desafio", "source_url": "https://www.instagram.com/p/DcUjm2eyjbC/", "caption": "Porque na música, a gente emagrece se divertindo. Você consegue fazer essa música inteira? Acesse a aula completa liberada no YouTube. Comente QUERO.", "metrics": {}},
+    {"id": "Dce8x59SSP2", "alias": "Descoberta do canal", "source_url": "https://www.instagram.com/p/Dce8x59SSP2/", "caption": "Descoberta do canal, adequação ao iniciante e convite para experimentar.", "metrics": {"plays": 82000}},
+    {"id": "Dcv2Yt4RBmX", "alias": "Rotina e nutrição", "source_url": "https://www.instagram.com/p/Dcv2Yt4RBmX/", "caption": "História de rotina: expectativa, dificuldade, processo, aprendizado e convite.", "metrics": {}},
+    {"id": "DauwjqVBoHh", "alias": "Baixo impacto", "source_url": "https://www.instagram.com/p/DauwjqVBoHh/", "caption": "Treino de baixo impacto, aula gratuita e palavra-chave MUNDOFIT.", "metrics": {"plays": 4099020}},
+], "memory_items": [], "relations": []}
+COPY_JOBS: dict[str, dict] = {}
 
 
 def resolve_verified_memory(data: dict, query: str) -> dict | None:
@@ -195,110 +192,75 @@ async def health_check():
         except httpx.HTTPError:
             return False
     money = await probe(f"{MONEY_API}/ping")
-    drama = await probe(f"{DRAMA_API}/healthz")
-    return {"status": "online" if money and drama else "partial", "engines": {"money_printer_turbo": money, "drama_claw": drama}}
+    return {"status": "online" if money else "partial", "engines": {"money_printer_turbo": money}}
+
+
+COPY_ANGLES = [
+    "desafio participativo", "curiosidade", "convite direto", "companhia",
+    "primeiro contato", "pergunta direta", "demonstração prática",
+    "quebra de objeção", "história curta", "CTA direto",
+]
+
+
+async def build_copy_job(job_id: str, body: SimpleCopiesRequest, memory: dict | None) -> None:
+    source = memory["caption"] if memory else body.query
+    async def create(index: int, angle: str) -> dict:
+        prompt = (
+            f"Crie uma copy falada curta em português para Thaix Santiago. Tema: {body.query}. "
+            f"Referência observada: {source}. Ângulo: {angle}. Direção confirmada: {body.answers}. "
+            f"Finalize com 'Comente {body.targetCta}'. Não invente resultados, depoimentos, números, "
+            "benefícios médicos ou oferta ativa. A referência inspira estrutura; publicação não prova vendas. "
+            "Retorne somente a fala, sem título ou explicações."
+        )
+        payload = {"video_subject": body.query, "video_language": "pt-BR", "paragraph_number": 3, "video_script_prompt": prompt}
+        async with httpx.AsyncClient(timeout=90) as client:
+            response = await client.post(f"{MONEY_API}/api/v1/scripts", json=payload)
+            response.raise_for_status()
+            text = str((response.json().get("data") or {}).get("video_script") or "").strip()
+        if not text:
+            raise ValueError("A IA retornou uma copy vazia.")
+        return {"id": f"{job_id}-{index}", "title": angle.title(), "angle": angle, "hook_spoken": text.splitlines()[0][:180], "text": text, "cta": f"Comente {body.targetCta}.", "source_post_id": memory.get("post_id") if memory else None}
+    try:
+        copies = await asyncio.gather(*(create(i, angle) for i, angle in enumerate(COPY_ANGLES, 1)))
+        COPY_JOBS[job_id] = {"status": "completed", "copies": copies}
+    except Exception as exc:
+        COPY_JOBS[job_id] = {"status": "failed", "error": f"Não foi possível gerar as copies: {exc}"}
 
 
 @app.post("/api/simple/copies", status_code=202)
 async def generate_simple_copies(body: SimpleCopiesRequest):
     if len(body.answers) > 5 or any(len(key) > 80 or len(value) > 80 for key, value in body.answers.items()):
         raise HTTPException(status_code=422, detail="A qualificação contém respostas inválidas.")
-    data = await profile_data(body.projectId)
-    memory = resolve_verified_memory(data, body.query)
-    if memory:
-        source = {
-            "consulta": body.query,
-            "referencia": memory["alias"],
-            "post_id": memory["post_id"],
-            "fonte": memory["source_url"],
-            "legenda_observada": memory["caption"],
-            "metricas_observadas": memory["metrics"],
-            "observado_em": memory["observed_at"],
-            "restricao": "Use apenas a legenda como linguagem observada. Métricas não provam conversão, retenção ou causalidade.",
-            "direcionamento_confirmado": body.answers,
-        }
-    else:
-        source = {
-            "tema_informado": body.query,
-            "restricao": "Tema livre sem evidência vinculada. Não invente prova, resultado, depoimento ou dado da cliente.",
-            "direcionamento_confirmado": body.answers,
-        }
-    try:
-        # Gemini with high reasoning may legitimately take longer than a
-        # lightweight draft.  Do not turn a live model response into a false
-        # failure while the copy job is still being composed.
-        async with httpx.AsyncClient(timeout=240) as client:
-            response = await client.post(
-                f"{DRAMA_API}/api/v1/projects/{body.projectId}/profile/strategic-copies",
-                json={
-                    "input_text": json.dumps(source, ensure_ascii=False),
-                    "source_post_id": memory["post_id"] if memory else None,
-                    "target_cta": body.targetCta,
-                    "fast": True,
-                },
-            )
-            response.raise_for_status()
-            result = response.json()
-    except httpx.HTTPStatusError as exc:
-        raise HTTPException(status_code=exc.response.status_code, detail=f"O gerador de copies recusou a solicitação: {exc.response.text[:500]}") from exc
-    except (httpx.HTTPError, ValueError) as exc:
-        raise HTTPException(status_code=503, detail=f"Gerador de copies indisponível: {exc}") from exc
-    job = result.get("data") or {}
-    return {"id": job.get("id"), "memory": memory, "status": job.get("status", "running")}
+    memory = resolve_verified_memory(PROFILE_DATA, body.query)
+    job_id = uuid4().hex
+    COPY_JOBS[job_id] = {"status": "running"}
+    asyncio.create_task(build_copy_job(job_id, body, memory))
+    return {"id": job_id, "memory": memory, "status": "running"}
 
 
 @app.post("/api/simple/copies/qualify")
 async def qualify_simple_copy(body: SimpleCopiesRequest):
-    data = await profile_data(body.projectId)
-    memory = resolve_verified_memory(data, body.query)
-    try:
-        context_bundle = await get_json(
-            f"{DRAMA_API}/api/v1/projects/{body.projectId}/profile/context?query={quote(body.query)}"
-        )
-        # The qualification uses the same high-reasoning text provider as the
-        # copy job.  Keep the gateway timeout aligned with that provider.
-        async with httpx.AsyncClient(timeout=240) as client:
-            response = await client.post(
-                f"{DRAMA_API}/api/v1/projects/{body.projectId}/profile/qualify",
-                json={
-                    "query": body.query,
-                    "target_cta": body.targetCta,
-                    "context_bundle": context_bundle.get("data") or {},
-                },
-            )
-            response.raise_for_status()
-            result = (response.json().get("data") or {})
-    except httpx.HTTPStatusError as exc:
-        try:
-            detail = str(exc.response.json().get("detail") or "")
-        except ValueError:
-            detail = ""
-        safe_detail = detail if detail.startswith("BLOQUEIO EXTERNO:") else "A IA não conseguiu montar perguntas válidas agora."
-        raise HTTPException(status_code=exc.response.status_code, detail=safe_detail) from exc
-    except (httpx.HTTPError, ValueError) as exc:
-        raise HTTPException(status_code=503, detail=f"Qualificação estratégica indisponível: {exc}") from exc
-    return {**result, "memory": memory}
+    memory = resolve_verified_memory(PROFILE_DATA, body.query)
+    questions = [
+        {"id": "objetivo", "question": "Qual objetivo?", "options": [{"id": "participar", "label": "Participar"}, {"id": "conhecer", "label": "Conhecer"}]},
+        {"id": "formato", "question": "Qual formato?", "options": [{"id": "falado", "label": "Falado"}, {"id": "misto", "label": "Misto"}]},
+        {"id": "abordagem", "question": "Qual abordagem?", "options": [{"id": "convite", "label": "Convite"}, {"id": "desafio", "label": "Desafio"}, {"id": "pergunta", "label": "Pergunta"}]},
+    ]
+    return {"questions": questions, "memory": memory, "model": "TG Simples"}
 
 
 @app.post("/api/simple/memory/resolve")
 async def resolve_simple_memory(body: SimpleCopiesRequest):
-    data = await profile_data(body.projectId)
-    memory = resolve_verified_memory(data, body.query)
+    memory = resolve_verified_memory(PROFILE_DATA, body.query)
     return {"memory": memory, "mode": "verified_memory" if memory else "free_topic"}
 
 
 @app.get("/api/simple/copies/{job_id}")
 async def get_simple_copies(job_id: str, projectId: str):
-    data = await profile_data(projectId)
-    job = next((item for item in data.get("jobs") or [] if item.get("id") == job_id), None)
+    job = COPY_JOBS.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Tarefa de copies não encontrada.")
-    response = {"id": job_id, "status": job.get("status"), "error": job.get("error")}
-    if job.get("status") == "completed":
-        copy_ids = (job.get("result") or {}).get("copy_ids") or []
-        by_id = {copy.get("id"): copy for copy in data.get("copies") or []}
-        response["copies"] = [by_id[copy_id] for copy_id in copy_ids if copy_id in by_id]
-    return response
+    return {"id": job_id, **job}
 
 
 @app.post("/api/simple/script")
@@ -404,26 +366,6 @@ async def get_simple_task(task_id: str):
         status = "compositing"
     messages = {"generating_script": "Criando roteiro com IA…", "rendering_audio": "Gerando narração em português…", "fetching_media": "Selecionando mídia…", "compositing": "Compondo vídeo e legendas…", "completed": "Vídeo pronto.", "error": "A geração encontrou um erro."}
     return {"id": task_id, "status": status, "progress": 100 if status == "completed" else progress, "currentStepMessage": messages[status], "videoUrl": video_url, "error": task.get("error") or task.get("failed_stage")}
-
-
-@app.post("/api/complex/projects", status_code=201)
-async def create_cinema_project(body: ComplexVideoRequest):
-    normalized = unicodedata.normalize("NFKD", body.title).encode("ascii", "ignore").decode("ascii")
-    project_name = re.sub(r"[^A-Za-z0-9]+", "_", normalized).strip("_")[:120]
-    if not project_name:
-        raise HTTPException(status_code=422, detail="O título não gerou um identificador de projeto válido")
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            response = await client.post(f"{DRAMA_API}/api/v1/projects", json={"name": project_name})
-            response.raise_for_status()
-            result = response.json()
-    except httpx.HTTPStatusError as exc:
-        raise HTTPException(status_code=502, detail=exc.response.text[:800]) from exc
-    except (httpx.HTTPError, ValueError) as exc:
-        raise HTTPException(status_code=503, detail=f"DramaClaw indisponível: {exc}") from exc
-    project = result.get("data") or {}
-    project_id = project.get("project_id") or project.get("id")
-    return {"id": project_id, "title": body.title, "status": "completed", "progress": 100, "currentStepMessage": "Produção criada no TG Criatividade.", "studioUrl": f"http://127.0.0.1:5174/projects/{project_id}/ingest?lng=pt&embedded=true"}
 
 
 if __name__ == "__main__":
